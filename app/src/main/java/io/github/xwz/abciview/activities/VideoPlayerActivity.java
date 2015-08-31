@@ -1,6 +1,5 @@
 package io.github.xwz.abciview.activities;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -40,7 +39,7 @@ import io.github.xwz.abciview.views.VideoPlayerView;
 /**
  * An activity that plays media using {@link VideoPlayer}.
  */
-public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callback, VideoPlayer.Listener, VideoPlayer.CaptionListener,
+public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.Callback, VideoPlayer.Listener, VideoPlayer.CaptionListener,
         AudioCapabilitiesReceiver.Listener {
 
     private static final String TAG = "PlayerActivity";
