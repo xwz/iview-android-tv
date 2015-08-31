@@ -9,14 +9,11 @@ import com.google.android.exoplayer.ExoPlayer;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by wei on 30/08/15.
- */
 public class DurationLogger implements Runnable, VideoPlayer.Listener {
 
     private static final String TAG = "VideoTimeLogger";
     private static final int REFRESH_INTERVAL_MS = 1000;
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private VideoPlayer player;
     private int state;
 
@@ -28,7 +25,7 @@ public class DurationLogger implements Runnable, VideoPlayer.Listener {
         this.run();
     }
 
-    public void stop() {
+    private void stop() {
         handler.removeCallbacks(this);
         player = null;
     }
@@ -40,11 +37,12 @@ public class DurationLogger implements Runnable, VideoPlayer.Listener {
 
     /**
      * Listen for time remaining, in seconds, during play back.
+     *
      * @param remaining seconds remaining
-     * @param listener
+     * @param listener listener
      */
     public void addListener(long remaining, OnTimeReached listener) {
-        listeners.add(new Pair<Long, OnTimeReached>(remaining, listener));
+        listeners.add(new Pair<>(remaining, listener));
     }
 
     @Override
@@ -56,7 +54,7 @@ public class DurationLogger implements Runnable, VideoPlayer.Listener {
         handler.postDelayed(this, REFRESH_INTERVAL_MS);
     }
 
-    protected void executeListeners() {
+    private void executeListeners() {
         long duration = player.getDuration() / 1000;
         long position = player.getCurrentPosition() / 1000;
         List<Pair<Long, OnTimeReached>> executed = new ArrayList<>();
@@ -112,6 +110,6 @@ public class DurationLogger implements Runnable, VideoPlayer.Listener {
     }
 
     public interface OnTimeReached {
-        public void onPositionRemainingReached(long duration, long position);
+        void onPositionRemainingReached(long duration, long position);
     }
 }

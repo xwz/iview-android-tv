@@ -15,23 +15,20 @@ import io.github.xwz.abciview.R;
 import io.github.xwz.abciview.models.EpisodeModel;
 import jp.wasabeef.picasso.transformations.gpu.VignetteFilterTransformation;
 
-/**
- * Created by wei on 28/08/15.
- */
 public class EpisodeDetailsView extends Presenter.ViewHolder {
     private final Context mContext;
 
     private static final int LOADER_DELAY_MS = 200;
 
-    private TextView episodeTitle;
-    private TextView seriesTitle;
-    private TextView description;
-    private TextView duration;
-    private ImageView image;
+    private final TextView episodeTitle;
+    private final TextView seriesTitle;
+    private final TextView description;
+    private final TextView duration;
+    private final ImageView image;
 
-    private Transformation transformation;
-    private Handler handler = new Handler();
-    private EpisodeLoader loader;
+    private final Transformation transformation;
+    private final Handler handler = new Handler();
+    private final EpisodeLoader loader;
 
     public EpisodeDetailsView(Context context, View view) {
         super(view);
@@ -62,7 +59,7 @@ public class EpisodeDetailsView extends Presenter.ViewHolder {
         description.setText(episode.getDescription());
     }
 
-    protected void loadEpisodeDetails(EpisodeModel episode) {
+    private void loadEpisodeDetails(EpisodeModel episode) {
         loader.setEpisode(episode);
         handler.removeCallbacks(loader);
         handler.postDelayed(loader, LOADER_DELAY_MS);

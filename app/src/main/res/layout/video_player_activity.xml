@@ -143,7 +143,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/marginBase"
             android:layout_marginBottom="@dimen/marginBaseDouble"
-            android:text="Next Episode"/>
+            android:text="@string/next_episode"/>
 
         <android.support.v17.leanback.widget.ImageCardView
             android:id="@+id/next_episode"

@@ -15,9 +15,6 @@ import io.github.xwz.abciview.api.EpisodeDetailsApi;
 import io.github.xwz.abciview.api.TvShowListApi;
 import io.github.xwz.abciview.models.EpisodeModel;
 
-/**
- * Created by wei on 27/08/15.
- */
 public class ContentManager {
 
     public static final Map<String, String> CATEGORIES = ImmutableMap.of(
@@ -32,7 +29,7 @@ public class ContentManager {
             "sport", "Sport"
     );
 
-    public static final Map<String, String> CHANNELS = ImmutableMap.of(
+    private static final Map<String, String> CHANNELS = ImmutableMap.of(
             "abc1", "ABC1",
             "abc2", "ABC2",
             "abc3", "ABC3",
@@ -45,17 +42,17 @@ public class ContentManager {
     public static final String CONTENT_ID = "io.github.xwz.abciview.CONTENT_ID";
     public static final String CONTENT_TAG = "io.github.xwz.abciview.CONTENT_TAG";
 
-    public static final String CONTENT_SHOW_LIST_FETCHING = "io.github.xwz.abciview.CONTENT_SHOW_LIST_FETCHING";
+    private static final String CONTENT_SHOW_LIST_FETCHING = "io.github.xwz.abciview.CONTENT_SHOW_LIST_FETCHING";
     public static final String CONTENT_SHOW_LIST_START = "io.github.xwz.abciview.CONTENT_SHOW_LIST_START";
     public static final String CONTENT_SHOW_LIST_DONE = "io.github.xwz.abciview.CONTENT_SHOW_LIST_DONE";
     public static final String CONTENT_SHOW_LIST_ERROR = "io.github.xwz.abciview.CONTENT_SHOW_LIST_ERROR";
 
-    public static final String CONTENT_EPISODE_FETCHING = "io.github.xwz.abciview.CONTENT_EPISODE_FETCHING";
+    private static final String CONTENT_EPISODE_FETCHING = "io.github.xwz.abciview.CONTENT_EPISODE_FETCHING";
     public static final String CONTENT_EPISODE_START = "io.github.xwz.abciview.CONTENT_EPISODE_START";
     public static final String CONTENT_EPISODE_DONE = "io.github.xwz.abciview.CONTENT_EPISODE_DONE";
     public static final String CONTENT_EPISODE_ERROR = "io.github.xwz.abciview.CONTENT_EPISODE_ERROR";
 
-    public static final String CONTENT_AUTH_FETCHING = "io.github.xwz.abciview.CONTENT_AUTH_FETCHING";
+    private static final String CONTENT_AUTH_FETCHING = "io.github.xwz.abciview.CONTENT_AUTH_FETCHING";
     public static final String CONTENT_AUTH_START = "io.github.xwz.abciview.CONTENT_AUTH_START";
     public static final String CONTENT_AUTH_DONE = "io.github.xwz.abciview.CONTENT_AUTH_DONE";
     public static final String CONTENT_AUTH_ERROR = "io.github.xwz.abciview.CONTENT_AUTH_ERROR";
@@ -69,7 +66,7 @@ public class ContentManager {
     private Context mContext = null;
     private ContentCacheManager mCache = null;
 
-    static ContentManager instance = null;
+    private static ContentManager instance = null;
 
     public ContentManager(Context context) {
         instance = this;

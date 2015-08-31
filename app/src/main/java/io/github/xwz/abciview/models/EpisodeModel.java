@@ -55,8 +55,8 @@ public class EpisodeModel implements Serializable {
         return ep;
     }
 
-    @SuppressWarnings("unchecked")
-    protected static <T extends Object> T get(JSONObject data, String key, T fallback) {
+    @SuppressWarnings({"unchecked", "TypeParameterExplicitlyExtendsObject"})
+    private static <T extends Object> T get(JSONObject data, String key, T fallback) {
         T value = null;
         try {
             value = data != null && key != null ? (T) data.get(key) : null;
@@ -70,7 +70,7 @@ public class EpisodeModel implements Serializable {
         return TAG;
     }
 
-    protected void set(JSONObject data) {
+    private void set(JSONObject data) {
         seriesTitle = get(data, "seriesTitle", getSeriesTitle());
         href = get(data, "href", getHref());
         format = get(data, "format", getFormat());
@@ -95,7 +95,7 @@ public class EpisodeModel implements Serializable {
 
         try {
             stream = getStream(data);
-        } catch (JSONException e) {
+        } catch (JSONException ignored) {
         }
 
         if (stream != null) {
@@ -140,7 +140,7 @@ public class EpisodeModel implements Serializable {
         return new LinkedHashMap<>(others);
     }
 
-    public List<EpisodeModel> getOtherEpisodes(String cat) {
+    private List<EpisodeModel> getOtherEpisodes(String cat) {
         for (Map.Entry<String, List<EpisodeModel>> episodes : getOtherEpisodes().entrySet()) {
             if (episodes.getKey().equals(cat)) {
                 return episodes.getValue();
@@ -157,7 +157,7 @@ public class EpisodeModel implements Serializable {
         return urls;
     }
 
-    protected String getStream(JSONObject data) throws JSONException {
+    private String getStream(JSONObject data) throws JSONException {
         if (data.has("playlist") && data.get("playlist") instanceof JSONArray) {
             JSONArray playlists = data.getJSONArray("playlist");
             for (int i = 0, k = playlists.length(); i < k; i++) {
@@ -173,7 +173,7 @@ public class EpisodeModel implements Serializable {
         return null;
     }
 
-    protected static int getInt(JSONObject data, String key, int fallback) {
+    private static int getInt(JSONObject data, String key, int fallback) {
         if (data != null && key != null && data.has(key)) {
             try {
                 return data.getInt(key);
@@ -195,7 +195,7 @@ public class EpisodeModel implements Serializable {
         return found;
     }
 
-    protected static boolean getBoolean(JSONObject data, String key, boolean fallback) {
+    private static boolean getBoolean(JSONObject data, String key, boolean fallback) {
         if (data != null && key != null && data.has(key)) {
             try {
                 return data.getBoolean(key);

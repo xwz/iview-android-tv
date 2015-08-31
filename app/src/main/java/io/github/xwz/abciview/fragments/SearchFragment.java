@@ -23,9 +23,6 @@ import io.github.xwz.abciview.adapters.EpisodePresenter;
 import io.github.xwz.abciview.content.ContentManager;
 import io.github.xwz.abciview.models.EpisodeModel;
 
-/**
- * Created by wei on 28/08/15.
- */
 public class SearchFragment extends android.support.v17.leanback.app.SearchFragment
         implements android.support.v17.leanback.app.SearchFragment.SearchResultProvider {
 
@@ -34,7 +31,7 @@ public class SearchFragment extends android.support.v17.leanback.app.SearchFragm
 
     private ArrayObjectAdapter adapter;
     private SearchRunnable searcher;
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

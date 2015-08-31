@@ -7,9 +7,6 @@ import android.view.ViewGroup;
 import io.github.xwz.abciview.models.EpisodeModel;
 import io.github.xwz.abciview.views.EpisodeCardView;
 
-/**
- * Created by wei on 28/08/15.
- */
 public class EpisodePresenter extends Presenter {
     private static final String TAG = "EpisodePresenter";
 

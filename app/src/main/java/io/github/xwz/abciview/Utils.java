@@ -6,9 +6,6 @@ import android.view.Display;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-/**
- * Created by wei on 28/08/15.
- */
 public class Utils {
 
     /*

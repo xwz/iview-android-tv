@@ -16,17 +16,14 @@ import java.util.Map;
 import io.github.xwz.abciview.models.EpisodeModel;
 import io.github.xwz.abciview.trie.RadixTree;
 
-/**
- * Created by wei on 27/08/15.
- */
 public class ContentCacheManager {
     private static final String TAG = "ContentCacheManager";
     private LocalBroadcastManager mBroadcastManager = null;
 
-    private Map<String, EpisodeModel> mEpisodes = new HashMap<>();
+    private final Map<String, EpisodeModel> mEpisodes = new HashMap<>();
     private List<EpisodeModel> mShows = new ArrayList<>();
     private RadixTree<String> mDictionary = new RadixTree<>();
-    private Map<String, Uri> mStreamUrls = new HashMap<>();
+    private final Map<String, Uri> mStreamUrls = new HashMap<>();
 
     public ContentCacheManager(Context context) {
         mBroadcastManager = LocalBroadcastManager.getInstance(context);
@@ -65,7 +62,7 @@ public class ContentCacheManager {
     }
 
     synchronized public List<EpisodeModel> getAllShows() {
-        return new ArrayList<EpisodeModel>(mShows);
+        return new ArrayList<>(mShows);
     }
 
     synchronized public boolean hasShows() {

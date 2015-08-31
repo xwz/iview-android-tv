@@ -12,14 +12,11 @@ import io.github.xwz.abciview.BuildConfig;
 import io.github.xwz.abciview.content.ContentManager;
 import io.github.xwz.abciview.models.EpisodeModel;
 
-/**
- * Created by wei on 29/08/15.
- */
 public class AuthApi extends IViewApi {
 
     private static final String TAG = "AuthApi";
     private static final Uri AUTH_URL = Uri.parse(BuildConfig.AUTH_URL);
-    private String id;
+    private final String id;
 
     private static final Pattern TOKEN_PATTERN = Pattern.compile("<tokenhd>([^<]+)</tokenhd>");
     private static final Pattern SERVER_PATTERN = Pattern.compile("<server>([^<]+)</server>");
@@ -39,7 +36,7 @@ public class AuthApi extends IViewApi {
         return null;
     }
 
-    protected void buildAuth(String stream) {
+    private void buildAuth(String stream) {
         if (stream == null) {
             stream = updateEpisodeDetails(id);
         }
@@ -58,7 +55,7 @@ public class AuthApi extends IViewApi {
         }
     }
 
-    protected String updateEpisodeDetails(String href) {
+    private String updateEpisodeDetails(String href) {
         Log.d(TAG, "Need to update episode details");
         EpisodeDetailsApi api = new EpisodeDetailsApi(getContext(), href);
         if (api.updateEpisode(href)) {

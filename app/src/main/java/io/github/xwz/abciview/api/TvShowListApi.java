@@ -20,15 +20,12 @@ import io.github.xwz.abciview.content.ContentManager;
 import io.github.xwz.abciview.models.EpisodeModel;
 import io.github.xwz.abciview.trie.RadixTree;
 
-/**
- * Created by wei on 27/08/15.
- */
 public class TvShowListApi extends IViewApi {
     private static final String TAG = "TvShowListApi";
     private static final int CACHE_EXPIRY = 600; // 10 mins
 
-    private Map<String, EpisodeModel> episodes = new HashMap<>();
-    private List<EpisodeModel> shows = new ArrayList<>();
+    private final Map<String, EpisodeModel> episodes = new HashMap<>();
+    private final List<EpisodeModel> shows = new ArrayList<>();
     private boolean success = false;
 
     public TvShowListApi(Context context) {
@@ -49,7 +46,7 @@ public class TvShowListApi extends IViewApi {
         return null;
     }
 
-    protected RadixTree<String> buildWordsFromShows() {
+    private RadixTree<String> buildWordsFromShows() {
         RadixTree<String> dict = new RadixTree<>();
         for (EpisodeModel ep : shows) {
             dict.putAll(getWords(ep));
@@ -58,7 +55,7 @@ public class TvShowListApi extends IViewApi {
         return dict;
     }
 
-    public Map<String, String> getWords(EpisodeModel episode) {
+    private Map<String, String> getWords(EpisodeModel episode) {
         Map<String, String> words = new HashMap<>();
         if (episode.getSeriesTitle() != null) {
             words.putAll(splitWords(episode.getSeriesTitle(), episode));
@@ -69,11 +66,11 @@ public class TvShowListApi extends IViewApi {
         return words;
     }
 
-    protected Map<String, String> splitWords(String s, EpisodeModel episode) {
+    private Map<String, String> splitWords(String s, EpisodeModel episode) {
         String[] words = s.split("\\s+");
         Map<String, String> result = new HashMap<>();
-        for (int i = 0; i < words.length; i++) {
-            String word = words[i].replaceAll("[^\\w]", "");
+        for (String w : words) {
+            String word = w.replaceAll("[^\\w]", "");
             if (word.length() >= 3) {
                 result.put(word.toLowerCase(), word);
             }
@@ -81,7 +78,7 @@ public class TvShowListApi extends IViewApi {
         return result;
     }
 
-    protected void fetchTitlesFromIndex() {
+    private void fetchTitlesFromIndex() {
         String response = fetchUrl(getIndexUrl(), CACHE_EXPIRY);
         JSONObject data = parseJSON(response);
         List<EpisodeModel> titles = getEpisodesFromData(data);
@@ -94,7 +91,7 @@ public class TvShowListApi extends IViewApi {
         }
     }
 
-    protected void fetchTitlesInCategory(String cat) {
+    private void fetchTitlesInCategory(String cat) {
         String response = fetchUrl(getCategoryUrl(cat), CACHE_EXPIRY);
         JSONObject data = parseJSON(response);
         List<EpisodeModel> titles = getEpisodesFromData(data);
@@ -107,7 +104,7 @@ public class TvShowListApi extends IViewApi {
         }
     }
 
-    protected List<EpisodeModel> getEpisodesFromData(JSONObject data) {
+    private List<EpisodeModel> getEpisodesFromData(JSONObject data) {
         List<EpisodeModel> titles = new ArrayList<>();
         if (data != null) {
             Iterator<String> keys = data.keys();
@@ -126,7 +123,7 @@ public class TvShowListApi extends IViewApi {
         return titles;
     }
 
-    protected List<EpisodeModel> getEpisodesFromList(JSONArray groups) {
+    private List<EpisodeModel> getEpisodesFromList(JSONArray groups) {
         List<EpisodeModel> titles = new ArrayList<>();
         for (int i = 0, k = groups.length(); i < k; i++) {
             try {
@@ -146,11 +143,11 @@ public class TvShowListApi extends IViewApi {
         return titles;
     }
 
-    protected Uri getCategoryUrl(String cat) {
+    private Uri getCategoryUrl(String cat) {
         return buildApiUrl("category/" + cat);
     }
 
-    protected Uri getIndexUrl() {
+    private Uri getIndexUrl() {
         String fields[] = {"seriesTitle", "href", "format", "formatBgColour", "formatTextColour", "channel", "pubDate",
                 "thumbnail", "livestream", "episodeHouseNumber", "categories", "title", "duration", "label",
                 "rating", "episodeCount"};

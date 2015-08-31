@@ -29,31 +29,28 @@ import io.github.xwz.abciview.R;
 import io.github.xwz.abciview.models.EpisodeModel;
 import io.github.xwz.abciview.player.VideoPlayer;
 
-/**
- * Created by wei on 30/08/15.
- */
 public class VideoPlayerView {
     private static final String TAG = "VideoPlayerView";
 
-    private View shutterView;
-    private AspectRatioFrameLayout videoFrame;
-    private SurfaceView surfaceView;
-    private TextView debugTextView;
-    private TextView playerStateTextView;
-    private TextView statusTextView;
-    private SubtitleLayout subtitleLayout;
-    private EpisodeCardView nextEpisode;
-    private View nextEpisodeCard;
-    private View episodeDetails;
-    private TextView episodeTitle;
-    private TextView seriesTitle;
-    private TextView duration;
+    private final View shutterView;
+    private final AspectRatioFrameLayout videoFrame;
+    private final SurfaceView surfaceView;
+    private final TextView debugTextView;
+    private final TextView playerStateTextView;
+    private final TextView statusTextView;
+    private final SubtitleLayout subtitleLayout;
+    private final EpisodeCardView nextEpisode;
+    private final View nextEpisodeCard;
+    private final View episodeDetails;
+    private final TextView episodeTitle;
+    private final TextView seriesTitle;
+    private final TextView duration;
 
     private DebugTextViewHelper debugViewHelper;
 
     private final Context mContext;
 
-    private MediaController mediaController;
+    private final MediaController mediaController;
     private MediaController.MediaPlayerControl mPlayer;
 
     private static final List<Integer> PLAY_PAUSE_EVENTS = Arrays.asList(
@@ -67,21 +64,19 @@ public class VideoPlayerView {
         mContext = context;
         mediaController = controller;
         shutterView = root.findViewById(R.id.shutter);
-
         videoFrame = (AspectRatioFrameLayout) root.findViewById(R.id.video_frame);
         surfaceView = (SurfaceView) root.findViewById(R.id.surface_view);
         debugTextView = (TextView) root.findViewById(R.id.debug_text_view);
         statusTextView = (TextView) root.findViewById(R.id.status);
-
         playerStateTextView = (TextView) root.findViewById(R.id.player_state_view);
         subtitleLayout = (SubtitleLayout) root.findViewById(R.id.subtitles);
-        ImageCardView card = (ImageCardView) root.findViewById(R.id.next_episode);
         nextEpisodeCard = root.findViewById(R.id.next_episode_card);
         episodeDetails = root.findViewById(R.id.episode_details);
         episodeTitle = (TextView) root.findViewById(R.id.episode_title);
         seriesTitle = (TextView) root.findViewById(R.id.series_title);
         duration = (TextView) root.findViewById(R.id.duration);
 
+        ImageCardView card = (ImageCardView) root.findViewById(R.id.next_episode);
         card.setFocusable(true);
         card.setFocusableInTouchMode(true);
         card.setInfoVisibility(View.VISIBLE);
@@ -185,11 +180,11 @@ public class VideoPlayerView {
         showEpisodeDetails();
     }
 
-    public void showEpisodeDetails() {
+    private void showEpisodeDetails() {
         episodeDetails.setVisibility(View.VISIBLE);
     }
 
-    public void hideControls() {
+    private void hideControls() {
         mediaController.hide();
         episodeDetails.setVisibility(View.GONE);
     }
@@ -262,15 +257,15 @@ public class VideoPlayerView {
         nextEpisodeCard.setVisibility(View.VISIBLE);
     }
 
-    public void showStatusText(int resId) {
+    private void showStatusText(int resId) {
         showStatusText(mContext.getResources().getString(resId));
     }
 
-    public void hideStatusText() {
+    private void hideStatusText() {
         statusTextView.setVisibility(View.GONE);
     }
 
-    public void showStatusText(String text) {
+    private void showStatusText(String text) {
         statusTextView.setVisibility(View.VISIBLE);
         statusTextView.setText(text);
     }

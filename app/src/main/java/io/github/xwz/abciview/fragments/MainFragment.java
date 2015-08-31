@@ -32,15 +32,12 @@ import io.github.xwz.abciview.adapters.EpisodePresenter;
 import io.github.xwz.abciview.content.ContentManager;
 import io.github.xwz.abciview.models.EpisodeModel;
 
-/**
- * Created by wei on 28/08/15.
- */
 public class MainFragment extends BrowseFragment {
 
     private static final String TAG = "MainFragment";
     private ProgressBar progress;
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -60,7 +57,8 @@ public class MainFragment extends BrowseFragment {
         setupListeners();
     }
 
-    protected void setupUIElements() {
+    @SuppressWarnings("deprecation")
+    private void setupUIElements() {
         setHeadersState(HEADERS_DISABLED | HEADERS_HIDDEN);
         setBadgeDrawable(getResources().getDrawable(R.mipmap.logo));
         setSearchAffordanceColor(getResources().getColor(R.color.green_500));
@@ -69,18 +67,18 @@ public class MainFragment extends BrowseFragment {
         if (root != null) {
             BrowseFrameLayout frame = (BrowseFrameLayout) root.findViewById(android.support.v17.leanback.R.id.browse_frame);
             progress = new ProgressBar(getActivity());
-            progress.setLayoutParams(new FrameLayout.LayoutParams(250, 250, Gravity.CENTER));
+            progress.setLayoutParams(new FrameLayout.LayoutParams(150, 150, Gravity.CENTER));
             frame.addView(progress);
         }
     }
 
-    protected void hideProgress() {
+    private void hideProgress() {
         if (progress != null) {
             progress.setVisibility(View.GONE);
         }
     }
 
-    protected void setupListeners() {
+    private void setupListeners() {
         setOnSearchClickedListener(getSearchClickedListener());
         setOnItemViewClickedListener(getItemClickedListener());
     }
@@ -108,7 +106,7 @@ public class MainFragment extends BrowseFragment {
         };
     }
 
-    protected void updateAdapter() {
+    private void updateAdapter() {
         Map<String, List<EpisodeModel>> all = ContentManager.getInstance().getAllShowsByCategories();
         ArrayObjectAdapter adapter = new ArrayObjectAdapter(new ListRowPresenter());
         EpisodePresenter card = new EpisodePresenter();

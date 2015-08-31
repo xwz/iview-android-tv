@@ -15,14 +15,11 @@ import java.util.Map;
 import io.github.xwz.abciview.content.ContentManager;
 import io.github.xwz.abciview.models.EpisodeModel;
 
-/**
- * Created by wei on 29/08/15.
- */
 public class EpisodeDetailsApi extends IViewApi {
     private static final String TAG = "EpisodeDetailsApi";
     private static final int CACHE_EXPIRY = 60; // 1 min
     private boolean success = false;
-    private String id;
+    private final String id;
 
     public EpisodeDetailsApi(Context context, String id) {
         super(context);
@@ -56,7 +53,7 @@ public class EpisodeDetailsApi extends IViewApi {
         return success;
     }
 
-    protected EpisodeModel fetchEpisodeDetails(String url) {
+    private EpisodeModel fetchEpisodeDetails(String url) {
         Log.d(TAG, "Fetching episode details: " + url);
         String response = fetchUrl(buildApiUrl(url), CACHE_EXPIRY);
         JSONObject data = parseJSON(response);
@@ -66,7 +63,7 @@ public class EpisodeDetailsApi extends IViewApi {
         return null;
     }
 
-    protected boolean fetchRelatedEpisode(EpisodeModel ep, String related) {
+    private boolean fetchRelatedEpisode(EpisodeModel ep, String related) {
         String response = fetchUrl(buildApiUrl(related), CACHE_EXPIRY);
         JSONObject data = parseJSON(response);
         try {
@@ -81,7 +78,7 @@ public class EpisodeDetailsApi extends IViewApi {
         return false;
     }
 
-    protected Map<String, List<EpisodeModel>> getEpisodesFromList(JSONArray groups) {
+    private Map<String, List<EpisodeModel>> getEpisodesFromList(JSONArray groups) {
         Map<String, List<EpisodeModel>> related = new LinkedHashMap<>();
         for (int i = 0, k = groups.length(); i < k; i++) {
             try {

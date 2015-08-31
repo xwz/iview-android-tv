@@ -73,7 +73,7 @@ public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.C
     private EpisodeModel mCurrentEpisode;
     private List<String> mOtherEpisodeUrls;
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -110,7 +110,7 @@ public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.C
         playEpisode(episode);
     }
 
-    protected void playEpisode(EpisodeModel episode) {
+    private void playEpisode(EpisodeModel episode) {
         releasePlayer();
         playerPosition = 0;
         ready = false;
@@ -119,7 +119,7 @@ public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.C
         ContentManager.getInstance().fetchAuthToken(episode);
     }
 
-    protected void prepareStream(Intent intent) {
+    private void prepareStream(Intent intent) {
         contentUri = ContentManager.getInstance().getEpisodeStreamUrl(mCurrentEpisode);
         if (contentUri != null) {
             ready = true;
@@ -128,7 +128,7 @@ public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.C
         }
     }
 
-    protected void authFailed(Intent intent) {
+    private void authFailed(Intent intent) {
         String href = intent.getStringExtra(ContentManager.CONTENT_ID);
         String error = intent.getStringExtra(ContentManager.CONTENT_TAG);
         Log.e(TAG, error + ":" + href);
@@ -248,7 +248,7 @@ public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.C
         }
     }
 
-    protected View.OnClickListener getNextEpisodeListener() {
+    private View.OnClickListener getNextEpisodeListener() {
         EpisodeModel next = getNextEpisode(mCurrentEpisode);
         Log.d(TAG, "next episode:" + next);
         if (next != null) {
@@ -262,7 +262,7 @@ public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.C
         return null;
     }
 
-    protected View.OnClickListener getPrevEpisodeListener() {
+    private View.OnClickListener getPrevEpisodeListener() {
         EpisodeModel prev = getPrevEpisode(mCurrentEpisode);
         Log.d(TAG, "previous episode:" + prev);
         if (prev != null) {
@@ -276,17 +276,17 @@ public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.C
         return null;
     }
 
-    protected EpisodeModel getNextEpisode(EpisodeModel current) {
+    private EpisodeModel getNextEpisode(EpisodeModel current) {
         return ContentManager.getInstance().findNextEpisode(mOtherEpisodeUrls, current.getHref());
     }
 
-    protected EpisodeModel getPrevEpisode(EpisodeModel current) {
+    private EpisodeModel getPrevEpisode(EpisodeModel current) {
         List<String> others = new ArrayList<>(mOtherEpisodeUrls);
         Collections.reverse(others);
         return ContentManager.getInstance().findNextEpisode(others, current.getHref());
     }
 
-    protected void suggestNextEpisode() {
+    private void suggestNextEpisode() {
         EpisodeModel next = getNextEpisode(mCurrentEpisode);
         Log.d(TAG, "Suggest next episode: " + next);
         if (next != null) {
@@ -294,7 +294,7 @@ public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.C
         }
     }
 
-    protected void playNextEpisode() {
+    private void playNextEpisode() {
         EpisodeModel next = getNextEpisode(mCurrentEpisode);
         Log.d(TAG, "Play next episode: " + next);
         if (next != null) {
@@ -302,7 +302,7 @@ public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.C
         }
     }
 
-    protected void playPrevEpisode() {
+    private void playPrevEpisode() {
         EpisodeModel next = getPrevEpisode(mCurrentEpisode);
         Log.d(TAG, "Play previous episode: " + next);
         if (next != null) {

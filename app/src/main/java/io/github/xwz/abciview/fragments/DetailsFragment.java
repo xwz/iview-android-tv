@@ -35,9 +35,6 @@ import io.github.xwz.abciview.content.ContentManager;
 import io.github.xwz.abciview.models.EpisodeModel;
 import io.github.xwz.abciview.views.EpisodeDetailsView;
 
-/**
- * Created by wei on 28/08/15.
- */
 public class DetailsFragment extends android.support.v17.leanback.app.RowsFragment {
 
     private static final String TAG = "DetailsFragment";
@@ -49,7 +46,7 @@ public class DetailsFragment extends android.support.v17.leanback.app.RowsFragme
     private boolean loadedOtherEpisodes = false;
     private List<String> mOtherEpisodeUrls = new ArrayList<>();
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -77,12 +74,12 @@ public class DetailsFragment extends android.support.v17.leanback.app.RowsFragme
         setupListeners();
     }
 
-    protected void setupListeners() {
+    private void setupListeners() {
         setOnItemViewClickedListener(getItemClickedListener());
         setOnItemViewSelectedListener(getItemSelectedListener());
     }
 
-    protected void setupAdapter(EpisodeModel episode) {
+    private void setupAdapter(EpisodeModel episode) {
         ArrayObjectAdapter adapter = new ArrayObjectAdapter(new ListRowPresenter());
         otherEpisodes = new ArrayObjectAdapter(new EpisodePresenter());
         otherEpisodes.add(0, episode);
@@ -90,7 +87,7 @@ public class DetailsFragment extends android.support.v17.leanback.app.RowsFragme
         setAdapter(adapter);
     }
 
-    protected void setCurrentEpisode(EpisodeModel episode) {
+    private void setCurrentEpisode(EpisodeModel episode) {
         Log.d(TAG, "Showing details: " + episode);
         if (!episode.equals(mCurrentEpisode)) {
             mCurrentEpisode = episode;
@@ -101,7 +98,7 @@ public class DetailsFragment extends android.support.v17.leanback.app.RowsFragme
         }
     }
 
-    protected void updateEpisodeData(Intent intent) {
+    private void updateEpisodeData(Intent intent) {
         String href = intent.getStringExtra(ContentManager.CONTENT_TAG);
         EpisodeModel ep = ContentManager.getInstance().getEpisode(href);
         if (ep != null) {
@@ -109,7 +106,7 @@ public class DetailsFragment extends android.support.v17.leanback.app.RowsFragme
                 mCurrentEpisode.merge(ep);
                 mDetailView.updateEpisode(mCurrentEpisode);
             }
-            if (ep.equals(mLoadedEpisode) && loadedOtherEpisodes == false) {
+            if (ep.equals(mLoadedEpisode) && !loadedOtherEpisodes) {
                 updateRelatedEpisodes(ep.getOtherEpisodes());
                 loadedOtherEpisodes = true;
                 mOtherEpisodeUrls = mLoadedEpisode.getOtherEpisodeUrls(ContentManager.OTHER_EPISODES);
@@ -118,7 +115,7 @@ public class DetailsFragment extends android.support.v17.leanback.app.RowsFragme
         }
     }
 
-    protected void updateRelatedEpisodes(Map<String, List<EpisodeModel>> others) {
+    private void updateRelatedEpisodes(Map<String, List<EpisodeModel>> others) {
         boolean updated = false;
         ArrayObjectAdapter adapter = (ArrayObjectAdapter) getAdapter();
         for (Map.Entry<String, List<EpisodeModel>> list : others.entrySet()) {
@@ -147,7 +144,7 @@ public class DetailsFragment extends android.support.v17.leanback.app.RowsFragme
         return view;
     }
 
-    protected void insertHeader(LayoutInflater inflater, FrameLayout container) {
+    private void insertHeader(LayoutInflater inflater, FrameLayout container) {
         VerticalGridView grid = findFirstGrid(container);
         if (grid != null) {
             View header = inflater.inflate(R.layout.episode_details_view, container, false);
@@ -162,7 +159,7 @@ public class DetailsFragment extends android.support.v17.leanback.app.RowsFragme
         }
     }
 
-    protected void setupGradient(View bottom) {
+    private void setupGradient(View bottom) {
         int height = getResources().getDimensionPixelSize(R.dimen.episode_detail_padding_bottom);
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) bottom.getLayoutParams();
         lp.topMargin = mHeaderHeight;
@@ -170,7 +167,7 @@ public class DetailsFragment extends android.support.v17.leanback.app.RowsFragme
         bottom.setLayoutParams(lp);
     }
 
-    protected void setupHeaderView(VerticalGridView grid, View header) {
+    private void setupHeaderView(VerticalGridView grid, View header) {
         mDetailView = new EpisodeDetailsView(getActivity(), header);
         if (mCurrentEpisode != null) {
             mDetailView.setEpisode(mCurrentEpisode);
@@ -181,7 +178,7 @@ public class DetailsFragment extends android.support.v17.leanback.app.RowsFragme
         header.setLayoutParams(lp);
     }
 
-    protected void setupGridAlignment(VerticalGridView grid) {
+    private void setupGridAlignment(VerticalGridView grid) {
         int cardHeight = getResources().getDimensionPixelSize(R.dimen.card_height);
         int titleHeight = getResources().getDimensionPixelSize(R.dimen.lb_browse_header_height);
         grid.setWindowAlignment(VerticalGridView.WINDOW_ALIGN_LOW_EDGE);
@@ -193,7 +190,7 @@ public class DetailsFragment extends android.support.v17.leanback.app.RowsFragme
         grid.setLayoutParams(lp);
     }
 
-    protected VerticalGridView findFirstGrid(ViewGroup container) {
+    private VerticalGridView findFirstGrid(ViewGroup container) {
         for (int i = 0, k = container.getChildCount(); i < k; i++) {
             View view = container.getChildAt(i);
             if (view instanceof VerticalGridView) {
@@ -212,7 +209,8 @@ public class DetailsFragment extends android.support.v17.leanback.app.RowsFragme
                     EpisodeModel ep = (EpisodeModel) item;
                     Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
                     intent.putExtra(ContentManager.CONTENT_ID, ep);
-                    intent.putExtra(ContentManager.OTHER_EPISODES, mOtherEpisodeUrls.toArray(new String[]{}));
+                    String[] others = mOtherEpisodeUrls.toArray(new String[mOtherEpisodeUrls.size()]);
+                    intent.putExtra(ContentManager.OTHER_EPISODES, others);
                     startActivity(intent);
                 }
             }

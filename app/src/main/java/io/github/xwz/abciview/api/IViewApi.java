@@ -23,10 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.github.xwz.abciview.BuildConfig;
 
-/**
- * Created by wei on 27/08/15.
- */
-public abstract class IViewApi extends AsyncTask<String, Void, Void> {
+abstract class IViewApi extends AsyncTask<String, Void, Void> {
 
     private static final String TAG = "IViewApi";
     private static final String API_URL = BuildConfig.API_URL;
@@ -38,20 +35,20 @@ public abstract class IViewApi extends AsyncTask<String, Void, Void> {
     private static final float MAX_AVAILABLE_SPACE_USE_FRACTION = 0.5f;
     private static final float MAX_TOTAL_SPACE_USE_FRACTION = 0.1f;
 
-    OkHttpClient client = new OkHttpClient();
+    private final OkHttpClient client = new OkHttpClient();
 
     private Context mContext = null;
     private boolean useCache = true;
 
-    public IViewApi(Context context) {
+    IViewApi(Context context) {
         mContext = context;
     }
 
-    protected CacheControl allowStaleCache(int seconds) {
+    private CacheControl allowStaleCache(int seconds) {
         return new CacheControl.Builder().maxStale(seconds, TimeUnit.SECONDS).build();
     }
 
-    protected void setEnableCache(boolean enable) {
+    void setEnableCache(boolean enable) {
         useCache = enable;
     }
 
@@ -62,11 +59,11 @@ public abstract class IViewApi extends AsyncTask<String, Void, Void> {
         return new Cache(cacheDir, cacheSize);
     }
 
-    protected Uri buildApiUrl(String path) {
+    Uri buildApiUrl(String path) {
         return buildApiUrl(path, null);
     }
 
-    protected Uri buildApiUrl(String path, Map<String, String> params) {
+    Uri buildApiUrl(String path, Map<String, String> params) {
         Uri.Builder uri = Uri.parse(API_URL).buildUpon();
         uri.appendPath(path);
         if (params != null) {
@@ -77,11 +74,11 @@ public abstract class IViewApi extends AsyncTask<String, Void, Void> {
         return uri.build();
     }
 
-    protected Context getContext() {
+    Context getContext() {
         return mContext;
     }
 
-    protected JSONObject parseJSON(String content) {
+    JSONObject parseJSON(String content) {
         if (content != null) {
             try {
                 return new JSONObject(content);
@@ -92,7 +89,7 @@ public abstract class IViewApi extends AsyncTask<String, Void, Void> {
         return null;
     }
 
-    protected String fetchUrl(Uri url, int staleness) {
+    String fetchUrl(Uri url, int staleness) {
         if (useCache && client.getCache() == null) {
             Cache cache = createCache(getContext());
             if (cache != null) {
@@ -102,7 +99,7 @@ public abstract class IViewApi extends AsyncTask<String, Void, Void> {
         return fetchFromNetwork(url, staleness);
     }
 
-    protected String fetchFromNetwork(Uri url, int staleness) {
+    String fetchFromNetwork(Uri url, int staleness) {
         Request.Builder builder = new Request.Builder();
         builder.url(url.toString());
         if (staleness > 0) {
@@ -127,8 +124,8 @@ public abstract class IViewApi extends AsyncTask<String, Void, Void> {
     }
 
 
-    @SuppressWarnings("unchecked")
-    protected static <T extends Object> T get(JSONObject data, String key, T fallback) {
+    @SuppressWarnings({"unchecked", "TypeParameterExplicitlyExtendsObject"})
+    static <T extends Object> T get(JSONObject data, String key, T fallback) {
         T value = null;
         try {
             value = data != null && key != null ? (T) data.get(key) : null;
@@ -145,6 +142,7 @@ public abstract class IViewApi extends AsyncTask<String, Void, Void> {
         }
         File cache = new File(cacheDir, path);
         if (!cache.exists()) {
+            //noinspection ResultOfMethodCallIgnored
             cache.mkdirs();
         }
         return cache;
@@ -155,6 +153,7 @@ public abstract class IViewApi extends AsyncTask<String, Void, Void> {
         return Math.max(size, MIN_DISK_CACHE_SIZE);
     }
 
+    @SuppressWarnings("deprecation")
     private static long calculateAvailableCacheSize(File dir) {
         long size = 0;
         try {

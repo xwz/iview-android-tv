@@ -8,16 +8,12 @@ import android.support.v17.leanback.widget.Presenter;
 import com.squareup.picasso.Picasso;
 
 import io.github.xwz.abciview.R;
-import io.github.xwz.abciview.Utils;
 import io.github.xwz.abciview.models.EpisodeModel;
 
-/**
- * Created by wei on 28/08/15.
- */
 public class EpisodeCardView extends Presenter.ViewHolder {
     private static final String TAG = "EpisodeCardView";
 
-    private ImageCardView card;
+    private final ImageCardView card;
     private final Context mContext;
     private final Point size;
 
