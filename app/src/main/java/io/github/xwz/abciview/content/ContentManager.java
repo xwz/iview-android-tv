@@ -184,4 +184,12 @@ public class ContentManager {
         }
         return null;
     }
+
+    public List<EpisodeModel> getRecommendations() {
+        List<EpisodeModel> all = getAllShows();
+        if (all.size() > 40) {
+            return getAllShows().subList(30, 32);
+        }
+        return new ArrayList<>();
+    }
 }
