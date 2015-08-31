@@ -66,7 +66,7 @@
 
     <RelativeLayout
         android:id="@+id/episode_details"
-        android:background="#33000000"
+        android:background="#99000000"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:visibility="gone"

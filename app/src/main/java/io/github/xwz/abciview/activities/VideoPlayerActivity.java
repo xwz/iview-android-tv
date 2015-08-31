@@ -206,6 +206,7 @@ public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.C
                 player.setInternalErrorListener(eventLogger);
                 videoPlayerView.startDebugView(player);
                 videoPlayerView.resetView();
+                videoPlayerView.setMediaPlayer(player.getPlayerControl());
 
                 timeLogger = new DurationLogger();
                 timeLogger.addListener(new Pair<Long, DurationLogger.OnTimeReached>(30L, new DurationLogger.OnTimeReached() {

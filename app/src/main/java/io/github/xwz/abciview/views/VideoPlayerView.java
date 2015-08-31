@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Handler;
 import android.support.v17.leanback.widget.ImageCardView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -21,6 +22,7 @@ import com.google.android.exoplayer.text.SubtitleLayout;
 import com.google.android.exoplayer.util.DebugTextViewHelper;
 import com.google.android.exoplayer.util.Util;
 
+import java.util.Arrays;
 import java.util.List;
 
 import io.github.xwz.abciview.R;
@@ -52,6 +54,14 @@ public class VideoPlayerView {
     private final Context mContext;
 
     private MediaController mediaController;
+    private MediaController.MediaPlayerControl mPlayer;
+
+    private static final List<Integer> PLAY_PAUSE_EVENTS = Arrays.asList(
+            KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE,
+            KeyEvent.KEYCODE_MEDIA_PLAY,
+            KeyEvent.KEYCODE_MEDIA_STOP,
+            KeyEvent.KEYCODE_DPAD_CENTER
+    );
 
     public VideoPlayerView(Context context, MediaController controller, View root) {
         mContext = context;
@@ -81,23 +91,47 @@ public class VideoPlayerView {
         root.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    toggleControlsVisibility();
-                } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                    view.performClick();
-                }
-                return true;
+                return handleTouchEvents(view, motionEvent);
             }
         });
         root.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-                    return mediaController.dispatchKeyEvent(event);
-                }
-                return false;
+                return handleKeyEvents(v, keyCode, event);
             }
         });
+    }
+
+    private boolean handleKeyEvents(View v, int keyCode, KeyEvent event) {
+        Log.d(TAG, "keyCode:" + keyCode + ", event:" + event);
+        final boolean uniqueDown = event.getRepeatCount() == 0 && event.getAction() == KeyEvent.ACTION_DOWN;
+        if (PLAY_PAUSE_EVENTS.contains(keyCode) && uniqueDown) {
+            doPauseResume();
+            return true;
+        }
+        return false;
+    }
+
+    private boolean handleTouchEvents(View view, MotionEvent motionEvent) {
+        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+            toggleControlsVisibility();
+        } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+            view.performClick();
+        }
+        return true;
+    }
+
+    private void doPauseResume() {
+        Log.d(TAG, "doPauseResume:" + mPlayer);
+        if (mPlayer != null) {
+            if (mPlayer.isPlaying()) {
+                mPlayer.pause();
+                showControls();
+            } else {
+                mPlayer.start();
+                hideControlsDelayed();
+            }
+        }
     }
 
     public void setEpisode(EpisodeModel episode) {
@@ -105,6 +139,11 @@ public class VideoPlayerView {
         seriesTitle.setText(episode.getSeriesTitle());
         duration.setText(episode.getDurationText());
         showShutter(true);
+        showEpisodeDetails();
+    }
+
+    public void setMediaPlayer(MediaController.MediaPlayerControl player) {
+        mPlayer = player;
     }
 
     public void resetView() {
@@ -143,6 +182,10 @@ public class VideoPlayerView {
 
     public void showControls() {
         mediaController.show(0);
+        showEpisodeDetails();
+    }
+
+    public void showEpisodeDetails() {
         episodeDetails.setVisibility(View.VISIBLE);
     }
 
@@ -193,7 +236,9 @@ public class VideoPlayerView {
                 text += "ready";
                 hideStatusText();
                 showShutter(false);
-                hideControlsDelayed();
+                if (mPlayer != null && mPlayer.isPlaying()) {
+                    hideControlsDelayed();
+                }
                 break;
             default:
                 text += "unknown";
@@ -209,7 +254,7 @@ public class VideoPlayerView {
             public void run() {
                 hideControls();
             }
-        }, 5000);
+        }, 3000);
     }
 
     public void suggestNextEpisode(EpisodeModel episode) {
