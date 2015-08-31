@@ -50,7 +50,7 @@ public class RadixTree<V> implements Map<String, V>, Serializable {
      * Default constructor.
      */
     public RadixTree() {
-        this.root = new RadixTreeNode<V>("");
+        this.root = new RadixTreeNode<>("");
     }
 
     /**
@@ -59,7 +59,7 @@ public class RadixTree<V> implements Map<String, V>, Serializable {
      *
      * @param visitor the visitor
      */
-    public void visit(RadixTreeVisitor<V, ?> visitor) {
+    private void visit(RadixTreeVisitor<V, ?> visitor) {
         visit(root, "", "", visitor);
     }
 
@@ -71,7 +71,7 @@ public class RadixTree<V> implements Map<String, V>, Serializable {
      * @param visitor the visitor
      * @param prefix  the prefix used to restrict visitation
      */
-    public void visit(RadixTreeVisitor<V, ?> visitor, String prefix) {
+    private void visit(RadixTreeVisitor<V, ?> visitor, String prefix) {
         visit(root, prefix, "", visitor);
     }
 
@@ -184,11 +184,11 @@ public class RadixTree<V> implements Map<String, V>, Serializable {
      */
     public List<Map.Entry<String, V>> getEntriesWithPrefix(String prefix) {
         RadixTreeVisitor<V, List<Map.Entry<String, V>>> visitor = new RadixTreeVisitor<V, List<Map.Entry<String, V>>>() {
-            List<Map.Entry<String, V>> result = new ArrayList<Map.Entry<String, V>>();
+            List<Map.Entry<String, V>> result = new ArrayList<>();
 
             @Override
             public void visit(String key, V value) {
-                result.add(new AbstractMap.SimpleEntry<String, V>(key, value));
+                result.add(new AbstractMap.SimpleEntry<>(key, value));
             }
 
             @Override
@@ -212,7 +212,7 @@ public class RadixTree<V> implements Map<String, V>, Serializable {
             throw new NullPointerException("prefix cannot be null");
 
         RadixTreeVisitor<V, List<V>> visitor = new RadixTreeVisitor<V, List<V>>() {
-            List<V> result = new ArrayList<V>();
+            List<V> result = new ArrayList<>();
 
             @Override
             public void visit(String key, V value) {
@@ -240,7 +240,7 @@ public class RadixTree<V> implements Map<String, V>, Serializable {
             throw new NullPointerException("prefix cannot be null");
 
         RadixTreeVisitor<V, List<String>> visitor = new RadixTreeVisitor<V, List<String>>() {
-            List<String> result = new ArrayList<String>();
+            List<String> result = new ArrayList<>();
 
             @Override
             public void visit(String key, V value) {
@@ -293,11 +293,11 @@ public class RadixTree<V> implements Map<String, V>, Serializable {
         //      reflected in the parent structure
         //
         RadixTreeVisitor<V, Set<Map.Entry<String, V>>> visitor = new RadixTreeVisitor<V, Set<Map.Entry<String, V>>>() {
-            Set<Map.Entry<String, V>> result = new HashSet<Map.Entry<String, V>>();
+            Set<Map.Entry<String, V>> result = new HashSet<>();
 
             @Override
             public void visit(String key, V value) {
-                result.add(new AbstractMap.SimpleEntry<String, V>(key, value));
+                result.add(new AbstractMap.SimpleEntry<>(key, value));
             }
 
             @Override
@@ -316,7 +316,7 @@ public class RadixTree<V> implements Map<String, V>, Serializable {
         //      reflected in the parent structure
         //
         RadixTreeVisitor<V, Set<String>> visitor = new RadixTreeVisitor<V, Set<String>>() {
-            Set<String> result = new TreeSet<String>();
+            Set<String> result = new TreeSet<>();
 
             @Override
             public void visit(String key, V value) {
@@ -339,7 +339,7 @@ public class RadixTree<V> implements Map<String, V>, Serializable {
         //      reflected in the parent structure
         //
         RadixTreeVisitor<V, Collection<V>> visitor = new RadixTreeVisitor<V, Collection<V>>() {
-            Collection<V> result = new ArrayList<V>();
+            Collection<V> result = new ArrayList<>();
 
             @Override
             public void visit(String key, V value) {
@@ -399,13 +399,13 @@ public class RadixTree<V> implements Map<String, V>, Serializable {
 
             if (!found) {
                 // No child exists with any prefix of the given key, so add a new one
-                RadixTreeNode<V> n = new RadixTreeNode<V>(leftoverKey, value);
+                RadixTreeNode<V> n = new RadixTreeNode<>(leftoverKey, value);
                 node.getChildren().add(n);
             }
         } else if (largestPrefix < node.getPrefix().length()) {
             // Key and node.getPrefix() share a prefix, so split node
             final String leftoverPrefix = node.getPrefix().substring(largestPrefix);
-            final RadixTreeNode<V> n = new RadixTreeNode<V>(leftoverPrefix, node.getValue());
+            final RadixTreeNode<V> n = new RadixTreeNode<>(leftoverPrefix, node.getValue());
             n.setHasValue(node.hasValue());
             n.getChildren().addAll(node.getChildren());
 
@@ -421,14 +421,14 @@ public class RadixTree<V> implements Map<String, V>, Serializable {
             } else {
                 // There's a leftover suffix on the key, so add another child
                 final String leftoverKey = key.substring(largestPrefix);
-                final RadixTreeNode<V> keyNode = new RadixTreeNode<V>(leftoverKey, value);
+                final RadixTreeNode<V> keyNode = new RadixTreeNode<>(leftoverKey, value);
                 node.getChildren().add(keyNode);
                 node.setHasValue(false);
             }
         } else {
             // node.getPrefix() is a prefix of key, so add as child
             final String leftoverKey = key.substring(largestPrefix);
-            final RadixTreeNode<V> n = new RadixTreeNode<V>(leftoverKey, value);
+            final RadixTreeNode<V> n = new RadixTreeNode<>(leftoverKey, value);
             node.getChildren().add(n);
         }
 
@@ -451,7 +451,7 @@ public class RadixTree<V> implements Map<String, V>, Serializable {
             return value;
         }
 
-        return remove(sKey.toString(), root);
+        return remove(sKey, root);
     }
 
     /**

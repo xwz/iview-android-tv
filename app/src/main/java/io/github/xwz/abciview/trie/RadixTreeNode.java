@@ -122,7 +122,7 @@ class RadixTreeNode<V> implements Iterable<RadixTreeNode<V>>, Comparable<RadixTr
     Collection<RadixTreeNode<V>> getChildren() {
         // Delayed creation of children to reduce memory cost
         if (children == null)
-            children = new TreeSet<RadixTreeNode<V>>();
+            children = new TreeSet<>();
         return children;
     }
 
@@ -174,6 +174,6 @@ class RadixTreeNode<V> implements Iterable<RadixTreeNode<V>>, Comparable<RadixTr
 
     @Override
     public int compareTo(RadixTreeNode<V> node) {
-        return prefix.toString().compareTo(node.getPrefix().toString());
+        return prefix.compareTo(node.getPrefix());
     }
 }

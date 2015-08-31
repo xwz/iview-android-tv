@@ -24,7 +24,7 @@ package io.github.xwz.abciview.trie;
 /**
  * Radix tree utility functions.
  */
-public class RadixTreeUtil {
+class RadixTreeUtil {
     /**
      * Finds the length of the largest prefix for two character sequences.
      *
@@ -60,7 +60,7 @@ public class RadixTreeUtil {
      * @param node         the subtree
      * @param outputPrefix prefix to be printed to output
      */
-    static <V> void dumpTree(RadixTreeNode<V> node, String outputPrefix) {
+    private static <V> void dumpTree(RadixTreeNode<V> node, String outputPrefix) {
         if (node.hasValue())
             System.out.format("%s{%s : %s}%n", outputPrefix, node.getPrefix(), node.getValue());
         else

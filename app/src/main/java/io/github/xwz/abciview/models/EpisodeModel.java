@@ -15,9 +15,6 @@ import java.util.Set;
 
 import io.github.xwz.abciview.Utils;
 
-/**
- * Created by wei on 27/08/15.
- */
 public class EpisodeModel implements Serializable {
     private static final String TAG = "TvShowModel";
 
