@@ -37,6 +37,7 @@ public class VideoPlayerView {
     private final SurfaceView surfaceView;
     private final TextView debugTextView;
     private final TextView playerStateTextView;
+    private final View debugView;
     private final TextView statusTextView;
     private final SubtitleLayout subtitleLayout;
     private final EpisodeCardView nextEpisode;
@@ -67,6 +68,7 @@ public class VideoPlayerView {
         videoFrame = (AspectRatioFrameLayout) root.findViewById(R.id.video_frame);
         surfaceView = (SurfaceView) root.findViewById(R.id.surface_view);
         debugTextView = (TextView) root.findViewById(R.id.debug_text_view);
+        debugView = root.findViewById(R.id.debug_view);
         statusTextView = (TextView) root.findViewById(R.id.status);
         playerStateTextView = (TextView) root.findViewById(R.id.player_state_view);
         subtitleLayout = (SubtitleLayout) root.findViewById(R.id.subtitles);
@@ -82,6 +84,8 @@ public class VideoPlayerView {
         card.setInfoVisibility(View.VISIBLE);
         card.setExtraVisibility(View.VISIBLE);
         nextEpisode = new EpisodeCardView(context, card);
+
+        debugView.setVisibility(View.GONE);
 
         root.setOnTouchListener(new View.OnTouchListener() {
             @Override
