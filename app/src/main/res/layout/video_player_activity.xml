@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FrameLayout
+    android:id="@+id/root"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:keepScreenOn="true"
+    tools:background="@color/black">
+
+    <com.google.android.exoplayer.AspectRatioFrameLayout
+        android:id="@+id/video_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        tools:visibility="gone">
+
+        <SurfaceView
+            android:id="@+id/surface_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"/>
+
+        <com.google.android.exoplayer.text.SubtitleLayout
+            android:id="@+id/subtitles"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <View
+            android:id="@+id/shutter"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/black"
+            tools:visibility="gone"/>
+
+    </com.google.android.exoplayer.AspectRatioFrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#88000000"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/player_state_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:textSize="10sp"
+            tools:ignore="SmallSp"
+            tools:text="player state"/>
+
+        <TextView
+            android:id="@+id/debug_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:textSize="10sp"
+            tools:ignore="SmallSp"
+            tools:text="debug text"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/episode_details"
+        android:background="#33000000"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:visibility="gone"
+        android:padding="@dimen/marginBaseTriple"
+        android:layout_marginLeft="@dimen/lb_browse_padding_start"
+        android:layout_marginTop="@dimen/episode_detail_padding_top"
+        tools:background="#333"
+        tools:visibility="visible">
+
+        <TextView
+            android:id="@+id/series_title"
+            android:layout_width="@dimen/episode_detail_width"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/fontHuge"
+            tools:text="Series Title"/>
+
+        <TextView
+            android:id="@+id/episode_title"
+            android:layout_width="@dimen/episode_detail_width"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/fontGigantic"
+            android:textStyle="bold"
+            tools:text="Episode Title"
+            android:textColor="@color/white"
+            android:layout_below="@+id/series_title"
+            android:layout_alignParentStart="true"/>
+
+        <TextView
+            android:id="@+id/duration"
+            tools:text="20:22"
+            android:layout_marginTop="@dimen/marginBaseHalf"
+            android:layout_width="@dimen/episode_detail_width"
+            android:textSize="@dimen/fontLarge"
+            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/episode_title"
+            android:layout_alignParentStart="true"/>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/bullet"
+        android:paddingBottom="@dimen/marginBase"
+        android:paddingLeft="@dimen/marginBaseDouble"
+        android:paddingRight="@dimen/marginBaseDouble"
+        android:paddingTop="@dimen/marginBase"
+        android:visibility="gone"
+        tools:text="Buffering..."
+        tools:visibility="visible"/>
+
+    <LinearLayout
+        android:id="@+id/next_episode_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom"
+        android:layout_margin="@dimen/marginBaseQuadruple"
+        android:background="@drawable/bullet"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/marginBase"
+        android:paddingLeft="@dimen/marginBaseDouble"
+        android:paddingRight="@dimen/marginBaseDouble"
+        android:paddingTop="@dimen/marginBase"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <TextView
+            android:textStyle="bold"
+            android:textSize="@dimen/fontExtraLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/marginBase"
+            android:layout_marginBottom="@dimen/marginBaseDouble"
+            android:text="Next Episode"/>
+
+        <android.support.v17.leanback.widget.ImageCardView
+            android:id="@+id/next_episode"
+            tools:layout_height="@dimen/card_height"
+            tools:layout_width="@dimen/card_width"
+            android:layout_marginBottom="@dimen/marginBase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</FrameLayout>

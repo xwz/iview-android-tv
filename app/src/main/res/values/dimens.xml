@@ -1,0 +1,29 @@
+<resources>
+    <dimen name="fontGigantic">30sp</dimen>
+    <dimen name="fontHuge">22sp</dimen>
+    <dimen name="fontExtraLarge">17sp</dimen>
+    <dimen name="fontLarge">15sp</dimen>
+    <dimen name="fontRegular">13sp</dimen>
+    <dimen name="fontSmall">11sp</dimen>
+
+    <!-- general margins -->
+    <dimen name="marginBaseOctuple">64dp</dimen>
+    <dimen name="marginBaseQuintuple">40dp</dimen>
+    <dimen name="marginBaseQuadruple">32dp</dimen>
+    <dimen name="marginBaseTriple">24dp</dimen>
+    <dimen name="marginBaseDouble">16dp</dimen>
+    <dimen name="marginBase">8dp</dimen>
+    <dimen name="marginBaseHalf">4dp</dimen>
+    <dimen name="marginBaseQuarter">2dp</dimen>
+    <dimen name="marginBaseEighth">1dp</dimen>
+
+    <dimen name="card_width">208dp</dimen>
+    <dimen name="card_height">117dp</dimen>
+
+    <dimen name="episode_detail_padding_top">@dimen/lb_browse_padding_start</dimen>
+    <dimen name="episode_detail_padding_left">300dp</dimen>
+    <dimen name="episode_detail_padding_bottom">@dimen/lb_browse_padding_start</dimen>
+    <dimen name="episode_detail_width">400dp</dimen>
+    <dimen name="episode_detail_shade_width">600dp</dimen>
+
+</resources>

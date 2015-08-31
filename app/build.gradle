@@ -1,0 +1,54 @@
+apply plugin: 'com.android.application'
+
+def getAppProp(String propName) {
+    def propsFile = rootProject.file('app.properties')
+    println rootProject
+    if (propsFile.exists()) {
+        def props = new Properties()
+        props.load(new FileInputStream(propsFile))
+        if (props[propName] != null) {
+            return props[propName]
+        } else {
+            throw new GradleException('Unable to find property "' + propName + '" in properties file "' + propsFile + '".')
+        }
+    } else {
+        throw new GradleException('Unable to find file "app.properties" in project root.')
+    }
+}
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
+
+    defaultConfig {
+        applicationId "io.github.xwz.abciview"
+        minSdkVersion 21
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    productFlavors {
+        app {
+            buildConfigField 'String', 'AUTH_URL', getAppProp('AUTH_URL')
+            buildConfigField 'String', 'API_URL', getAppProp('API_URL')
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:recyclerview-v7:23.0.0'
+    compile 'com.android.support:leanback-v17:23.0.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.squareup.okhttp:okhttp:2.5.0'
+    compile 'jp.wasabeef:picasso-transformations:1.0.5'
+    compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.2.3'
+    compile 'com.google.android.exoplayer:exoplayer:r1.4.2'
+}
