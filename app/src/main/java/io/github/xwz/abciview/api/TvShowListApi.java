@@ -43,7 +43,7 @@ public class TvShowListApi extends IViewApi {
         Log.d(TAG, "Found " + episodes.size() + " episodes from category query");
         fetchTitlesFromIndex();
         ContentManager.cache().putShows(shows);
-        ContentManager.cache().putEpisodes(episodes);
+        ContentManager.cache().addEpisodes(episodes.values());
         ContentManager.cache().setDictionary(buildWordsFromShows());
         success = true;
         return null;

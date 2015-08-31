@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.util.Pair;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.widget.MediaController;
@@ -23,7 +22,9 @@ import com.google.android.exoplayer.util.Util;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import io.github.xwz.abciview.R;
@@ -199,6 +200,7 @@ public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.C
                 playerNeedsPrepare = true;
                 mediaController.setMediaPlayer(player.getPlayerControl());
                 mediaController.setEnabled(true);
+                mediaController.setPrevNextListeners(getNextEpisodeListener(), getPrevEpisodeListener());
                 eventLogger = new EventLogger();
                 eventLogger.startSession();
                 player.addListener(eventLogger);
@@ -209,21 +211,20 @@ public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.C
                 videoPlayerView.setMediaPlayer(player.getPlayerControl());
 
                 timeLogger = new DurationLogger();
-                timeLogger.addListener(new Pair<Long, DurationLogger.OnTimeReached>(30L, new DurationLogger.OnTimeReached() {
+                timeLogger.addListener(30L, new DurationLogger.OnTimeReached() {
                     @Override
                     public void onPositionRemainingReached(long duration, long position) {
                         suggestNextEpisode();
                     }
-                }));
-                timeLogger.addListener(new Pair<Long, DurationLogger.OnTimeReached>(0L, new DurationLogger.OnTimeReached() {
+                });
+                timeLogger.addListener(0L, new DurationLogger.OnTimeReached() {
                     @Override
                     public void onPositionRemainingReached(long duration, long position) {
                         playNextEpisode();
                     }
-                }));
+                });
                 player.addListener(timeLogger);
                 timeLogger.start(player);
-
             }
             if (playerNeedsPrepare) {
                 player.prepare();
@@ -247,23 +248,42 @@ public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.C
         }
     }
 
-    protected EpisodeModel getNextEpisode(EpisodeModel current) {
-        String next = null;
-        boolean found = false;
-        for (String href : mOtherEpisodeUrls) {
-            if (found) {
-                next = href;
-                break;
-            }
-            found = href.equals(current.getHref());
-        }
-        if (!found && next == null && mOtherEpisodeUrls.size() > 0) {
-            next = mOtherEpisodeUrls.get(0);
-        }
+    protected View.OnClickListener getNextEpisodeListener() {
+        EpisodeModel next = getNextEpisode(mCurrentEpisode);
+        Log.d(TAG, "next episode:" + next);
         if (next != null) {
-            return ContentManager.getInstance().getEpisode(next);
+            return new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    playNextEpisode();
+                }
+            };
         }
         return null;
+    }
+
+    protected View.OnClickListener getPrevEpisodeListener() {
+        EpisodeModel prev = getPrevEpisode(mCurrentEpisode);
+        Log.d(TAG, "previous episode:" + prev);
+        if (prev != null) {
+            return new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    playPrevEpisode();
+                }
+            };
+        }
+        return null;
+    }
+
+    protected EpisodeModel getNextEpisode(EpisodeModel current) {
+        return ContentManager.getInstance().findNextEpisode(mOtherEpisodeUrls, current.getHref());
+    }
+
+    protected EpisodeModel getPrevEpisode(EpisodeModel current) {
+        List<String> others = new ArrayList<>(mOtherEpisodeUrls);
+        Collections.reverse(others);
+        return ContentManager.getInstance().findNextEpisode(others, current.getHref());
     }
 
     protected void suggestNextEpisode() {
@@ -277,6 +297,14 @@ public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.C
     protected void playNextEpisode() {
         EpisodeModel next = getNextEpisode(mCurrentEpisode);
         Log.d(TAG, "Play next episode: " + next);
+        if (next != null) {
+            playEpisode(next);
+        }
+    }
+
+    protected void playPrevEpisode() {
+        EpisodeModel next = getPrevEpisode(mCurrentEpisode);
+        Log.d(TAG, "Play previous episode: " + next);
         if (next != null) {
             playEpisode(next);
         }

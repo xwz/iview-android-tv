@@ -3,10 +3,12 @@ package io.github.xwz.abciview.content;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +46,16 @@ public class ContentCacheManager {
         }
     }
 
+    public void broadcastChangeDelayed(long delay, final String change, final String tag, final String id) {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                broadcastChange(change, tag, id);
+            }
+        }, delay);
+    }
+
     public void broadcastChange(String change, String tag) {
         broadcastChange(change, tag, null);
     }
@@ -64,8 +76,10 @@ public class ContentCacheManager {
         mShows = new ArrayList<>(shows);
     }
 
-    synchronized public void putEpisodes(Map<String, EpisodeModel> episodes) {
-        mEpisodes = new HashMap<>(episodes);
+    synchronized public void addEpisodes(Collection<EpisodeModel> episodes) {
+        for (EpisodeModel ep : episodes) {
+            mEpisodes.put(ep.getHref(), ep);
+        }
     }
 
     synchronized public void setDictionary(RadixTree<String> dict) {

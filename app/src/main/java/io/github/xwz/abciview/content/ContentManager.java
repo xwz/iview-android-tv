@@ -110,8 +110,8 @@ public class ContentManager {
     public void fetchEpisode(EpisodeModel episode) {
         mCache.broadcastChange(CONTENT_EPISODE_FETCHING, episode.getHref());
         EpisodeModel existing = mCache.getEpisode(episode.getHref());
-        if (existing != null && existing.hasExtras()) {
-            mCache.broadcastChange(CONTENT_EPISODE_DONE, episode.getHref());
+        if (existing != null && existing.hasExtras() && existing.hasOtherEpisodes()) {
+            mCache.broadcastChangeDelayed(100, CONTENT_EPISODE_DONE, episode.getHref(), null);
         } else {
             new EpisodeDetailsApi(mContext, episode.getHref()).execute(episode.getHref());
         }
@@ -167,5 +167,24 @@ public class ContentManager {
 
     public Uri getEpisodeStreamUrl(EpisodeModel episode) {
         return mCache.getEpisodeStreamUrl(episode.getHref());
+    }
+
+    public EpisodeModel findNextEpisode(List<String> urls, String current) {
+        String next = null;
+        boolean found = false;
+        for (String href : urls) {
+            if (found) {
+                next = href;
+                break;
+            }
+            found = href.equals(current);
+        }
+        if (!found && next == null && urls.size() > 0) {
+            next = urls.get(0);
+        }
+        if (next != null) {
+            return ContentManager.getInstance().getEpisode(next);
+        }
+        return null;
     }
 }

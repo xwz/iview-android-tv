@@ -127,7 +127,7 @@ public class EpisodeModel implements Serializable {
         this.share = ep.share == null ? this.share : ep.share;
 
         this.categories.addAll(ep.categories);
-        this.others = new LinkedHashMap<>(ep.others);
+        this.others = ep.others.size() == 0 ? this.others : new LinkedHashMap<>(ep.others);
 
         this.extras = this.stream != null;
     }
@@ -326,5 +326,9 @@ public class EpisodeModel implements Serializable {
 
     public boolean hasExtras() {
         return extras;
+    }
+
+    public boolean hasOtherEpisodes() {
+        return others.size() > 0;
     }
 }

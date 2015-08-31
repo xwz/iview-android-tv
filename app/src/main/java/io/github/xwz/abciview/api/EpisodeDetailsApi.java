@@ -97,6 +97,7 @@ public class EpisodeDetailsApi extends IViewApi {
                         if (type.contains("Other Episode")) {
                             type = ContentManager.OTHER_EPISODES;
                         }
+                        ContentManager.cache().addEpisodes(titles);
                         related.put(type, titles);
                     }
                 }

@@ -40,11 +40,11 @@ public class DurationLogger implements Runnable, VideoPlayer.Listener {
 
     /**
      * Listen for time remaining, in seconds, during play back.
-     *
+     * @param remaining seconds remaining
      * @param listener
      */
-    public void addListener(Pair<Long, OnTimeReached> listener) {
-        listeners.add(listener);
+    public void addListener(long remaining, OnTimeReached listener) {
+        listeners.add(new Pair<Long, OnTimeReached>(remaining, listener));
     }
 
     @Override

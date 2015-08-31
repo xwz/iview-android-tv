@@ -112,11 +112,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="@drawable/bullet"
-        android:paddingBottom="@dimen/marginBase"
-        android:paddingLeft="@dimen/marginBaseDouble"
-        android:paddingRight="@dimen/marginBaseDouble"
-        android:paddingTop="@dimen/marginBase"
+        android:paddingBottom="@dimen/marginBaseDouble"
+        android:paddingLeft="@dimen/marginBaseQuadruple"
+        android:paddingRight="@dimen/marginBaseQuadruple"
+        android:paddingTop="@dimen/marginBaseDouble"
         android:visibility="gone"
+        android:textSize="@dimen/fontHuge"
         tools:text="Buffering..."
         tools:visibility="visible"/>
 
