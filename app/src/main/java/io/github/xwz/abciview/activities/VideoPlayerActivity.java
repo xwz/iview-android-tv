@@ -1,9 +1,18 @@
 package io.github.xwz.abciview.activities;
 
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.graphics.drawable.Drawable;
+import android.media.MediaMetadata;
+import android.media.session.MediaSession;
+import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -13,11 +22,14 @@ import android.view.View;
 import android.widget.MediaController;
 import android.widget.Toast;
 
+import com.google.android.exoplayer.ExoPlayer;
 import com.google.android.exoplayer.audio.AudioCapabilities;
 import com.google.android.exoplayer.audio.AudioCapabilitiesReceiver;
 import com.google.android.exoplayer.drm.UnsupportedDrmException;
 import com.google.android.exoplayer.text.Cue;
 import com.google.android.exoplayer.util.Util;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -44,6 +56,8 @@ public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.C
         AudioCapabilitiesReceiver.Listener {
 
     private static final String TAG = "PlayerActivity";
+    private static final String MEDIA_SESSION_TAG = "io.github.xwz.abciview.MEDIA_SESSION_TAG";
+    private static final String RESUME_POSITION = "io.github.xwz.abciview.RESUME_POSITION";
 
     private static final CookieManager defaultCookieManager;
 
@@ -53,6 +67,7 @@ public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.C
     }
 
     private EventLogger eventLogger;
+    private MediaSession mediaSession;
     private MediaController mediaController;
     private DurationLogger timeLogger;
 
@@ -72,6 +87,7 @@ public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.C
 
     private EpisodeModel mCurrentEpisode;
     private List<String> mOtherEpisodeUrls;
+    private long resumePosition;
 
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -92,6 +108,7 @@ public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.C
         super.onCreate(savedInstanceState);
         EpisodeModel episode = (EpisodeModel) getIntent().getSerializableExtra(ContentManager.CONTENT_ID);
         mOtherEpisodeUrls = Arrays.asList(getIntent().getStringArrayExtra(ContentManager.OTHER_EPISODES));
+        resumePosition = getIntent().getLongExtra(RESUME_POSITION, 0);
 
         setContentView(R.layout.video_player_activity);
         View root = findViewById(R.id.root);
@@ -112,7 +129,7 @@ public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.C
 
     private void playEpisode(EpisodeModel episode) {
         releasePlayer();
-        playerPosition = 0;
+        playerPosition = resumePosition;
         ready = false;
         mCurrentEpisode = episode;
         videoPlayerView.setEpisode(episode);
@@ -193,6 +210,7 @@ public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.C
     private void preparePlayer() {
         if (ready) {
             if (player == null) {
+                Log.d(TAG, "Prepare player, position:" + playerPosition);
                 player = new VideoPlayer(getRendererBuilder());
                 player.addListener(this);
                 player.setCaptionListener(this);
@@ -225,6 +243,14 @@ public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.C
                 });
                 player.addListener(timeLogger);
                 timeLogger.start(player);
+                if (mediaSession != null) {
+                    mediaSession.release();
+                }
+                mediaSession = new MediaSession(this, MEDIA_SESSION_TAG);
+                mediaSession.setFlags(MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
+                mediaSession.setActive(true);
+                updateMediaSessionData();
+
             }
             if (playerNeedsPrepare) {
                 player.prepare();
@@ -237,15 +263,89 @@ public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.C
 
     private void releasePlayer() {
         if (player != null) {
+            Log.d(TAG, "Release player");
             videoPlayerView.stopDebugView();
             playerPosition = player.getCurrentPosition();
+            long duration = player.getDuration();
+            player.getPlayerControl().pause();
+            updatePlaybackState(ExoPlayer.STATE_IDLE);
+            updateMediaSessionIntent();
             player.release();
             player = null;
             eventLogger.endSession();
             eventLogger = null;
             timeLogger.endSession();
             timeLogger = null;
+            if (playerPosition >= duration) {
+                mediaSession.setActive(false);
+                mediaSession.release();
+                mediaSession = null;
+            }
         }
+    }
+
+    private void updateMediaSessionData() {
+        if (mCurrentEpisode == null) {
+            return;
+        }
+        final MediaMetadata.Builder builder = new MediaMetadata.Builder();
+
+        updatePlaybackState(ExoPlayer.STATE_IDLE);
+
+        updateMediaSessionIntent();
+
+        builder.putString(MediaMetadata.METADATA_KEY_DISPLAY_TITLE, mCurrentEpisode.getSeriesTitle());
+        builder.putString(MediaMetadata.METADATA_KEY_DISPLAY_SUBTITLE, mCurrentEpisode.getTitle());
+        builder.putLong(MediaMetadata.METADATA_KEY_DURATION, mCurrentEpisode.getDuration() * 1000);
+
+        builder.putString(MediaMetadata.METADATA_KEY_TITLE, mCurrentEpisode.getSeriesTitle());
+        builder.putString(MediaMetadata.METADATA_KEY_ARTIST, mCurrentEpisode.getTitle());
+
+        Point size = new Point(getResources().getDimensionPixelSize(R.dimen.card_width),
+                getResources().getDimensionPixelSize(R.dimen.card_height));
+        Picasso.with(this).load(mCurrentEpisode.getThumbnail()).resize(size.x, size.y).into(new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                builder.putBitmap(MediaMetadata.METADATA_KEY_ART, bitmap);
+                mediaSession.setMetadata(builder.build());
+            }
+
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+            }
+        });
+    }
+
+    private void updateMediaSessionIntent() {
+        Intent intent = new Intent(this, VideoPlayerActivity.class);
+        intent.putExtra(ContentManager.CONTENT_ID, mCurrentEpisode);
+        String[] others = mOtherEpisodeUrls.toArray(new String[mOtherEpisodeUrls.size()]);
+        intent.putExtra(ContentManager.OTHER_EPISODES, others);
+        intent.putExtra(RESUME_POSITION, playerPosition);
+
+        PendingIntent pending = PendingIntent.getActivity(this, 99, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        mediaSession.setSessionActivity(pending);
+    }
+
+    private void updatePlaybackState(int playbackState) {
+        PlaybackState.Builder state = new PlaybackState.Builder();
+        long position = player.getCurrentPosition();
+        if (ExoPlayer.STATE_PREPARING == playbackState) {
+            state.setState(PlaybackState.STATE_CONNECTING, position, 1.0f);
+        } else if (ExoPlayer.STATE_BUFFERING == playbackState) {
+            state.setState(PlaybackState.STATE_BUFFERING, position, 1.0f);
+        } else {
+            if (player.getPlayerControl().isPlaying()) {
+                state.setState(PlaybackState.STATE_PLAYING, position, 1.0f);
+            } else {
+                state.setState(PlaybackState.STATE_PAUSED, position, 1.0f);
+            }
+        }
+        mediaSession.setPlaybackState(state.build());
     }
 
     private View.OnClickListener getNextEpisodeListener() {
@@ -315,6 +415,7 @@ public class VideoPlayerActivity extends BaseActivity implements SurfaceHolder.C
     @Override
     public void onStateChanged(boolean playWhenReady, int playbackState) {
         videoPlayerView.onStateChanged(playWhenReady, playbackState);
+        updatePlaybackState(playbackState);
     }
 
     @Override
