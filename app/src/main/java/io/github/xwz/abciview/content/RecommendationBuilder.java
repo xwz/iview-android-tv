@@ -16,7 +16,7 @@ public class RecommendationBuilder {
     private String mDescription;
     private PendingIntent mIntent;
     private Bitmap mImage;
-    private String mBackground;
+    private Bitmap mBackground;
 
     public RecommendationBuilder(Context context) {
         mContext = context;
@@ -43,32 +43,26 @@ public class RecommendationBuilder {
         return this;
     }
 
-    public RecommendationBuilder setBackground(String url) {
+    public RecommendationBuilder setBackground(Bitmap url) {
         mBackground = url;
         return this;
     }
 
     public Notification build() {
-        Bundle extras = new Bundle();
-        if (mBackground != null) {
-            extras.putString(Notification.EXTRA_BACKGROUND_IMAGE_URI, mBackground);
-        }
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext)
                 .setContentTitle(mTitle)
                 .setContentText(mDescription)
                 .setSmallIcon(R.mipmap.icon)
                 .setLargeIcon(mImage)
                 .setContentIntent(mIntent)
-                .setExtras(extras)
                 .setColor(mContext.getResources().getColor(R.color.brand_color))
                 .setPriority(0)
                 .setLocalOnly(true)
                 .setOngoing(true)
-                .setAutoCancel(false)
-                .setCategory(Notification.CATEGORY_RECOMMENDATION);
-
-        NotificationCompat.BigPictureStyle big = new NotificationCompat.BigPictureStyle(builder)
-                .bigPicture(mImage);
-        return big.build();
+                .setAutoCancel(true)
+                .setCategory(Notification.CATEGORY_RECOMMENDATION)
+                .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(mBackground));
+        return builder.build();
     }
 }

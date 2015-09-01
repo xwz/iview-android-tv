@@ -1,6 +1,7 @@
 package io.github.xwz.abciview.content;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
@@ -62,6 +63,19 @@ public class ContentManager {
     public static final String AUTH_FAILED_URL = "AUTH_FAILED_URL";
 
     public static final String OTHER_EPISODES = "OTHER_EPISODES";
+
+    public enum RecommendationPosition {
+        FIRST(0), SECOND(1);
+        private final int id;
+
+        private RecommendationPosition(int id) {
+            this.id = id;
+        }
+
+        public int getId() {
+            return id;
+        }
+    }
 
     private Context mContext = null;
     private ContentCacheManager mCache = null;
@@ -134,9 +148,9 @@ public class ContentManager {
         return mCache.getAllShows();
     }
 
-    public Map<String, List<EpisodeModel>> getAllShowsByCategories() {
+    public LinkedHashMap<String, List<EpisodeModel>> getAllShowsByCategories() {
         List<EpisodeModel> shows = mCache.getAllShows();
-        Map<String, List<EpisodeModel>> all = new LinkedHashMap<>();
+        LinkedHashMap<String, List<EpisodeModel>> all = new LinkedHashMap<>();
         for (Map.Entry<String, String> channel : CHANNELS.entrySet()) {
             List<EpisodeModel> episodes = new ArrayList<>();
             for (EpisodeModel show : shows) {
@@ -191,5 +205,23 @@ public class ContentManager {
             return getAllShows().subList(30, 32);
         }
         return new ArrayList<>();
+    }
+
+    public void recommendEpisode(Context context, EpisodeModel ep, RecommendationPosition position) {
+        Intent intent = new Intent(context, RecommendationsService.class);
+        intent.putExtra(ContentManager.CONTENT_ID, ep);
+        intent.putExtra(ContentManager.CONTENT_TAG, position.getId());
+        context.startService(intent);
+    }
+
+    public void updateRecommendations(Context context) {
+        List<EpisodeModel> shows = ContentManager.getInstance().getRecommendations();
+        int i = 0;
+        for (EpisodeModel show : shows) {
+            Log.d(TAG, "Recommendation: " + i+", "+show);
+            if (i < 2) {
+                recommendEpisode(context, show, RecommendationPosition.values()[i++]);
+            }
+        }
     }
 }

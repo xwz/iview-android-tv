@@ -38,11 +38,11 @@
             android:theme="@style/PlayerTheme"/>
 
         <service
-            android:name=".content.UpdateRecommendationsService"
+            android:name=".content.RecommendationsService"
             android:enabled="true"/>
 
         <receiver
-            android:name=".content.BootActivity"
+            android:name=".activities.BootActivity"
             android:enabled="true"
             android:exported="false">
             <intent-filter>

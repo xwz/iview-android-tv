@@ -1,4 +1,4 @@
-package io.github.xwz.abciview.content;
+package io.github.xwz.abciview.activities;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -6,6 +6,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
+import io.github.xwz.abciview.content.RecommendationsService;
 
 public class BootActivity extends BroadcastReceiver {
     private static final String TAG = "BootActivity";
@@ -23,7 +25,7 @@ public class BootActivity extends BroadcastReceiver {
         Log.d(TAG, "Scheduling recommendations update");
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent recommendationIntent = new Intent(context, UpdateRecommendationsService.class);
+        Intent recommendationIntent = new Intent(context, RecommendationsService.class);
         PendingIntent alarmIntent = PendingIntent.getService(context, 0, recommendationIntent, 0);
 
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,

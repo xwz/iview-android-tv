@@ -22,12 +22,14 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import io.github.xwz.abciview.R;
 import io.github.xwz.abciview.activities.DetailsActivity;
 import io.github.xwz.abciview.activities.SearchActivity;
+import io.github.xwz.abciview.adapters.BaseArrayAdapter;
 import io.github.xwz.abciview.adapters.EpisodePresenter;
 import io.github.xwz.abciview.content.ContentManager;
 import io.github.xwz.abciview.models.EpisodeModel;
@@ -44,6 +46,7 @@ public class MainFragment extends BrowseFragment {
             Log.d(TAG, "Action: " + action);
             if (ContentManager.CONTENT_SHOW_LIST_DONE.equals(action)) {
                 updateAdapter();
+                ContentManager.getInstance().updateRecommendations(getActivity());
             }
         }
     };
@@ -52,7 +55,6 @@ public class MainFragment extends BrowseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         Log.i(TAG, "onCreate");
         super.onActivityCreated(savedInstanceState);
-        ContentManager.getInstance().fetchShowList();
         setupUIElements();
         setupListeners();
     }
@@ -106,18 +108,42 @@ public class MainFragment extends BrowseFragment {
         };
     }
 
-    private void updateAdapter() {
-        Map<String, List<EpisodeModel>> all = ContentManager.getInstance().getAllShowsByCategories();
-        ArrayObjectAdapter adapter = new ArrayObjectAdapter(new ListRowPresenter());
+    private void updateRows(ArrayObjectAdapter adapter) {
+        LinkedHashMap<String, List<EpisodeModel>> all = ContentManager.getInstance().getAllShowsByCategories();
+        int currentRows = adapter.size();
+        int newRows = all.size();
         EpisodePresenter card = new EpisodePresenter();
-        int i = 0;
-        for (Map.Entry<String, List<EpisodeModel>> channel : all.entrySet()) {
-            ArrayObjectAdapter row = new ArrayObjectAdapter(card);
-            row.addAll(0, channel.getValue());
-            HeaderItem header = new HeaderItem(i++, channel.getKey());
-            adapter.add(new ListRow(header, row));
+        List<String> categories = new ArrayList<>(all.keySet());
+        for (int i = 0; i < newRows; i++) {
+            String category = categories.get(i);
+            if (i < currentRows) { // update row
+                ListRow row = (ListRow) adapter.get(i);
+                row.setHeaderItem(new HeaderItem(category));
+                BaseArrayAdapter<EpisodeModel> items = (BaseArrayAdapter<EpisodeModel>) row.getAdapter();
+                items.replaceItems(all.get(category));
+            } else { // add
+                BaseArrayAdapter<EpisodeModel> items = new BaseArrayAdapter<>(card);
+                items.addAll(0, all.get(category));
+                HeaderItem header = new HeaderItem(category);
+                ListRow row = new ListRow(header, items);
+                adapter.add(row);
+            }
         }
-        setAdapter(adapter);
+        int deleteRows = currentRows - newRows;
+        if (deleteRows > 0) {
+            adapter.removeItems(newRows, deleteRows);
+        }
+    }
+
+    private void updateAdapter() {
+        ArrayObjectAdapter adapter = (ArrayObjectAdapter) getAdapter();
+        if (adapter == null) {
+            adapter = new ArrayObjectAdapter(new ListRowPresenter());
+            updateRows(adapter);
+            setAdapter(adapter);
+        } else {
+            updateRows(adapter);
+        }
         hideProgress();
     }
 
@@ -125,6 +151,7 @@ public class MainFragment extends BrowseFragment {
     public void onResume() {
         super.onResume();
         registerReceiver();
+        ContentManager.getInstance().fetchShowList();
     }
 
     public void onPause() {
