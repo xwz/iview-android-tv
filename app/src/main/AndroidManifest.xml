@@ -50,6 +50,11 @@
             </intent-filter>
         </receiver>
 
+        <provider
+            android:name=".content.RecommendationBuilder$RecommendationBackgroundContentProvider"
+            android:authorities="io.github.xwz.abciview.recommendation"
+            android:exported="true" />
+
     </application>
 
 </manifest>

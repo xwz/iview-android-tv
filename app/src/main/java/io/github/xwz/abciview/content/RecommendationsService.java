@@ -47,13 +47,15 @@ public class RecommendationsService extends IntentService {
         Point size = new Point(getResources().getDimensionPixelSize(R.dimen.card_width),
                 getResources().getDimensionPixelSize(R.dimen.card_height));
         Bitmap image = Picasso.with(this).load(ep.getThumbnail()).resize(size.x, size.y).get();
+        Bitmap background = Picasso.with(this).load(ep.getThumbnail()).get();
 
-        final RecommendationBuilder builder = new RecommendationBuilder(this);
+        final RecommendationBuilder builder = new RecommendationBuilder(this, id);
         final NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = builder
                 .setTitle(ep.getSeriesTitle())
                 .setDescription(ep.getTitle())
                 .setImage(image)
+                .setBackground(background)
                 .setPendingIntent(buildPendingIntent(ep))
                 .build();
         manager.notify(RECOMMENDATION_TAG, id, notification);
