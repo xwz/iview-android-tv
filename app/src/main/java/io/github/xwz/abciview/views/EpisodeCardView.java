@@ -41,4 +41,8 @@ public class EpisodeCardView extends Presenter.ViewHolder {
                 .resize(size.x, size.y)
                 .into(card.getMainImageView());
     }
+
+    public ImageCardView getImageCardView() {
+        return card;
+    }
 }

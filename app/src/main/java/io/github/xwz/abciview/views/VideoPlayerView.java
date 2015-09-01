@@ -3,6 +3,7 @@ package io.github.xwz.abciview.views;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Handler;
+import android.support.v17.leanback.widget.BaseCardView;
 import android.support.v17.leanback.widget.ImageCardView;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -84,6 +85,7 @@ public class VideoPlayerView {
         card.setInfoVisibility(View.VISIBLE);
         card.setExtraVisibility(View.VISIBLE);
         nextEpisode = new EpisodeCardView(context, card);
+        nextEpisode.getImageCardView().setCardType(BaseCardView.CARD_TYPE_INFO_OVER);
 
         debugView.setVisibility(View.GONE);
 
