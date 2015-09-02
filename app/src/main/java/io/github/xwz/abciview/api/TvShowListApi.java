@@ -3,7 +3,6 @@ package io.github.xwz.abciview.api;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.ArrayMap;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -13,6 +12,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +27,7 @@ public class TvShowListApi extends IViewApi {
 
     private final Map<String, EpisodeModel> episodes = new HashMap<>();
     private final List<EpisodeModel> shows = new ArrayList<>();
+    private LinkedHashMap<String, List<EpisodeModel>> collections = new LinkedHashMap<>();
     private boolean success = false;
 
     public TvShowListApi(Context context) {
@@ -35,6 +36,13 @@ public class TvShowListApi extends IViewApi {
 
     @Override
     protected Void doInBackground(String... urls) {
+        fetchTitlesFromCollection();
+
+        for (Map.Entry<String, List<EpisodeModel>> collection : collections.entrySet()) {
+            Log.d(TAG, "Found collection: " + collection.getKey());
+            ContentManager.cache().addCollection(collection.getKey(), collection.getValue());
+        }
+
         for (String cat : ContentManager.CATEGORIES.keySet()) {
             fetchTitlesInCategory(cat);
         }
@@ -45,6 +53,15 @@ public class TvShowListApi extends IViewApi {
         ContentManager.cache().setDictionary(buildWordsFromShows());
         success = true;
         return null;
+    }
+
+    private void fetchTitlesFromCollection() {
+        String response = fetchUrl(getHomeUrl(), CACHE_EXPIRY);
+        JSONObject data = parseJSON(response);
+        List<EpisodeModel> titles = getEpisodesFromData(data, true);
+        for (EpisodeModel ep : titles) {
+            episodes.put(ep.getHref(), ep);
+        }
     }
 
     private RadixTree<String> buildWordsFromShows() {
@@ -82,7 +99,7 @@ public class TvShowListApi extends IViewApi {
     private void fetchTitlesFromIndex() {
         String response = fetchUrl(getIndexUrl(), CACHE_EXPIRY);
         JSONObject data = parseJSON(response);
-        List<EpisodeModel> titles = getEpisodesFromData(data);
+        List<EpisodeModel> titles = getEpisodesFromData(data, false);
         Log.d(TAG, "Found " + titles.size() + " episode from index query");
         for (EpisodeModel title : titles) {
             if (episodes.containsKey(title.getHref())) {
@@ -97,7 +114,7 @@ public class TvShowListApi extends IViewApi {
     private void fetchTitlesInCategory(String cat) {
         String response = fetchUrl(getCategoryUrl(cat), CACHE_EXPIRY);
         JSONObject data = parseJSON(response);
-        List<EpisodeModel> titles = getEpisodesFromData(data);
+        List<EpisodeModel> titles = getEpisodesFromData(data, false);
         for (EpisodeModel title : titles) {
             if (episodes.containsKey(title.getHref())) {
                 title = episodes.get(title.getHref());
@@ -107,7 +124,7 @@ public class TvShowListApi extends IViewApi {
         }
     }
 
-    private List<EpisodeModel> getEpisodesFromData(JSONObject data) {
+    private List<EpisodeModel> getEpisodesFromData(JSONObject data, boolean addToCollection) {
         List<EpisodeModel> titles = new ArrayList<>();
         if (data != null) {
             Iterator<String> keys = data.keys();
@@ -116,7 +133,7 @@ public class TvShowListApi extends IViewApi {
                 try {
                     if (data.get(key) instanceof JSONArray) {
                         JSONArray groups = data.getJSONArray(key);
-                        titles.addAll(getEpisodesFromList(groups));
+                        titles.addAll(getEpisodesFromList(groups, addToCollection));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -126,18 +143,23 @@ public class TvShowListApi extends IViewApi {
         return titles;
     }
 
-    private List<EpisodeModel> getEpisodesFromList(JSONArray groups) {
+    private List<EpisodeModel> getEpisodesFromList(JSONArray groups, boolean addToCollection) {
         List<EpisodeModel> titles = new ArrayList<>();
         for (int i = 0, k = groups.length(); i < k; i++) {
             try {
                 if (groups.get(i) instanceof JSONObject) {
                     JSONObject group = groups.getJSONObject(i);
+                    List<EpisodeModel> episodes = new ArrayList<>();
                     if (group.has("episodes") && group.get("episodes") instanceof JSONArray) {
-                        JSONArray episodes = group.getJSONArray("episodes");
-                        for (int j = 0, m = episodes.length(); j < m; j++) {
-                            titles.add(EpisodeModel.create(episodes.getJSONObject(j)));
+                        JSONArray data = group.getJSONArray("episodes");
+                        for (int j = 0, m = data.length(); j < m; j++) {
+                            episodes.add(EpisodeModel.create(data.getJSONObject(j)));
                         }
                     }
+                    if (episodes.size() > 0 && addToCollection && group.has("title") && group.get("title") instanceof String) {
+                        collections.put(group.getString("title"), episodes);
+                    }
+                    titles.addAll(episodes);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -151,11 +173,17 @@ public class TvShowListApi extends IViewApi {
     }
 
     private Uri getIndexUrl() {
-        String fields[] = {"seriesTitle", "href", "format", "formatBgColour", "formatTextColour", "channel", "pubDate",
-                "thumbnail", "livestream", "episodeHouseNumber", "categories", "title", "duration", "label",
-                "rating", "episodeCount"};
+        String fields[] = {"seriesTitle", "href", "format", "formatBgColour", "formatTextColour", "channel", "pubDate", "thumbnail",
+                "livestream", "episodeHouseNumber", "categories", "title", "duration", "label", "rating", "episodeCount"};
         Map<String, String> params = ImmutableMap.of("fields", TextUtils.join(",", fields));
         return buildApiUrl("index", params);
+    }
+
+    private Uri getHomeUrl() {
+        String fields[] = {"seriesTitle", "href", "format", "formatBgColour", "formatTextColour", "channel", "pubDate", "thumbnail",
+                "livestream", "episodeHouseNumber", "categories", "title", "duration", "label", "rating"};
+        Map<String, String> params = ImmutableMap.of("fields", TextUtils.join(",", fields));
+        return buildApiUrl("home", params);
     }
 
     protected void onPreExecute() {

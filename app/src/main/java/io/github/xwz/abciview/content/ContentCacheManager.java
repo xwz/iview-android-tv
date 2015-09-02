@@ -10,6 +10,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ public class ContentCacheManager {
     private List<EpisodeModel> mShows = new ArrayList<>();
     private RadixTree<String> mDictionary = new RadixTree<>();
     private final Map<String, Uri> mStreamUrls = new HashMap<>();
+    private Map<String, List<EpisodeModel>> mCollections = new LinkedHashMap<>();
 
     public ContentCacheManager(Context context) {
         mBroadcastManager = LocalBroadcastManager.getInstance(context);
@@ -71,6 +73,14 @@ public class ContentCacheManager {
 
     synchronized public void putShows(List<EpisodeModel> shows) {
         mShows = new ArrayList<>(shows);
+    }
+
+    synchronized public void addCollection(String title, List<EpisodeModel> shows) {
+        mCollections.put(title, new ArrayList<>(shows));
+    }
+
+    synchronized public Map<String, List<EpisodeModel>> getCollections() {
+        return new LinkedHashMap<>(mCollections);
     }
 
     synchronized public void addEpisodes(Collection<EpisodeModel> episodes) {

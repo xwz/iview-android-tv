@@ -215,6 +215,8 @@ public class ContentManager {
     public LinkedHashMap<String, List<EpisodeModel>> getAllShowsByCategories() {
         List<EpisodeModel> shows = mCache.getAllShows();
         LinkedHashMap<String, List<EpisodeModel>> all = new LinkedHashMap<>();
+        all.putAll(mCache.getCollections());
+
         for (Map.Entry<String, String> channel : CHANNELS.entrySet()) {
             List<EpisodeModel> episodes = new ArrayList<>();
             for (EpisodeModel show : shows) {
