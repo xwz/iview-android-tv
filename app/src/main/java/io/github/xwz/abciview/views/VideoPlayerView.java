@@ -62,6 +62,13 @@ public class VideoPlayerView {
             KeyEvent.KEYCODE_DPAD_CENTER
     );
 
+    private static final List<Integer> PLAYER_EVENTS = Arrays.asList(
+            KeyEvent.KEYCODE_VOLUME_DOWN,
+            KeyEvent.KEYCODE_VOLUME_UP,
+            KeyEvent.KEYCODE_VOLUME_MUTE,
+            KeyEvent.KEYCODE_CAMERA
+    );
+
     public VideoPlayerView(Context context, MediaController controller, View root) {
         mContext = context;
         mediaController = controller;
@@ -111,8 +118,10 @@ public class VideoPlayerView {
         if (PLAY_PAUSE_EVENTS.contains(keyCode) && uniqueDown) {
             doPauseResume();
             return true;
+        } else if (PLAYER_EVENTS.contains(keyCode)){
+            return mediaController.dispatchKeyEvent(event);
         }
-        return true;
+        return false;
     }
 
     private boolean handleTouchEvents(View view, MotionEvent motionEvent) {
