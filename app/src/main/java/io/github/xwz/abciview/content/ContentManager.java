@@ -1,11 +1,17 @@
 package io.github.xwz.abciview.content;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.provider.BaseColumns;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +69,22 @@ public class ContentManager {
     public static final String AUTH_FAILED_URL = "AUTH_FAILED_URL";
 
     public static final String OTHER_EPISODES = "OTHER_EPISODES";
+    public static final String GLOBAL_SEARCH_INTENT = "GLOBAL_SEARCH_INTENT";
+
+    //The columns we'll include in the video database table
+    public static final String KEY_SERIES_TITLE = SearchManager.SUGGEST_COLUMN_TEXT_1;
+    public static final String KEY_TITLE = SearchManager.SUGGEST_COLUMN_TEXT_2;
+
+    public static final String KEY_IMAGE = SearchManager.SUGGEST_COLUMN_RESULT_CARD_IMAGE;
+    public static final String KEY_DATA_TYPE = SearchManager.SUGGEST_COLUMN_CONTENT_TYPE;
+    public static final String KEY_IS_LIVE = SearchManager.SUGGEST_COLUMN_IS_LIVE;
+    public static final String KEY_VIDEO_WIDTH = SearchManager.SUGGEST_COLUMN_VIDEO_WIDTH;
+    public static final String KEY_VIDEO_HEIGHT = SearchManager.SUGGEST_COLUMN_VIDEO_HEIGHT;
+    public static final String KEY_PRODUCTION_YEAR = SearchManager.SUGGEST_COLUMN_PRODUCTION_YEAR;
+    public static final String KEY_COLUMN_DURATION = SearchManager.SUGGEST_COLUMN_DURATION;
+    public static final String KEY_ACTION = SearchManager.SUGGEST_COLUMN_INTENT_ACTION;
+    public static final String KEY_EXTRA_DATA = SearchManager.SUGGEST_COLUMN_INTENT_EXTRA_DATA;
+    public static final String KEY_EXTRA_NAME = SearchManager.EXTRA_DATA_KEY;
 
     public enum RecommendationPosition {
         FIRST(0), SECOND(1);
@@ -113,9 +135,14 @@ public class ContentManager {
         new AuthApi(mContext, episode.getHref()).execute(episode.getStream());
     }
 
+    private TvShowListApi fetchShows;
+
     public void fetchShowList() {
-        mCache.broadcastChange(CONTENT_SHOW_LIST_FETCHING);
-        new TvShowListApi(mContext).execute();
+        if (fetchShows == null || fetchShows.getStatus() == AsyncTask.Status.FINISHED) {
+            mCache.broadcastChange(CONTENT_SHOW_LIST_FETCHING);
+            fetchShows = new TvShowListApi(mContext);
+            fetchShows.execute();
+        }
     }
 
     public void fetchEpisode(EpisodeModel episode) {
@@ -138,6 +165,43 @@ public class ContentManager {
         }
         Log.d(TAG, "Search: '" + query + "' found : " + results.size());
         return results;
+    }
+
+    public Cursor searchShowsCursor(String query) {
+        String[] columns = new String[]{
+                BaseColumns._ID,
+                KEY_SERIES_TITLE,
+                KEY_TITLE,
+                KEY_IMAGE,
+                KEY_DATA_TYPE,
+                KEY_IS_LIVE,
+                KEY_VIDEO_WIDTH,
+                KEY_VIDEO_HEIGHT,
+                KEY_PRODUCTION_YEAR,
+                KEY_COLUMN_DURATION,
+                KEY_ACTION,
+                KEY_EXTRA_DATA,
+                KEY_EXTRA_NAME
+        };
+        MatrixCursor cursor = new MatrixCursor(columns);
+        for (EpisodeModel ep : searchShows(query)) {
+            LinkedHashMap row = new LinkedHashMap();
+            row.put(BaseColumns._ID, ep.getHref());
+            row.put(KEY_SERIES_TITLE, ep.getSeriesTitle());
+            row.put(KEY_TITLE, ep.getTitle());
+            row.put(KEY_IMAGE, ep.getThumbnail());
+            row.put(KEY_DATA_TYPE, "video/mp4");
+            row.put(KEY_IS_LIVE, ep.getLivestream());
+            row.put(KEY_VIDEO_WIDTH, 1280);
+            row.put(KEY_VIDEO_HEIGHT, 720);
+            row.put(KEY_PRODUCTION_YEAR, 2015);
+            row.put(KEY_COLUMN_DURATION, ep.getDuration()*1000);
+            row.put(KEY_ACTION, GLOBAL_SEARCH_INTENT);
+            row.put(KEY_EXTRA_DATA, ep.getHref());
+            row.put(KEY_EXTRA_NAME, KEY_EXTRA_DATA);
+            cursor.addRow(row.values());
+        }
+        return cursor;
     }
 
     public List<String> suggestions(String query) {

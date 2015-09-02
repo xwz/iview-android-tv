@@ -3,6 +3,7 @@ package io.github.xwz.abciview.api;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.ArrayMap;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -86,6 +87,8 @@ public class TvShowListApi extends IViewApi {
         for (EpisodeModel title : titles) {
             if (episodes.containsKey(title.getHref())) {
                 title.setCategories(episodes.get(title.getHref()).getCategories());
+            } else {
+                episodes.put(title.getHref(), title);
             }
             shows.add(title);
         }
@@ -165,5 +168,7 @@ public class TvShowListApi extends IViewApi {
         } else {
             ContentManager.getInstance().broadcastChange(ContentManager.CONTENT_SHOW_LIST_ERROR);
         }
+        episodes.clear();
+        shows.clear();
     }
 }

@@ -30,7 +30,16 @@
         </activity>
 
         <activity android:name=".activities.SearchActivity"/>
-        <activity android:name=".activities.DetailsActivity"/>
+
+        <activity android:name=".activities.DetailsActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+        </activity>
+
         <activity
             android:name=".activities.VideoPlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -53,7 +62,12 @@
         <provider
             android:name=".content.RecommendationBuilder$RecommendationBackgroundContentProvider"
             android:authorities="io.github.xwz.abciview.recommendation"
-            android:exported="true" />
+            android:exported="true"/>
+
+        <provider
+            android:name=".content.SearchContentProvider"
+            android:authorities="io.github.xwz.abciview.search"
+            android:exported="true"/>
 
     </application>
 

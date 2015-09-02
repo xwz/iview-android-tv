@@ -64,6 +64,17 @@ public class DetailsFragment extends android.support.v17.leanback.app.RowsFragme
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EpisodeModel episode = (EpisodeModel) getActivity().getIntent().getSerializableExtra(ContentManager.CONTENT_ID);
+        if (episode == null) {
+            episode = getEpisodeFromGlobalSearchIntent();
+        }
+        if (episode != null) {
+            setupEpisode(episode);
+        } else {
+            Log.e(TAG, "No episode set.");
+        }
+    }
+
+    private void setupEpisode(EpisodeModel episode) {
         mLoadedEpisode = episode;
         setCurrentEpisode(episode);
 
@@ -72,6 +83,22 @@ public class DetailsFragment extends android.support.v17.leanback.app.RowsFragme
 
         setupAdapter(episode);
         setupListeners();
+    }
+
+    private EpisodeModel getEpisodeFromGlobalSearchIntent() {
+        Intent intent = getActivity().getIntent();
+        String action = intent.getAction();
+        if (ContentManager.GLOBAL_SEARCH_INTENT.equals(action)) {
+            Log.d(TAG, "getEpisodeFromGlobalSearchIntent");
+            Bundle data = intent.getExtras();
+            if (data != null) {
+                String href = data.getString(ContentManager.KEY_EXTRA_NAME);
+                Log.d(TAG, "Search result: " +href);
+                return ContentManager.getInstance().getEpisode(href);
+            }
+            Log.w(TAG, "Unable to find href from search result");
+        }
+        return null;
     }
 
     private void setupListeners() {
