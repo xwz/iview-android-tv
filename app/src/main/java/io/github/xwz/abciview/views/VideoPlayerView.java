@@ -104,13 +104,15 @@ public class VideoPlayerView {
     }
 
     private boolean handleKeyEvents(View v, int keyCode, KeyEvent event) {
-        Log.d(TAG, "keyCode:" + keyCode + ", event:" + event);
         final boolean uniqueDown = event.getRepeatCount() == 0 && event.getAction() == KeyEvent.ACTION_DOWN;
+        if (uniqueDown) {
+            Log.d(TAG, "keyCode:" + keyCode + ", event:" + event);
+        }
         if (PLAY_PAUSE_EVENTS.contains(keyCode) && uniqueDown) {
             doPauseResume();
             return true;
         }
-        return false;
+        return true;
     }
 
     private boolean handleTouchEvents(View view, MotionEvent motionEvent) {
@@ -182,6 +184,7 @@ public class VideoPlayerView {
     }
 
     public void showControls() {
+        Log.d(TAG, "Show controls");
         mediaController.show(0);
         showEpisodeDetails();
     }
@@ -191,6 +194,7 @@ public class VideoPlayerView {
     }
 
     private void hideControls() {
+        Log.d(TAG, "Hide controls");
         mediaController.hide();
         episodeDetails.setVisibility(View.GONE);
     }
@@ -250,6 +254,7 @@ public class VideoPlayerView {
 
     private void hideControlsDelayed() {
         final Handler handler = new Handler();
+        Log.d(TAG, "hideControlsDelayed");
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {

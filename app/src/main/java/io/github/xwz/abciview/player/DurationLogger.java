@@ -48,7 +48,7 @@ public class DurationLogger implements Runnable, VideoPlayer.Listener {
     @Override
     public void run() {
         if (player != null) {
-            Log.d(TAG, "duration: " + player.getDuration() / 1000 + ", position:" + player.getCurrentPosition() / 1000);
+            //Log.d(TAG, "duration: " + player.getDuration() / 1000 + ", position:" + player.getCurrentPosition() / 1000);
             executeListeners();
         }
         handler.postDelayed(this, REFRESH_INTERVAL_MS);
