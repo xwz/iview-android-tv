@@ -79,7 +79,7 @@ public class DetailsFragment extends android.support.v17.leanback.app.RowsFragme
         setCurrentEpisode(episode);
 
         Point size = Utils.getDisplaySize(getActivity());
-        mHeaderHeight = Math.round(size.y * 0.5f);
+        mHeaderHeight = Math.round(size.y * 0.475f);
 
         setupAdapter(episode);
         setupListeners();

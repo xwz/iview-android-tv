@@ -20,7 +20,7 @@
     <dimen name="card_width">208dp</dimen>
     <dimen name="card_height">117dp</dimen>
 
-    <dimen name="episode_detail_padding_top">@dimen/lb_browse_padding_start</dimen>
+    <dimen name="episode_detail_padding_top">@dimen/marginBaseQuintuple</dimen>
     <dimen name="episode_detail_padding_left">300dp</dimen>
     <dimen name="episode_detail_padding_bottom">@dimen/lb_browse_padding_start</dimen>
     <dimen name="episode_detail_width">400dp</dimen>
