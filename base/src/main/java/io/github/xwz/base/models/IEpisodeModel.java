@@ -27,15 +27,7 @@ public interface IEpisodeModel extends Serializable {
 
     String getHref();
 
-    String getFormat();
-
-    String getFormatBgColour();
-
-    String getFormatTextColour();
-
     String getChannel();
-
-    String getPubDate();
 
     String getThumbnail();
 
@@ -48,8 +40,6 @@ public interface IEpisodeModel extends Serializable {
     String getTitle();
 
     int getDuration();
-
-    String getLabel();
 
     String getRating();
 

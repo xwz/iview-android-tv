@@ -51,7 +51,7 @@ public class TvShowListApi extends IViewApi {
         fetchTitlesFromIndex();
         ContentManager.cache().putShows(shows);
         ContentManager.cache().addEpisodes(episodes.values());
-        ContentManager.cache().setDictionary(buildWordsFromShows());
+        ContentManager.cache().setDictionary(buildWordsFromShows(shows));
         success = true;
         return null;
     }
@@ -63,38 +63,6 @@ public class TvShowListApi extends IViewApi {
         for (IEpisodeModel ep : titles) {
             episodes.put(ep.getHref(), ep);
         }
-    }
-
-    private RadixTree<String> buildWordsFromShows() {
-        RadixTree<String> dict = new RadixTree<>();
-        for (IEpisodeModel ep : shows) {
-            dict.putAll(getWords(ep));
-        }
-        Log.d(TAG, "dict:" + dict.size());
-        return dict;
-    }
-
-    private Map<String, String> getWords(IEpisodeModel episode) {
-        Map<String, String> words = new HashMap<>();
-        if (episode.getSeriesTitle() != null) {
-            words.putAll(splitWords(episode.getSeriesTitle(), episode));
-        }
-        if (episode.getTitle() != null) {
-            words.putAll(splitWords(episode.getTitle(), episode));
-        }
-        return words;
-    }
-
-    private Map<String, String> splitWords(String s, IEpisodeModel episode) {
-        String[] words = s.split("\\s+");
-        Map<String, String> result = new HashMap<>();
-        for (String w : words) {
-            String word = w.replaceAll("[^\\w]", "");
-            if (word.length() >= 3) {
-                result.put(word.toLowerCase(), word);
-            }
-        }
-        return result;
     }
 
     private void fetchTitlesFromIndex() {

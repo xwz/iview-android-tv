@@ -71,7 +71,7 @@ public class ContentCacheManager {
         return !mShows.isEmpty();
     }
 
-    synchronized public void putShows(List<IEpisodeModel> shows) {
+    synchronized public void putShows(Collection<IEpisodeModel> shows) {
         mShows = new ArrayList<>(shows);
     }
 
@@ -79,7 +79,7 @@ public class ContentCacheManager {
         mCollections.put(title, new ArrayList<>(shows));
     }
 
-    synchronized public Map<String, List<IEpisodeModel>> getCollections() {
+    synchronized public LinkedHashMap<String, List<IEpisodeModel>> getCollections() {
         return new LinkedHashMap<>(mCollections);
     }
 

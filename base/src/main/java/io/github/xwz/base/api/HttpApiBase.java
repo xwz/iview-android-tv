@@ -12,13 +12,21 @@ import com.squareup.okhttp.CacheControl;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import com.squareup.okhttp.ResponseBody;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import io.github.xwz.base.models.IEpisodeModel;
+import io.github.xwz.base.trie.RadixTree;
 
 public abstract class HttpApiBase extends AsyncTask<String, Void, Void> {
 
@@ -71,21 +79,49 @@ public abstract class HttpApiBase extends AsyncTask<String, Void, Void> {
         return null;
     }
 
-    protected String fetchUrl(Uri url, int staleness) {
+    private void ensureCache() {
         if (useCache && client.getCache() == null) {
             Cache cache = createCache(getContext());
             if (cache != null) {
                 client.setCache(cache);
             }
         }
-        return fetchFromNetwork(url, staleness);
+    }
+
+    protected String fetchUrl(Uri url, int staleness) {
+        ensureCache();
+        return extractBody(fetchFromNetwork(url, staleness));
     }
 
     protected String fetchUrlSkipLocalCache(Uri url, int staleness) {
-        return fetchFromNetwork(url, staleness);
+        return extractBody(fetchFromNetwork(url, staleness));
     }
 
-    private String fetchFromNetwork(Uri url, int staleness) {
+    private String extractBody(ResponseBody body) {
+        if (body != null) {
+            try {
+                return body.string();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    protected InputStream fetchStream(Uri url, int staleness) {
+        ensureCache();
+        ResponseBody body = fetchFromNetwork(url, staleness);
+        if (body != null) {
+            try {
+                return body.byteStream();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    private ResponseBody fetchFromNetwork(Uri url, int staleness) {
         Request.Builder builder = new Request.Builder();
         builder.url(url.toString());
         if (staleness > 0) {
@@ -101,7 +137,7 @@ public abstract class HttpApiBase extends AsyncTask<String, Void, Void> {
                 Log.d(TAG, "Network response [" + response.code() + "]:" + request.urlString());
             }
             if (response.isSuccessful()) {
-                return response.body().string();
+                return response.body();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -131,6 +167,38 @@ public abstract class HttpApiBase extends AsyncTask<String, Void, Void> {
             cache.mkdirs();
         }
         return cache;
+    }
+
+    protected RadixTree<String> buildWordsFromShows(Collection<IEpisodeModel> shows) {
+        RadixTree<String> dict = new RadixTree<>();
+        for (IEpisodeModel ep : shows) {
+            dict.putAll(getWords(ep));
+        }
+        Log.d(TAG, "dict:" + dict.size());
+        return dict;
+    }
+
+    private Map<String, String> getWords(IEpisodeModel episode) {
+        Map<String, String> words = new HashMap<>();
+        if (episode.getSeriesTitle() != null) {
+            words.putAll(splitWords(episode.getSeriesTitle(), episode));
+        }
+        if (episode.getTitle() != null) {
+            words.putAll(splitWords(episode.getTitle(), episode));
+        }
+        return words;
+    }
+
+    private Map<String, String> splitWords(String s, IEpisodeModel episode) {
+        String[] words = s.split("\\s+");
+        Map<String, String> result = new HashMap<>();
+        for (String w : words) {
+            String word = w.replaceAll("[^\\w]", "");
+            if (word.length() >= 3) {
+                result.put(word.toLowerCase(), word);
+            }
+        }
+        return result;
     }
 
     private static long calculateDiskCacheSize(File dir) {

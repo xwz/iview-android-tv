@@ -29,6 +29,22 @@ public class ContentManager implements IContentManager {
         return instance;
     }
 
+    public static ContentCacheManager cache() {
+        return getInstance().mCache;
+    }
+
+    public void broadcastChange(String change, String tag, String id) {
+        mCache.broadcastChange(change, tag, id);
+    }
+
+    public void broadcastChange(String change, String tag) {
+        mCache.broadcastChange(change, tag);
+    }
+
+    public void broadcastChange(String change) {
+        mCache.broadcastChange(change);
+    }
+
     @Override
     public void updateRecommendations(Context context) {
 
@@ -36,7 +52,7 @@ public class ContentManager implements IContentManager {
 
     @Override
     public LinkedHashMap<String, List<IEpisodeModel>> getAllShowsByCategories() {
-        return null;
+        return mCache.getCollections();
     }
 
     private SBSApi fetchShows;
@@ -52,7 +68,7 @@ public class ContentManager implements IContentManager {
 
     @Override
     public IEpisodeModel getEpisode(String href) {
-        return null;
+        return mCache.getEpisode(href);
     }
 
     @Override
