@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">TV</string>
+    <string name="search_results">Search Results</string>
+    <string name="loading">Loading&#8230;</string>
+    <string name="buffering">Buffering&#8230;</string>
+
+    <string name="drm_error_not_supported">Protected content not supported on API levels below 18</string>
+    <string name="drm_error_unsupported_scheme">This device does not support the required DRM scheme</string>
+    <string name="drm_error_unknown">An unknown DRM error occurred</string>
+
+    <string name="next_episode">Next Episode</string>
+
+    <string name="search_label">@string/app_name</string>
+    <string name="search_hint">Search for videos</string>
+</resources>
