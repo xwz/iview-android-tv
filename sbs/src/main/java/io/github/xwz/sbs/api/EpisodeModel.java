@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import io.github.xwz.base.Utils;
+import io.github.xwz.base.content.IContentManager;
 import io.github.xwz.base.models.IEpisodeModel;
 
 public class EpisodeModel implements IEpisodeModel {
@@ -94,6 +95,16 @@ public class EpisodeModel implements IEpisodeModel {
 
     public void setOtherEpisodes(Map<String, List<IEpisodeModel>> more) {
         others = more;
+        if (more.containsKey(IContentManager.OTHER_EPISODES)) {
+            if (more.get(IContentManager.OTHER_EPISODES).size() > 1) {
+                episodeCount = more.get(IContentManager.OTHER_EPISODES).size() + 1;
+            }
+        }
+    }
+
+    @Override
+    public void setEpisodeCount(int count) {
+        episodeCount = count;
     }
 
     public Map<String, List<IEpisodeModel>> getOtherEpisodes() {

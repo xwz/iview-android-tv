@@ -35,4 +35,9 @@ public class MainFragment extends io.github.xwz.base.fragments.MainFragment {
     protected Class<?> getDetailsActivityClass() {
         return null;
     }
+
+    @Override
+    protected Class<?> getCategoryActivityClass() {
+        return null;
+    }
 }

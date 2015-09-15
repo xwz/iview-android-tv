@@ -129,6 +129,10 @@ public class EpisodeModel implements IEpisodeModel {
         this.extras = this.stream != null;
     }
 
+    public void setEpisodeCount(int count) {
+        episodeCount = count;
+    }
+
     @Override
     public void merge(IEpisodeModel ep) {
         merge((EpisodeModel)ep);

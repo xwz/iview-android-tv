@@ -18,11 +18,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import io.github.xwz.base.ImmutableMap;
+import io.github.xwz.base.content.IContentManager;
 import io.github.xwz.base.models.IEpisodeModel;
 import io.github.xwz.sbs.content.ContentManager;
 
@@ -36,8 +36,7 @@ public class SBSApi extends SBSApiBase {
     private int page = 0;
 
     private final List<IEpisodeModel> episodes = new ArrayList<>();
-    private final LinkedHashMap<String, IEpisodeModel> shows = new LinkedHashMap<>();
-    private HashMap<String, List<IEpisodeModel>> collections = new HashMap<>();
+    private HashMap<String, List<IEpisodeModel>> showList = new HashMap<>();
     private boolean success = false;
 
     public SBSApi(Context context) {
@@ -50,19 +49,53 @@ public class SBSApi extends SBSApiBase {
             fetchAllTitles(page++);
         }
 
+        // Build a list of shows
+        List<IEpisodeModel> shows = new ArrayList<>();
+        for (List<IEpisodeModel> eps : showList.values()) {
+            IEpisodeModel show = eps.get(0);
+
+            // calculate other episodes
+            for (IEpisodeModel ep : eps) {
+                List<IEpisodeModel> others = new ArrayList<>(eps);
+                others.remove(ep);
+                Map<String, List<IEpisodeModel>> more = new HashMap<>();
+                more.put(IContentManager.OTHER_EPISODES, others);
+                ep.setOtherEpisodes(more);
+            }
+            shows.add(show);
+        }
+
+        // build a list of show collections by category
+        Map<String, List<IEpisodeModel>> collections = new HashMap<>();
+        for (IEpisodeModel show : shows) {
+            for (String cat : show.getCategories()) {
+                if (!collections.containsKey(cat)) {
+                    collections.put(cat, new ArrayList<IEpisodeModel>());
+                }
+                collections.get(cat).add(show);
+            }
+        }
+
+        // sort the collection names
         List<String> keys = new ArrayList<>();
         keys.addAll(collections.keySet());
         Collections.sort(keys);
 
+        // add collections by name
         for (String key : keys) {
             List<IEpisodeModel> collection = collections.get(key);
             Log.d(TAG, "Found collection: " + key + " = " + collection.size());
-            ContentManager.cache().addCollection(key, collection);
+            String[] parts = key.split("/");
+            String name = parts.length > 1 ? parts[1] : key;
+            if (key.contains("Film/")) {
+                name = key;
+            }
+            ContentManager.cache().addCollection(name, collection);
         }
 
-        ContentManager.cache().putShows(shows.values());
+        ContentManager.cache().putShows(shows);
         ContentManager.cache().addEpisodes(episodes);
-        ContentManager.cache().setDictionary(buildWordsFromShows(shows.values()));
+        ContentManager.cache().setDictionary(buildWordsFromShows(shows));
 
         success = true;
         return null;
@@ -79,7 +112,7 @@ public class SBSApi extends SBSApiBase {
             ContentManager.getInstance().broadcastChange(ContentManager.CONTENT_SHOW_LIST_ERROR);
         }
         episodes.clear();
-        shows.clear();
+        showList.clear();
     }
 
     private void fetchAllTitles(int page) {
@@ -119,10 +152,7 @@ public class SBSApi extends SBSApiBase {
                 Entry entry = gson.fromJson(reader, Entry.class);
                 IEpisodeModel ep = EpisodeModel.create(entry);
                 episodes.add(ep);
-                shows.put(ep.getSeriesTitle(), ep);
-                for (String cat : ep.getCategories()) {
-                    addToCollection(cat, ep);
-                }
+                addToShowList(ep.getSeriesTitle(), ep);
             } catch (JsonSyntaxException e) {
                 e.printStackTrace();
             }
@@ -130,11 +160,11 @@ public class SBSApi extends SBSApiBase {
         reader.endArray();
     }
 
-    private void addToCollection(String cat, IEpisodeModel ep) {
-        if (!collections.containsKey(cat)) {
-            collections.put(cat, new ArrayList<IEpisodeModel>());
+    private void addToShowList(String title, IEpisodeModel ep) {
+        if (!showList.containsKey(title)) {
+            showList.put(title, new ArrayList<IEpisodeModel>());
         }
-        collections.get(cat).add(ep);
+        showList.get(title).add(ep);
     }
 
     private Uri getIndexUrl(int page) {
@@ -163,6 +193,17 @@ public class SBSApi extends SBSApiBase {
                 return parts.length > 1 ? parts[1] : name;
             }
             return name;
+        }
+
+        public String getScheme() {
+            if (scheme != null && scheme.length() > 0) {
+                return scheme;
+            }
+            if (name != null) {
+                String[] parts = name.split("/");
+                return parts.length > 1 ? parts[0] : scheme;
+            }
+            return scheme;
         }
     }
 
@@ -250,10 +291,11 @@ public class SBSApi extends SBSApiBase {
             List<String> cats = new ArrayList<>();
             if (categories != null) {
                 for (Category c : categories) {
-                    if ("Channel".equals(c.scheme) || "Genre".equals(c.scheme)) {
+                    String scheme = c.getScheme();
+                    if ("Channel".equals(scheme) || "Genre".equals(scheme) || "Film".equals(scheme)) {
                         String name = c.getName();
-                        if (name != null) {
-                            cats.add(c.scheme + "/" + name);
+                        if (name != null && !scheme.equals(name)) {
+                            cats.add(scheme + "/" + name);
                         }
                     }
                 }
@@ -285,7 +327,7 @@ public class SBSApi extends SBSApiBase {
         public int getDuration() {
             if (contents != null && contents.size() > 0) {
                 try {
-                    Integer.parseInt(contents.get(0).duration);
+                    return Math.round(Float.parseFloat(contents.get(0).duration));
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }

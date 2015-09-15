@@ -13,6 +13,7 @@ import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
 import android.support.v17.leanback.widget.OnItemViewClickedListener;
 import android.support.v17.leanback.widget.Presenter;
+import android.support.v17.leanback.widget.PresenterSelector;
 import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
 import android.support.v4.content.LocalBroadcastManager;
@@ -29,12 +30,14 @@ import java.util.List;
 import io.github.xwz.base.adapters.BaseArrayAdapter;
 import io.github.xwz.base.adapters.EpisodePresenter;
 import io.github.xwz.base.content.IContentManager;
+import io.github.xwz.base.models.CategoryModel;
 import io.github.xwz.base.models.IEpisodeModel;
 
 public abstract class MainFragment extends BrowseFragment {
 
     private static final String TAG = "MainFragment";
     private ProgressBar progress;
+    private static final int SHOW_CATEGORY_COUNT = 10;
 
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -98,7 +101,11 @@ public abstract class MainFragment extends BrowseFragment {
         return new OnItemViewClickedListener() {
             @Override
             public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
-                if (item instanceof IEpisodeModel) {
+                if (item instanceof CategoryModel) {
+                    Intent intent = new Intent(getActivity(), getCategoryActivityClass());
+                    intent.putExtra(IContentManager.CONTENT_ID, (IEpisodeModel) item);
+                    startActivity(intent);
+                } else if (item instanceof IEpisodeModel) {
                     Intent intent = new Intent(getActivity(), getDetailsActivityClass());
                     intent.putExtra(IContentManager.CONTENT_ID, (IEpisodeModel) item);
                     startActivity(intent);
@@ -109,23 +116,36 @@ public abstract class MainFragment extends BrowseFragment {
 
     protected abstract Class<?> getSearchActivityClass();
     protected abstract Class<?> getDetailsActivityClass();
+    protected abstract Class<?> getCategoryActivityClass();
 
     private void updateRows(ArrayObjectAdapter adapter) {
         LinkedHashMap<String, List<IEpisodeModel>> all = getContentManger().getAllShowsByCategories();
         int currentRows = adapter.size();
         int newRows = all.size();
-        EpisodePresenter card = new EpisodePresenter();
+        final EpisodePresenter card = new EpisodePresenter();
+        PresenterSelector selector = new PresenterSelector() {
+            @Override
+            public Presenter getPresenter(Object item) {
+                return card;
+            }
+        };
         List<String> categories = new ArrayList<>(all.keySet());
         for (int i = 0; i < newRows; i++) {
             String category = categories.get(i);
+            List<IEpisodeModel> episodes = all.get(category);
+            if (episodes.size() > SHOW_CATEGORY_COUNT) {
+                CategoryModel cat = new CategoryModel(category);
+                cat.setEpisodeCount(episodes.size());
+                episodes.add(0, cat);
+            }
             if (i < currentRows) { // update row
                 ListRow row = (ListRow) adapter.get(i);
                 row.setHeaderItem(new HeaderItem(category));
                 BaseArrayAdapter<IEpisodeModel> items = (BaseArrayAdapter<IEpisodeModel>) row.getAdapter();
-                items.replaceItems(all.get(category));
+                items.replaceItems(episodes);
             } else { // add
-                BaseArrayAdapter<IEpisodeModel> items = new BaseArrayAdapter<>(card);
-                items.addAll(0, all.get(category));
+                BaseArrayAdapter<IEpisodeModel> items = new BaseArrayAdapter<>(selector);
+                items.addAll(0, episodes);
                 HeaderItem header = new HeaderItem(category);
                 ListRow row = new ListRow(header, items);
                 adapter.add(row);

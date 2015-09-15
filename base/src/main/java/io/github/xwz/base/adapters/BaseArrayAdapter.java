@@ -2,6 +2,7 @@ package io.github.xwz.base.adapters;
 
 import android.support.v17.leanback.widget.ObjectAdapter;
 import android.support.v17.leanback.widget.Presenter;
+import android.support.v17.leanback.widget.PresenterSelector;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,6 +16,10 @@ public class BaseArrayAdapter<T> extends ObjectAdapter {
 
     public BaseArrayAdapter(Presenter presenter) {
         super(presenter);
+    }
+
+    public BaseArrayAdapter(PresenterSelector selector) {
+        super(selector);
     }
 
     @Override
