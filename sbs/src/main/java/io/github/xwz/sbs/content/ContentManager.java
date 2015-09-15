@@ -2,12 +2,15 @@ package io.github.xwz.sbs.content;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import io.github.xwz.base.content.ContentCacheManager;
 import io.github.xwz.base.content.IContentManager;
 import io.github.xwz.base.models.IEpisodeModel;
+import io.github.xwz.sbs.api.SBSApi;
 
 public class ContentManager implements IContentManager {
 
@@ -36,9 +39,15 @@ public class ContentManager implements IContentManager {
         return null;
     }
 
+    private SBSApi fetchShows;
+
     @Override
     public void fetchShowList() {
-
+        if (fetchShows == null || fetchShows.getStatus() == AsyncTask.Status.FINISHED) {
+            mCache.broadcastChange(CONTENT_SHOW_LIST_FETCHING);
+            fetchShows = new SBSApi(mContext);
+            fetchShows.execute();
+        }
     }
 
     @Override

@@ -18,6 +18,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    productFlavors {
+        app {
+            buildConfigField 'String', 'AUTH_URL', getAppProp('SBS_AUTH_URL')
+            buildConfigField 'String', 'API_URL', getAppProp('SBS_API_URL')
+        }
+    }
 }
 
 dependencies {

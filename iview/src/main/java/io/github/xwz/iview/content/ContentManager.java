@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.github.xwz.base.content.ContentCacheManager;
 import io.github.xwz.iview.api.AuthApi;
 import io.github.xwz.iview.api.EpisodeDetailsApi;
 import io.github.xwz.iview.api.TvShowListApi;
@@ -44,10 +45,6 @@ public class ContentManager implements IContentManager {
     );
 
     private static final String TAG = "ContentManager";
-
-    private static final String CONTENT_SHOW_LIST_FETCHING = "io.github.xwz.iview.CONTENT_SHOW_LIST_FETCHING";
-    private static final String CONTENT_EPISODE_FETCHING = "io.github.xwz.iview.CONTENT_EPISODE_FETCHING";
-    private static final String CONTENT_AUTH_FETCHING = "io.github.xwz.iview.CONTENT_AUTH_FETCHING";
 
     public enum RecommendationPosition {
         FIRST(0), SECOND(1);

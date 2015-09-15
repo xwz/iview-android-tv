@@ -1,4 +1,19 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+def getAppProp(String propName) {
+    def propsFile = rootProject.file('app.properties')
+    println rootProject
+    if (propsFile.exists()) {
+        def props = new Properties()
+        props.load(new FileInputStream(propsFile))
+        if (props[propName] != null) {
+            return props[propName]
+        } else {
+            throw new GradleException('Unable to find property "' + propName + '" in properties file "' + propsFile + '".')
+        }
+    } else {
+        throw new GradleException('Unable to find file "app.properties" in project root.')
+    }
+}
 
 buildscript {
     repositories {

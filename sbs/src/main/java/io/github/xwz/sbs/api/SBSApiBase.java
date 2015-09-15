@@ -1,4 +1,4 @@
-package io.github.xwz.iview.api;
+package io.github.xwz.sbs.api;
 
 import android.content.Context;
 import android.net.Uri;
@@ -6,14 +6,14 @@ import android.net.Uri;
 import java.util.Map;
 
 import io.github.xwz.base.api.HttpApiBase;
-import io.github.xwz.iview.BuildConfig;
+import io.github.xwz.sbs.BuildConfig;
 
-abstract class IViewApi extends HttpApiBase {
+abstract class SBSApiBase extends HttpApiBase {
 
     private static final String API_URL = BuildConfig.API_URL;
-    private static final String CACHE_PATH = "iview-api";
+    private static final String CACHE_PATH = "sbs-api";
 
-    public IViewApi(Context context) {
+    public SBSApiBase(Context context) {
         super(context);
     }
 

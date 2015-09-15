@@ -1,4 +1,4 @@
-package io.github.xwz.iview.content;
+package io.github.xwz.base.content;
 
 import android.content.Context;
 import android.content.Intent;
@@ -34,10 +34,10 @@ public class ContentCacheManager {
     public void broadcastChange(String change, String tag, String id) {
         Intent intent = new Intent(change);
         if (tag != null) {
-            intent.putExtra(ContentManager.CONTENT_TAG, tag);
+            intent.putExtra(IContentManager.CONTENT_TAG, tag);
         }
         if (id != null) {
-            intent.putExtra(ContentManager.CONTENT_ID, id);
+            intent.putExtra(IContentManager.CONTENT_ID, id);
         }
         Log.d(TAG, "Broadcast:=> " + change);
         if (mBroadcastManager != null) {

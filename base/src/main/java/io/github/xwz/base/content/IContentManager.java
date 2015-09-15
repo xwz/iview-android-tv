@@ -14,14 +14,18 @@ public interface IContentManager {
     String CONTENT_ID = "io.github.xwz.base.CONTENT_ID";
     String CONTENT_TAG = "io.github.xwz.base.CONTENT_TAG";
 
+    String CONTENT_SHOW_LIST_FETCHING = "io.github.xwz.base.CONTENT_SHOW_LIST_FETCHING";
     String CONTENT_SHOW_LIST_START = "io.github.xwz.base.CONTENT_SHOW_LIST_START";
     String CONTENT_SHOW_LIST_DONE = "io.github.xwz.base.CONTENT_SHOW_LIST_DONE";
     String CONTENT_SHOW_LIST_ERROR = "io.github.xwz.base.CONTENT_SHOW_LIST_ERROR";
 
+    String CONTENT_EPISODE_FETCHING = "io.github.xwz.base.CONTENT_EPISODE_FETCHING";
     String CONTENT_EPISODE_START = "io.github.xwz.base.CONTENT_EPISODE_START";
     String CONTENT_EPISODE_DONE = "io.github.xwz.base.CONTENT_EPISODE_DONE";
     String CONTENT_EPISODE_ERROR = "io.github.xwz.base.CONTENT_EPISODE_ERROR";
 
+
+    String CONTENT_AUTH_FETCHING = "io.github.xwz.base.CONTENT_AUTH_FETCHING";
     String CONTENT_AUTH_START = "io.github.xwz.base.CONTENT_AUTH_START";
     String CONTENT_AUTH_DONE = "io.github.xwz.base.CONTENT_AUTH_DONE";
     String CONTENT_AUTH_ERROR = "io.github.xwz.base.CONTENT_AUTH_ERROR";
