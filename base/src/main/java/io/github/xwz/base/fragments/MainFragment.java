@@ -28,6 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import io.github.xwz.base.adapters.BaseArrayAdapter;
+import io.github.xwz.base.adapters.CategoryPresenter;
 import io.github.xwz.base.adapters.EpisodePresenter;
 import io.github.xwz.base.content.IContentManager;
 import io.github.xwz.base.models.CategoryModel;
@@ -123,10 +124,11 @@ public abstract class MainFragment extends BrowseFragment {
         int currentRows = adapter.size();
         int newRows = all.size();
         final EpisodePresenter card = new EpisodePresenter();
+        final CategoryPresenter cat = new CategoryPresenter();
         PresenterSelector selector = new PresenterSelector() {
             @Override
             public Presenter getPresenter(Object item) {
-                return card;
+                return item instanceof CategoryModel ? cat : card;
             }
         };
         List<String> categories = new ArrayList<>(all.keySet());
@@ -134,9 +136,9 @@ public abstract class MainFragment extends BrowseFragment {
             String category = categories.get(i);
             List<IEpisodeModel> episodes = all.get(category);
             if (episodes.size() > SHOW_CATEGORY_COUNT) {
-                CategoryModel cat = new CategoryModel(category);
-                cat.setEpisodeCount(episodes.size());
-                episodes.add(0, cat);
+                CategoryModel collection = new CategoryModel(category);
+                collection.setEpisodeCount(episodes.size());
+                episodes.add(0, collection);
             }
             if (i < currentRows) { // update row
                 ListRow row = (ListRow) adapter.get(i);
