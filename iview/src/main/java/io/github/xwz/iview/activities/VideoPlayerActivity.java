@@ -1,12 +1,8 @@
 package io.github.xwz.iview.activities;
 
-import io.github.xwz.iview.content.ContentManager;
-import io.github.xwz.iview.player.VideoPlayer;
 import io.github.xwz.base.content.IContentManager;
+import io.github.xwz.iview.content.ContentManager;
 
-/**
- * An activity that plays media using {@link VideoPlayer}.
- */
 public class VideoPlayerActivity extends io.github.xwz.base.activities.VideoPlayerActivity {
 
     @Override

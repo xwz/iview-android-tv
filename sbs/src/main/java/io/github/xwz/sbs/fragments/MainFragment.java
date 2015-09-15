@@ -1,19 +1,17 @@
-package io.github.xwz.iview.fragments;
+package io.github.xwz.sbs.fragments;
 
 import android.support.v17.leanback.widget.BrowseFrameLayout;
 import android.view.View;
 
-import io.github.xwz.iview.R;
-import io.github.xwz.iview.activities.DetailsActivity;
-import io.github.xwz.iview.activities.SearchActivity;
-import io.github.xwz.iview.content.ContentManager;
 import io.github.xwz.base.content.IContentManager;
+import io.github.xwz.sbs.R;
+
 
 public class MainFragment extends io.github.xwz.base.fragments.MainFragment {
 
     @Override
     protected IContentManager getContentManger() {
-        return ContentManager.getInstance();
+        return null;
     }
 
     @Override
@@ -29,11 +27,11 @@ public class MainFragment extends io.github.xwz.base.fragments.MainFragment {
 
     @Override
     protected Class<?> getSearchActivityClass() {
-        return SearchActivity.class;
+        return null;
     }
 
     @Override
     protected Class<?> getDetailsActivityClass() {
-        return DetailsActivity.class;
+        return null;
     }
 }
