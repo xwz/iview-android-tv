@@ -21,13 +21,8 @@ abstract class SBSApiBase extends HttpApiBase {
         return CACHE_PATH;
     }
 
-    Uri buildApiUrl(String path) {
-        return buildApiUrl(path, null);
-    }
-
-    Uri buildApiUrl(String path, Map<String, String> params) {
+    Uri buildApiUrl(Map<String, String> params) {
         Uri.Builder uri = Uri.parse(API_URL).buildUpon();
-        uri.appendPath(path);
         if (params != null) {
             for (Map.Entry<String, String> param : params.entrySet()) {
                 uri.appendQueryParameter(param.getKey(), param.getValue());

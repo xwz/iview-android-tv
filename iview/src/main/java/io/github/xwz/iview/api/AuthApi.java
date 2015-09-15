@@ -68,7 +68,7 @@ public class AuthApi extends IViewApi {
     }
 
     private Pair<String, String> getAuthToken() {
-        String content = fetchFromNetwork(AUTH_URL, 0);
+        String content = fetchUrlSkipLocalCache(AUTH_URL, 0);
         if (content != null) {
             String token = null;
             String host = null;

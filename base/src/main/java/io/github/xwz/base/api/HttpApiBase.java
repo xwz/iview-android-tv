@@ -81,7 +81,11 @@ public abstract class HttpApiBase extends AsyncTask<String, Void, Void> {
         return fetchFromNetwork(url, staleness);
     }
 
-    protected String fetchFromNetwork(Uri url, int staleness) {
+    protected String fetchUrlSkipLocalCache(Uri url, int staleness) {
+        return fetchFromNetwork(url, staleness);
+    }
+
+    private String fetchFromNetwork(Uri url, int staleness) {
         Request.Builder builder = new Request.Builder();
         builder.url(url.toString());
         if (staleness > 0) {
@@ -104,7 +108,6 @@ public abstract class HttpApiBase extends AsyncTask<String, Void, Void> {
         }
         return null;
     }
-
 
     @SuppressWarnings({"unchecked", "TypeParameterExplicitlyExtendsObject"})
     protected static <T extends Object> T get(JSONObject data, String key, T fallback) {
