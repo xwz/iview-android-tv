@@ -43,7 +43,12 @@ public class CategoryCardView extends Presenter.ViewHolder {
     }
 
     public void setEpisode(IEpisodeModel ep) {
-        title.setText(ep.getTitle());
+        String[] parts = ep.getTitle().split("/");
+        if (parts.length > 1) {
+            title.setText(parts[1]);
+        } else {
+            title.setText(ep.getTitle());
+        }
         badge.setText("" + ep.getEpisodeCount());
     }
 }

@@ -128,6 +128,8 @@ public abstract class HttpApiBase extends AsyncTask<String, Void, Void> {
             builder.cacheControl(allowStaleCache(staleness));
         }
         Request request = builder.build();
+        client.setConnectTimeout(10, TimeUnit.SECONDS);
+        client.setReadTimeout(60, TimeUnit.SECONDS);
         Log.d(TAG, "Requesting URL:" + request.urlString());
         try {
             Response response = client.newCall(request).execute();
