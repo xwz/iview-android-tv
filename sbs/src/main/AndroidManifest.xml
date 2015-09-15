@@ -7,6 +7,7 @@
     <uses-permission android:name="ANDROID.PERMISSION.RECEIVE_BOOT_COMPLETED"/>
 
     <application
+        android:name="io.github.xwz.sbs.MainApplication"
         android:allowBackup="true"
         android:banner="@mipmap/banner"
         android:icon="@mipmap/icon"

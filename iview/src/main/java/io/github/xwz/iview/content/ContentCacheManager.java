@@ -19,7 +19,7 @@ import io.github.xwz.base.trie.RadixTree;
 
 public class ContentCacheManager {
     private static final String TAG = "ContentCacheManager";
-    private LocalBroadcastManager mBroadcastManager = null;
+    private final LocalBroadcastManager mBroadcastManager;
 
     private final Map<String, IEpisodeModel> mEpisodes = new HashMap<>();
     private List<IEpisodeModel> mShows = new ArrayList<>();
