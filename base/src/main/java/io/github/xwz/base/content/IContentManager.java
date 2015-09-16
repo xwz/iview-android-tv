@@ -18,12 +18,12 @@ public interface IContentManager {
     String CONTENT_SHOW_LIST_START = "io.github.xwz.base.CONTENT_SHOW_LIST_START";
     String CONTENT_SHOW_LIST_DONE = "io.github.xwz.base.CONTENT_SHOW_LIST_DONE";
     String CONTENT_SHOW_LIST_ERROR = "io.github.xwz.base.CONTENT_SHOW_LIST_ERROR";
+    String CONTENT_SHOW_LIST_PROGRESS = "io.github.xwz.base.CONTENT_SHOW_LIST_PROGRESS";
 
     String CONTENT_EPISODE_FETCHING = "io.github.xwz.base.CONTENT_EPISODE_FETCHING";
     String CONTENT_EPISODE_START = "io.github.xwz.base.CONTENT_EPISODE_START";
     String CONTENT_EPISODE_DONE = "io.github.xwz.base.CONTENT_EPISODE_DONE";
     String CONTENT_EPISODE_ERROR = "io.github.xwz.base.CONTENT_EPISODE_ERROR";
-
 
     String CONTENT_AUTH_FETCHING = "io.github.xwz.base.CONTENT_AUTH_FETCHING";
     String CONTENT_AUTH_START = "io.github.xwz.base.CONTENT_AUTH_START";
@@ -35,6 +35,7 @@ public interface IContentManager {
     String AUTH_FAILED_URL = "AUTH_FAILED_URL";
 
     String OTHER_EPISODES = "OTHER_EPISODES";
+    String MORE_LIKE_THIS = "More Like This";
     String GLOBAL_SEARCH_INTENT = "GLOBAL_SEARCH_INTENT";
 
     //The columns we'll include in the video database table
@@ -54,7 +55,7 @@ public interface IContentManager {
 
     void updateRecommendations(Context context);
     LinkedHashMap<String, List<IEpisodeModel>> getAllShowsByCategories();
-    void fetchShowList();
+    void fetchShowList(boolean force);
     IEpisodeModel getEpisode(String href);
     void fetchEpisode(IEpisodeModel episode);
     List<String> suggestions(String query);

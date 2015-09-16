@@ -10,6 +10,7 @@ import android.provider.BaseColumns;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,12 +98,16 @@ public class ContentManager implements IContentManager {
     }
 
     private TvShowListApi fetchShows;
+    private long lastFetchList = 0;
 
-    public void fetchShowList() {
-        if (fetchShows == null || fetchShows.getStatus() == AsyncTask.Status.FINISHED) {
+    public void fetchShowList(boolean force) {
+        long now = (new Date()).getTime();
+        boolean shouldFetch = force || now - lastFetchList > 1800000;
+        if (shouldFetch && (fetchShows == null || fetchShows.getStatus() == AsyncTask.Status.FINISHED)) {
             mCache.broadcastChange(CONTENT_SHOW_LIST_FETCHING);
             fetchShows = new TvShowListApi(mContext);
             fetchShows.execute();
+            lastFetchList = now;
         }
     }
 

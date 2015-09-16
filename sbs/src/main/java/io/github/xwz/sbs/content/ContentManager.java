@@ -3,7 +3,9 @@ package io.github.xwz.sbs.content;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Log;
 
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -11,6 +13,7 @@ import io.github.xwz.base.content.ContentCacheManager;
 import io.github.xwz.base.content.IContentManager;
 import io.github.xwz.base.models.IEpisodeModel;
 import io.github.xwz.sbs.api.SBSApi;
+import io.github.xwz.sbs.api.SBSRelatedApi;
 
 public class ContentManager implements IContentManager {
 
@@ -57,12 +60,18 @@ public class ContentManager implements IContentManager {
 
     private SBSApi fetchShows;
 
+    private long lastFetchList = 0;
+
     @Override
-    public void fetchShowList() {
-        if (fetchShows == null || fetchShows.getStatus() == AsyncTask.Status.FINISHED) {
+    public void fetchShowList(boolean force) {
+        long now = (new Date()).getTime();
+        boolean shouldFetch = force || now - lastFetchList > 1800000;
+        Log.d("ContentManager", "diff:" + (now - lastFetchList));
+        if (shouldFetch && (fetchShows == null || fetchShows.getStatus() == AsyncTask.Status.FINISHED)) {
             mCache.broadcastChange(CONTENT_SHOW_LIST_FETCHING);
             fetchShows = new SBSApi(mContext);
             fetchShows.execute();
+            lastFetchList = now;
         }
     }
 
@@ -73,7 +82,13 @@ public class ContentManager implements IContentManager {
 
     @Override
     public void fetchEpisode(IEpisodeModel episode) {
-
+        mCache.broadcastChange(CONTENT_EPISODE_FETCHING, episode.getHref());
+        IEpisodeModel existing = mCache.getEpisode(episode.getHref());
+        if (existing != null && existing.hasExtras() && existing.hasOtherEpisodes()) {
+            mCache.broadcastChangeDelayed(100, CONTENT_EPISODE_DONE, episode.getHref(), null);
+        } else {
+            new SBSRelatedApi(mContext, episode.getHref()).execute(episode.getHref());
+        }
     }
 
     @Override

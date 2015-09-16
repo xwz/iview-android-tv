@@ -16,6 +16,11 @@ public class CategoryModel implements IEpisodeModel {
     }
 
     @Override
+    public void setHasExtra(boolean extra) {
+
+    }
+
+    @Override
     public void merge(IEpisodeModel ep) {
 
     }

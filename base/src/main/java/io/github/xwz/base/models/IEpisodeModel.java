@@ -14,6 +14,8 @@ public interface IEpisodeModel extends Serializable {
 
     void setEpisodeCount(int count);
 
+    void setHasExtra(boolean extra);
+
     Map<String, List<IEpisodeModel>> getOtherEpisodes();
 
     List<String> getOtherEpisodeUrls(String cat);

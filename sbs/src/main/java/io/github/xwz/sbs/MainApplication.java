@@ -10,6 +10,6 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        new ContentManager(this).fetchShowList();
+        new ContentManager(this).fetchShowList(true);
     }
 }

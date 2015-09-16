@@ -20,8 +20,12 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -38,6 +42,7 @@ public abstract class MainFragment extends BrowseFragment {
 
     private static final String TAG = "MainFragment";
     private ProgressBar progress;
+    private TextView progressText;
     private static final int SHOW_CATEGORY_COUNT = 10;
 
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -48,6 +53,9 @@ public abstract class MainFragment extends BrowseFragment {
             if (IContentManager.CONTENT_SHOW_LIST_DONE.equals(action)) {
                 updateAdapter();
                 getContentManger().updateRecommendations(getActivity());
+            } else if (IContentManager.CONTENT_SHOW_LIST_PROGRESS.equals(action)) {
+                String msg = intent.getStringExtra(IContentManager.CONTENT_TAG);
+                updateProgress(msg);
             }
         }
     };
@@ -70,16 +78,34 @@ public abstract class MainFragment extends BrowseFragment {
         if (root != null) {
             progress = new ProgressBar(getActivity());
             progress.setLayoutParams(new FrameLayout.LayoutParams(150, 150, Gravity.CENTER));
-            getBrowseFrame(root).addView(progress);
+            progressText = new TextView(getActivity());
+            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
+            lp.topMargin = 150;
+            progressText.setLayoutParams(lp);
+            progressText.setGravity(Gravity.CENTER);
+            BrowseFrameLayout frame = getBrowseFrame(root);
+            frame.addView(progress);
+            frame.addView(progressText);
         }
     }
 
     protected abstract void setupHeader();
+
     protected abstract BrowseFrameLayout getBrowseFrame(View root);
 
     private void hideProgress() {
         if (progress != null) {
             progress.setVisibility(View.GONE);
+        }
+        if (progressText != null) {
+            progressText.setVisibility(View.GONE);
+        }
+    }
+
+    private void updateProgress(String msg) {
+        if (progressText != null) {
+            progressText.setText(msg);
         }
     }
 
@@ -116,7 +142,9 @@ public abstract class MainFragment extends BrowseFragment {
     }
 
     protected abstract Class<?> getSearchActivityClass();
+
     protected abstract Class<?> getDetailsActivityClass();
+
     protected abstract Class<?> getCategoryActivityClass();
 
     private void updateRows(ArrayObjectAdapter adapter) {
@@ -175,7 +203,8 @@ public abstract class MainFragment extends BrowseFragment {
     public void onResume() {
         super.onResume();
         registerReceiver();
-        getContentManger().fetchShowList();
+        boolean update = getAdapter() == null || getAdapter().size() == 0;
+        getContentManger().fetchShowList(update);
     }
 
     public void onPause() {
@@ -189,6 +218,7 @@ public abstract class MainFragment extends BrowseFragment {
         filter.addAction(IContentManager.CONTENT_SHOW_LIST_START);
         filter.addAction(IContentManager.CONTENT_SHOW_LIST_DONE);
         filter.addAction(IContentManager.CONTENT_SHOW_LIST_ERROR);
+        filter.addAction(IContentManager.CONTENT_SHOW_LIST_PROGRESS);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
     }
 }

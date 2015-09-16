@@ -38,6 +38,7 @@ public class EpisodeModel implements IEpisodeModel {
     private String share;
 
     private boolean extras = false;
+    private boolean fetchedRelated = false;
 
     private Map<String, List<IEpisodeModel>> others = new HashMap<>();
 
@@ -98,8 +99,21 @@ public class EpisodeModel implements IEpisodeModel {
         if (more.containsKey(IContentManager.OTHER_EPISODES)) {
             if (more.get(IContentManager.OTHER_EPISODES).size() > 1) {
                 episodeCount = more.get(IContentManager.OTHER_EPISODES).size() + 1;
+                setHasExtra(true);
             }
         }
+    }
+
+    public void setOtherEpisodes(String cat, List<IEpisodeModel> more) {
+        others.put(cat, more);
+    }
+
+    public void setHasExtra(boolean extra) {
+        extras = extra;
+    }
+
+    public void setHasFetchedRelated(boolean fetched) {
+        fetchedRelated = fetched;
     }
 
     @Override
@@ -253,6 +267,6 @@ public class EpisodeModel implements IEpisodeModel {
     }
 
     public boolean hasOtherEpisodes() {
-        return others.size() > 0;
+        return fetchedRelated || others.containsKey(IContentManager.MORE_LIKE_THIS);
     }
 }

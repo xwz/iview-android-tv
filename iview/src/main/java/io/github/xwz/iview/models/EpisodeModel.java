@@ -134,6 +134,11 @@ public class EpisodeModel implements IEpisodeModel {
     }
 
     @Override
+    public void setHasExtra(boolean extra) {
+        extras = extra;
+    }
+
+    @Override
     public void merge(IEpisodeModel ep) {
         merge((EpisodeModel)ep);
     }

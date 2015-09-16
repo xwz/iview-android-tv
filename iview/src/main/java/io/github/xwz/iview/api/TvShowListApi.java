@@ -35,8 +35,17 @@ public class TvShowListApi extends IViewApi {
         super(context);
     }
 
+    private int progress = 0;
+
+    private static final String[] PROGRESS = new String[]{
+            "Loading ABC1...", "Loading ABC2...", "Loading ABC3...", "Loading ABC4Kids...", "Loading News...",
+            "Loading Comedy...", "Loading Documentaries...", "Loading Drama...", "Loading Arts...", "Loading Education...",
+            "Loading Lifestyle...", "Loading Sports...",
+    };
+
     @Override
     protected Void doInBackground(String... urls) {
+        updateProgress();
         fetchTitlesFromCollection();
 
         for (Map.Entry<String, List<IEpisodeModel>> collection : collections.entrySet()) {
@@ -45,15 +54,22 @@ public class TvShowListApi extends IViewApi {
         }
 
         for (String cat : ContentManager.CATEGORIES.keySet()) {
+            updateProgress();
             fetchTitlesInCategory(cat);
         }
         Log.d(TAG, "Found " + episodes.size() + " episodes from category query");
         fetchTitlesFromIndex();
+        updateProgress();
         ContentManager.cache().putShows(shows);
         ContentManager.cache().addEpisodes(episodes.values());
         ContentManager.cache().setDictionary(buildWordsFromShows(shows));
+        updateProgress();
         success = true;
         return null;
+    }
+
+    private void updateProgress() {
+        ContentManager.getInstance().broadcastChange(ContentManager.CONTENT_SHOW_LIST_PROGRESS, PROGRESS[progress++ % PROGRESS.length]);
     }
 
     private void fetchTitlesFromCollection() {
