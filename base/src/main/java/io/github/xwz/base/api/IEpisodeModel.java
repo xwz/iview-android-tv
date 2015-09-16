@@ -1,4 +1,4 @@
-package io.github.xwz.base.models;
+package io.github.xwz.base.api;
 
 import java.io.Serializable;
 import java.util.List;
@@ -65,4 +65,8 @@ public interface IEpisodeModel extends Serializable {
     boolean hasExtras();
 
     boolean hasOtherEpisodes();
+
+    boolean isFilm();
+
+    String getCover();
 }

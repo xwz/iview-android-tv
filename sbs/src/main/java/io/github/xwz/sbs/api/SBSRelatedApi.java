@@ -10,7 +10,7 @@ import java.util.Map;
 
 import io.github.xwz.base.ImmutableMap;
 import io.github.xwz.base.content.IContentManager;
-import io.github.xwz.base.models.IEpisodeModel;
+import io.github.xwz.base.api.IEpisodeModel;
 import io.github.xwz.sbs.content.ContentManager;
 
 public class SBSRelatedApi extends SBSApiBase {

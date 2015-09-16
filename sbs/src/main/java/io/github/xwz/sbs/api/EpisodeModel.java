@@ -13,7 +13,7 @@ import java.util.Set;
 
 import io.github.xwz.base.Utils;
 import io.github.xwz.base.content.IContentManager;
-import io.github.xwz.base.models.IEpisodeModel;
+import io.github.xwz.base.api.IEpisodeModel;
 
 public class EpisodeModel implements IEpisodeModel {
     private static final String TAG = "EpisodeModel";
@@ -36,6 +36,8 @@ public class EpisodeModel implements IEpisodeModel {
     private String stream;
     private String captions;
     private String share;
+    private String cover;
+    private boolean film = false;
 
     private boolean extras = false;
     private boolean fetchedRelated = false;
@@ -268,5 +270,15 @@ public class EpisodeModel implements IEpisodeModel {
 
     public boolean hasOtherEpisodes() {
         return fetchedRelated || others.containsKey(IContentManager.MORE_LIKE_THIS);
+    }
+
+    @Override
+    public boolean isFilm() {
+        return film;
+    }
+
+    @Override
+    public String getCover() {
+        return cover;
     }
 }

@@ -45,7 +45,7 @@ import io.github.xwz.base.player.VideoPlayer;
 import io.github.xwz.base.views.VideoPlayerView;
 import io.github.xwz.base.R;
 import io.github.xwz.base.content.IContentManager;
-import io.github.xwz.base.models.IEpisodeModel;
+import io.github.xwz.base.api.IEpisodeModel;
 
 /**
  * An activity that plays media using {@link VideoPlayer}.

@@ -11,7 +11,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import io.github.xwz.base.R;
-import io.github.xwz.base.models.IEpisodeModel;
+import io.github.xwz.base.api.IEpisodeModel;
 
 public class CategoryCardView extends Presenter.ViewHolder {
 

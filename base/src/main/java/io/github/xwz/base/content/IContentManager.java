@@ -7,7 +7,7 @@ import android.net.Uri;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import io.github.xwz.base.models.IEpisodeModel;
+import io.github.xwz.base.api.IEpisodeModel;
 
 public interface IContentManager {
 

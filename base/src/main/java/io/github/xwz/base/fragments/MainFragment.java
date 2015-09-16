@@ -26,8 +26,6 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -37,8 +35,8 @@ import io.github.xwz.base.adapters.BaseArrayAdapter;
 import io.github.xwz.base.adapters.CategoryPresenter;
 import io.github.xwz.base.adapters.EpisodePresenter;
 import io.github.xwz.base.content.IContentManager;
-import io.github.xwz.base.models.CategoryModel;
-import io.github.xwz.base.models.IEpisodeModel;
+import io.github.xwz.base.api.CategoryModel;
+import io.github.xwz.base.api.IEpisodeModel;
 
 public abstract class MainFragment extends BrowseFragment {
 

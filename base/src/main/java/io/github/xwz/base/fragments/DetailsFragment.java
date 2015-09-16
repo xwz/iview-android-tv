@@ -31,7 +31,7 @@ import io.github.xwz.base.R;
 import io.github.xwz.base.Utils;
 import io.github.xwz.base.adapters.EpisodePresenter;
 import io.github.xwz.base.content.IContentManager;
-import io.github.xwz.base.models.IEpisodeModel;
+import io.github.xwz.base.api.IEpisodeModel;
 import io.github.xwz.base.views.EpisodeDetailsView;
 
 public abstract class DetailsFragment extends android.support.v17.leanback.app.RowsFragment {

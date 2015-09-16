@@ -20,9 +20,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.github.xwz.base.ImmutableMap;
 import io.github.xwz.base.api.HttpApiBase;
-import io.github.xwz.base.models.IEpisodeModel;
+import io.github.xwz.base.api.IEpisodeModel;
 import io.github.xwz.sbs.BuildConfig;
 
 abstract class SBSApiBase extends HttpApiBase {

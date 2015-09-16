@@ -28,7 +28,7 @@ import java.util.List;
 
 import io.github.xwz.base.player.VideoPlayer;
 import io.github.xwz.base.R;
-import io.github.xwz.base.models.IEpisodeModel;
+import io.github.xwz.base.api.IEpisodeModel;
 
 public class VideoPlayerView {
     private static final String TAG = "VideoPlayerView";

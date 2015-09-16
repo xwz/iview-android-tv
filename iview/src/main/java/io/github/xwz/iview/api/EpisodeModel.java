@@ -1,4 +1,4 @@
-package io.github.xwz.iview.models;
+package io.github.xwz.iview.api;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import io.github.xwz.base.Utils;
-import io.github.xwz.base.models.IEpisodeModel;
+import io.github.xwz.base.api.IEpisodeModel;
 
 public class EpisodeModel implements IEpisodeModel {
     private static final String TAG = "EpisodeModel";
@@ -341,5 +341,15 @@ public class EpisodeModel implements IEpisodeModel {
 
     public boolean hasOtherEpisodes() {
         return others.size() > 0;
+    }
+
+    @Override
+    public boolean isFilm() {
+        return false;
+    }
+
+    @Override
+    public String getCover() {
+        return null;
     }
 }

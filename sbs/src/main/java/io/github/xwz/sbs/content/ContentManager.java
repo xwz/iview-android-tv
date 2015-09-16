@@ -1,19 +1,15 @@
 package io.github.xwz.sbs.content;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 
-import io.github.xwz.base.content.ContentCacheManager;
 import io.github.xwz.base.content.ContentManagerBase;
-import io.github.xwz.base.content.IContentManager;
-import io.github.xwz.base.models.IEpisodeModel;
+import io.github.xwz.base.api.IEpisodeModel;
 import io.github.xwz.sbs.api.SBSApi;
 import io.github.xwz.sbs.api.SBSAuthApi;
 import io.github.xwz.sbs.api.SBSRelatedApi;

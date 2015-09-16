@@ -18,7 +18,7 @@ import java.io.IOException;
 import io.github.xwz.base.content.RecommendationBuilder;
 import io.github.xwz.iview.R;
 import io.github.xwz.iview.activities.DetailsActivity;
-import io.github.xwz.iview.models.EpisodeModel;
+import io.github.xwz.iview.api.EpisodeModel;
 
 public class RecommendationsService extends IntentService {
     private static final String TAG = "UpdateRecommendations";

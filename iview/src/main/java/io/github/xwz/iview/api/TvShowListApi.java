@@ -17,10 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 import io.github.xwz.iview.content.ContentManager;
-import io.github.xwz.iview.models.EpisodeModel;
 import io.github.xwz.base.ImmutableMap;
-import io.github.xwz.base.models.IEpisodeModel;
-import io.github.xwz.base.trie.RadixTree;
+import io.github.xwz.base.api.IEpisodeModel;
 
 public class TvShowListApi extends IViewApi {
     private static final String TAG = "TvShowListApi";

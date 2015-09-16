@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import io.github.xwz.base.models.IEpisodeModel;
 import io.github.xwz.base.trie.RadixTree;
 
 public abstract class HttpApiBase extends AsyncTask<String, Void, Void> {

@@ -20,7 +20,7 @@ import java.util.List;
 import io.github.xwz.base.R;
 import io.github.xwz.base.adapters.EpisodePresenter;
 import io.github.xwz.base.content.IContentManager;
-import io.github.xwz.base.models.IEpisodeModel;
+import io.github.xwz.base.api.IEpisodeModel;
 
 public abstract class SearchFragment extends android.support.v17.leanback.app.SearchFragment
         implements android.support.v17.leanback.app.SearchFragment.SearchResultProvider {

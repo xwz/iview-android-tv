@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 import io.github.xwz.base.R;
-import io.github.xwz.base.models.IEpisodeModel;
+import io.github.xwz.base.api.IEpisodeModel;
 
 public class EpisodeCardView extends Presenter.ViewHolder {
     private static final String TAG = "EpisodeCardView";

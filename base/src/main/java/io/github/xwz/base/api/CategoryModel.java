@@ -1,7 +1,9 @@
-package io.github.xwz.base.models;
+package io.github.xwz.base.api;
 
 import java.util.List;
 import java.util.Map;
+
+import io.github.xwz.base.api.IEpisodeModel;
 
 public class CategoryModel implements IEpisodeModel {
     private String category;
@@ -158,5 +160,15 @@ public class CategoryModel implements IEpisodeModel {
     @Override
     public boolean hasOtherEpisodes() {
         return false;
+    }
+
+    @Override
+    public boolean isFilm() {
+        return false;
+    }
+
+    @Override
+    public String getCover() {
+        return null;
     }
 }

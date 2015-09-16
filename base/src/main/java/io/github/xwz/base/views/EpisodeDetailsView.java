@@ -12,7 +12,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
 import io.github.xwz.base.R;
-import io.github.xwz.base.models.IEpisodeModel;
+import io.github.xwz.base.api.IEpisodeModel;
 import jp.wasabeef.picasso.transformations.gpu.VignetteFilterTransformation;
 
 public class EpisodeDetailsView extends Presenter.ViewHolder {

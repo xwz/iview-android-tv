@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 import io.github.xwz.iview.BuildConfig;
 import io.github.xwz.iview.content.ContentManager;
-import io.github.xwz.base.models.IEpisodeModel;
+import io.github.xwz.base.api.IEpisodeModel;
 
 public class AuthApi extends IViewApi {
 

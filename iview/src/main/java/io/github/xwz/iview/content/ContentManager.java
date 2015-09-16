@@ -11,7 +11,7 @@ import java.util.Map;
 
 import io.github.xwz.base.ImmutableMap;
 import io.github.xwz.base.content.ContentManagerBase;
-import io.github.xwz.base.models.IEpisodeModel;
+import io.github.xwz.base.api.IEpisodeModel;
 import io.github.xwz.iview.api.AuthApi;
 import io.github.xwz.iview.api.EpisodeDetailsApi;
 import io.github.xwz.iview.api.TvShowListApi;

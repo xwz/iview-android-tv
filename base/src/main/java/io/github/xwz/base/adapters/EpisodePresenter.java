@@ -5,7 +5,7 @@ import android.support.v17.leanback.widget.Presenter;
 import android.view.ViewGroup;
 
 import io.github.xwz.base.views.EpisodeCardView;
-import io.github.xwz.base.models.IEpisodeModel;
+import io.github.xwz.base.api.IEpisodeModel;
 
 public class EpisodePresenter extends Presenter {
     private static final String TAG = "EpisodePresenter";
