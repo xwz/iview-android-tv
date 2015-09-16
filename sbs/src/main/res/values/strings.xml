@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SBS</string>
+    <string name="settings_description">SBS Videos</string>
 </resources>

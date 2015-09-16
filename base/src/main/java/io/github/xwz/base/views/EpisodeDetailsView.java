@@ -49,10 +49,25 @@ public class EpisodeDetailsView extends Presenter.ViewHolder {
         episodeTitle.setText(episode.getTitle());
         seriesTitle.setText(episode.getSeriesTitle());
         duration.setText(episode.getDurationText());
-        description.setText("");
+
+        if (sameTitles(episode.getSeriesTitle(), episode.getTitle())) {
+            seriesTitle.setText("");
+        }
 
         // load more expensive details after some delay
         loadEpisodeDetails(episode);
+        if (episode.getDescription() != null && episode.getDescription().length() > 0) {
+            description.setText(episode.getDescription());
+        } else {
+            description.setText("");
+        }
+    }
+
+    private boolean sameTitles(String a, String b) {
+        if (a != null && b != null) {
+            return a.toLowerCase().equals(b.toLowerCase());
+        }
+        return false;
     }
 
     public void updateEpisode(IEpisodeModel episode) {

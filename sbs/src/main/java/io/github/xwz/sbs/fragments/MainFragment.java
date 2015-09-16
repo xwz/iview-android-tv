@@ -5,6 +5,7 @@ import android.view.View;
 
 import io.github.xwz.base.content.IContentManager;
 import io.github.xwz.sbs.R;
+import io.github.xwz.sbs.activities.DetailsActivity;
 import io.github.xwz.sbs.content.ContentManager;
 
 
@@ -33,7 +34,7 @@ public class MainFragment extends io.github.xwz.base.fragments.MainFragment {
 
     @Override
     protected Class<?> getDetailsActivityClass() {
-        return null;
+        return DetailsActivity.class;
     }
 
     @Override

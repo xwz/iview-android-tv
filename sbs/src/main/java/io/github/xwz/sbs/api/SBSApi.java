@@ -319,7 +319,8 @@ public class SBSApi extends SBSApiBase {
 
         public String getRating() {
             if (ratings != null && ratings.size() > 0) {
-                return ratings.get(0).rating;
+                String details = ratings.get(0).rating;
+                return details != null ? details.toUpperCase() : details;
             }
             return "";
         }

@@ -27,8 +27,17 @@ public class EpisodeCardView extends Presenter.ViewHolder {
     }
 
     public void setEpisode(IEpisodeModel ep) {
-        card.setTitleText(ep.getSeriesTitle());
-        card.setContentText(ep.getTitle());
+        String series = ep.getSeriesTitle();
+        String title = ep.getTitle();
+        if (series == null || series.length() == 0) {
+            series = title;
+        }
+        card.setTitleText(series);
+        card.setContentText(title);
+        if (sameTitles(series, title)) {
+            card.setContentText("");
+        }
+
         if (ep.getEpisodeCount() > 0) {
             TextDrawable badge = new TextDrawable(mContext);
             badge.setText("" + ep.getEpisodeCount());
@@ -40,6 +49,13 @@ public class EpisodeCardView extends Presenter.ViewHolder {
                 .load(ep.getThumbnail())
                 .resize(size.x, size.y)
                 .into(card.getMainImageView());
+    }
+
+    private boolean sameTitles(String a, String b) {
+        if (a != null && b != null) {
+            return a.toLowerCase().equals(b.toLowerCase());
+        }
+        return false;
     }
 
     public ImageCardView getImageCardView() {

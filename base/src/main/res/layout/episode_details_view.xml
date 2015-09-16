@@ -33,6 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/episode_detail_padding_top"
             android:textSize="@dimen/fontHuge"
+            tools:textColor="@color/white"
             tools:text="Series Title"/>
 
         <TextView
@@ -49,6 +50,7 @@
         <TextView
             android:id="@+id/duration"
             tools:text="20:22"
+            tools:textColor="@color/white"
             android:layout_marginTop="@dimen/marginBaseHalf"
             android:layout_marginBottom="@dimen/marginBaseHalf"
             android:layout_width="match_parent"
@@ -61,6 +63,7 @@
         <TextView
             android:id="@+id/description"
             tools:text="Description"
+            tools:textColor="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/duration"
