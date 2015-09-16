@@ -1,4 +1,4 @@
-package io.github.xwz.iview.content;
+package io.github.xwz.base.content;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -18,12 +18,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import io.github.xwz.iview.R;
-
 public class RecommendationBuilder {
 
     private static final String TAG = "RecommendationBuilder";
-    private static final String BACKGROUND_URI_PREFIX = "content://io.github.xwz.iview.recommendation/";
 
     private final int mId;
     private final Context mContext;
@@ -32,10 +29,18 @@ public class RecommendationBuilder {
     private PendingIntent mIntent;
     private Bitmap mImage;
     private Bitmap mBackground;
+    private int mIconRes;
+    private int mColor;
+    private String mBackgroundPrefix;
 
     public RecommendationBuilder(Context context, int id) {
         mContext = context;
         mId = id;
+    }
+
+    public RecommendationBuilder setBackgroundPrefix(String prefix) {
+        mBackgroundPrefix = prefix;
+        return this;
     }
 
     public RecommendationBuilder setTitle(String title) {
@@ -53,6 +58,15 @@ public class RecommendationBuilder {
         return this;
     }
 
+    public RecommendationBuilder setIcon(int res) {
+        mIconRes = res;
+        return this;
+    }
+
+    public RecommendationBuilder setColor(int color) {
+        mColor = color;
+        return this;
+    }
 
     public RecommendationBuilder setImage(Bitmap image) {
         mImage = image;
@@ -69,10 +83,10 @@ public class RecommendationBuilder {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext)
                 .setContentTitle(mTitle)
                 .setContentText(mDescription)
-                .setSmallIcon(R.mipmap.icon)
+                .setSmallIcon(mIconRes)
                 .setLargeIcon(mImage)
                 .setContentIntent(mIntent)
-                .setColor(mContext.getResources().getColor(R.color.brand_color))
+                .setColor(mColor)
                 .setExtras(createBackgroundImageBundle())
                 .setPriority(0)
                 .setLocalOnly(true)
@@ -86,7 +100,7 @@ public class RecommendationBuilder {
     private Bundle createBackgroundImageBundle() {
         Bundle extras = new Bundle();
         if (mBackground != null) {
-            String background = Uri.parse(BACKGROUND_URI_PREFIX + Integer.toString(mId)).toString();
+            String background = Uri.parse(mBackgroundPrefix + Integer.toString(mId)).toString();
             extras.putString(Notification.EXTRA_BACKGROUND_IMAGE_URI, background);
             try {
                 File bitmapFile = getNotificationBackground(mContext, mId);

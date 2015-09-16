@@ -46,10 +46,6 @@
             android:label="@string/app_name"
             android:theme="@style/PlayerTheme"/>
 
-        <service
-            android:name="io.github.xwz.iview.content.RecommendationsService"
-            android:enabled="true"/>
-
         <receiver
             android:name="io.github.xwz.iview.activities.BootActivity"
             android:enabled="true"
@@ -59,8 +55,12 @@
             </intent-filter>
         </receiver>
 
+        <service
+            android:name="io.github.xwz.iview.content.RecommendationsService"
+            android:enabled="true"/>
+
         <provider
-            android:name="io.github.xwz.iview.content.RecommendationBuilder$RecommendationBackgroundContentProvider"
+            android:name="io.github.xwz.base.content.RecommendationBuilder$RecommendationBackgroundContentProvider"
             android:authorities="io.github.xwz.iview.recommendation"
             android:exported="true"/>
 

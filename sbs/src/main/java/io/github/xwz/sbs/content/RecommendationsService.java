@@ -1,4 +1,4 @@
-package io.github.xwz.iview.content;
+package io.github.xwz.sbs.content;
 
 import android.app.IntentService;
 import android.app.Notification;
@@ -16,15 +16,15 @@ import com.squareup.picasso.Picasso;
 import java.io.IOException;
 
 import io.github.xwz.base.content.RecommendationBuilder;
-import io.github.xwz.iview.R;
-import io.github.xwz.iview.activities.DetailsActivity;
-import io.github.xwz.iview.models.EpisodeModel;
+import io.github.xwz.sbs.R;
+import io.github.xwz.sbs.activities.DetailsActivity;
+import io.github.xwz.sbs.api.EpisodeModel;
 
 public class RecommendationsService extends IntentService {
     private static final String TAG = "UpdateRecommendations";
 
-    private static final String RECOMMENDATION_TAG = "io.github.xwz.iview.RECOMMENDATION_TAG";
-    private static final String BACKGROUND_URI_PREFIX = "content://io.github.xwz.iview.recommendation/";
+    private static final String RECOMMENDATION_TAG = "io.github.xwz.sbs.RECOMMENDATION_TAG";
+    private static final String BACKGROUND_URI_PREFIX = "content://io.github.xwz.sbs.recommendation/";
 
     public RecommendationsService() {
         super("RecommendationService");
@@ -57,7 +57,7 @@ public class RecommendationsService extends IntentService {
         Notification notification = builder
                 .setBackgroundPrefix(BACKGROUND_URI_PREFIX)
                 .setIcon(R.mipmap.icon)
-                .setColor(getResources().getColor(R.color.brand_color))
+                .setColor(getResources().getColor(R.color.brand_color_dark))
                 .setTitle(ep.getSeriesTitle())
                 .setDescription(ep.getTitle())
                 .setImage(image)

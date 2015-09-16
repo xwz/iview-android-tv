@@ -60,11 +60,15 @@ public class ContentManager extends ContentManagerBase {
 
     @Override
     public List<IEpisodeModel> getRecommendations() {
+        List<IEpisodeModel> all = getAllShows();
+        if (all.size() > 40) {
+            return getAllShows().subList(30, 32);
+        }
         return new ArrayList<>();
     }
 
     @Override
     public Class getRecommendationServiceClass() {
-        return null;
+        return RecommendationsService.class;
     }
 }

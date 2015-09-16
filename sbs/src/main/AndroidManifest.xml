@@ -52,6 +52,15 @@
             </intent-filter>
         </receiver>
 
+        <service
+            android:name="io.github.xwz.sbs.content.RecommendationsService"
+            android:enabled="true"/>
+
+        <provider
+            android:name="io.github.xwz.base.content.RecommendationBuilder$RecommendationBackgroundContentProvider"
+            android:authorities="io.github.xwz.sbs.recommendation"
+            android:exported="true"/>
+
         <provider
             android:name="io.github.xwz.sbs.content.SearchContentProvider"
             android:authorities="io.github.xwz.sbs.search"

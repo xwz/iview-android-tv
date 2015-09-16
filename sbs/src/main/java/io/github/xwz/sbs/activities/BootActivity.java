@@ -1,9 +1,13 @@
 package io.github.xwz.sbs.activities;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
+import io.github.xwz.sbs.content.RecommendationsService;
 
 public class BootActivity extends BroadcastReceiver {
     private static final String TAG = "BootActivity";
@@ -18,7 +22,7 @@ public class BootActivity extends BroadcastReceiver {
     }
 
     private void scheduleRecommendationUpdate(Context context) {
-        /*Log.d(TAG, "Scheduling recommendations update");
+        Log.d(TAG, "Scheduling recommendations update");
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent recommendationIntent = new Intent(context, RecommendationsService.class);
@@ -27,6 +31,6 @@ public class BootActivity extends BroadcastReceiver {
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 INITIAL_DELAY,
                 AlarmManager.INTERVAL_HALF_HOUR,
-                alarmIntent);*/
+                alarmIntent);
     }
 }

@@ -18,6 +18,7 @@ import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import io.github.xwz.base.R;
 import io.github.xwz.base.adapters.BaseArrayAdapter;
 import io.github.xwz.base.adapters.CategoryPresenter;
 import io.github.xwz.base.adapters.EpisodePresenter;
@@ -84,6 +86,7 @@ public abstract class MainFragment extends BrowseFragment {
             lp.topMargin = 150;
             progressText.setLayoutParams(lp);
             progressText.setGravity(Gravity.CENTER);
+            progressText.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelSize(R.dimen.fontHuge));
             BrowseFrameLayout frame = getBrowseFrame(root);
             frame.addView(progress);
             frame.addView(progressText);

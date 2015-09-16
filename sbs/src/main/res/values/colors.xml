@@ -1,3 +1,4 @@
 <resources>
     <color name="brand_color">#FFD300</color>
+    <color name="brand_color_dark">#D00713</color>
 </resources>
