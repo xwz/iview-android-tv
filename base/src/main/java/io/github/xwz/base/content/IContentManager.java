@@ -53,7 +53,6 @@ public interface IContentManager {
     String KEY_EXTRA_DATA = SearchManager.SUGGEST_COLUMN_INTENT_EXTRA_DATA;
     String KEY_EXTRA_NAME = SearchManager.EXTRA_DATA_KEY;
 
-    void updateRecommendations(Context context);
     LinkedHashMap<String, List<IEpisodeModel>> getAllShowsByCategories();
     void fetchShowList(boolean force);
     IEpisodeModel getEpisode(String href);
@@ -63,4 +62,8 @@ public interface IContentManager {
     void fetchAuthToken(IEpisodeModel episode);
     Uri getEpisodeStreamUrl(IEpisodeModel episode);
     IEpisodeModel findNextEpisode(List<String> urls, String current);
+    List<IEpisodeModel> getAllShows();
+    List<IEpisodeModel> getRecommendations();
+    void updateRecommendations(Context context);
+    Class getRecommendationServiceClass();
 }

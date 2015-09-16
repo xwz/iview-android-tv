@@ -97,6 +97,7 @@ public abstract class SearchFragment extends android.support.v17.leanback.app.Se
 
         @Override
         public void run() {
+            Log.d(TAG, "Searching: " + query);
             List<IEpisodeModel> results = getContentManger().searchShows(query);
             EpisodePresenter card = new EpisodePresenter();
             ArrayObjectAdapter row = new ArrayObjectAdapter(card);

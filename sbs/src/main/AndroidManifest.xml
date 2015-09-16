@@ -51,12 +51,12 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
-<!--
+
         <provider
             android:name="io.github.xwz.sbs.content.SearchContentProvider"
             android:authorities="io.github.xwz.sbs.search"
             android:exported="true"/>
--->
+
     </application>
 
 </manifest>
