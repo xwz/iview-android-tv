@@ -66,7 +66,19 @@ public class SBSRelatedApi extends SBSApiBase {
         Matcher m = ID_PATTERN.matcher(url);
         if (m.find()) {
             String id = m.group(1);
-            return fetchContent(getRelatedUrl(id), CACHE_EXPIRY);
+            List<IEpisodeModel> all = new ArrayList<>();
+            List<IEpisodeModel> related = fetchContent(getRelatedUrl(id), CACHE_EXPIRY);
+            for (IEpisodeModel ep : related) {
+
+                // load from existing cache if possible, has better data.
+                IEpisodeModel info = ContentManager.getInstance().getEpisode(ep.getHref());
+                if (info != null) {
+                    all.add(info);
+                } else {
+                    all.add(ep);
+                }
+            }
+            return all;
         }
         return null;
     }

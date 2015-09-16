@@ -43,7 +43,7 @@ public abstract class MainFragment extends BrowseFragment {
     private static final String TAG = "MainFragment";
     private ProgressBar progress;
     private TextView progressText;
-    private static final int SHOW_CATEGORY_COUNT = 10;
+    private static final int SHOW_CATEGORY_COUNT = -1;
 
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -163,7 +163,7 @@ public abstract class MainFragment extends BrowseFragment {
         for (int i = 0; i < newRows; i++) {
             String category = categories.get(i);
             List<IEpisodeModel> episodes = all.get(category);
-            if (episodes.size() > SHOW_CATEGORY_COUNT) {
+            if (SHOW_CATEGORY_COUNT > 0 && episodes.size() > SHOW_CATEGORY_COUNT) {
                 CategoryModel collection = new CategoryModel(category);
                 collection.setEpisodeCount(episodes.size());
                 episodes.add(0, collection);

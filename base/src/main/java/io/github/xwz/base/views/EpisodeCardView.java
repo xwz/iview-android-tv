@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Point;
 import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.Presenter;
+import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
@@ -24,6 +25,7 @@ public class EpisodeCardView extends Presenter.ViewHolder {
         size = new Point(mContext.getResources().getDimensionPixelSize(R.dimen.card_width),
                 mContext.getResources().getDimensionPixelSize(R.dimen.card_height));
         card.setMainImageDimensions(size.x, size.y);
+        card.setMainImageScaleType(ImageView.ScaleType.CENTER_CROP);
     }
 
     public void setEpisode(IEpisodeModel ep) {

@@ -223,7 +223,7 @@ abstract class SBSApiBase extends HttpApiBase {
             Thumbnail largest = null;
             if (thumbnails != null) {
                 for (Thumbnail t : thumbnails) {
-                    if (largest == null || t.width > largest.width) {
+                    if (largest == null || (t.width >= t.height && t.width > largest.width)) {
                         largest = t;
                     }
                 }
