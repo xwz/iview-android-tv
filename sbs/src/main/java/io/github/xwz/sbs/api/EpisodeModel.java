@@ -62,6 +62,8 @@ public class EpisodeModel implements IEpisodeModel {
         duration = data.getDuration();
         rating = data.getRating();
         episodeCount = 0;
+        film = data.isFilm();
+        cover = data.getCover();
         categories.addAll(data.getCategories());
 
         description = data.synopsis;
@@ -280,5 +282,10 @@ public class EpisodeModel implements IEpisodeModel {
     @Override
     public String getCover() {
         return cover;
+    }
+
+    @Override
+    public boolean hasCover() {
+        return isFilm() && getCover() != null && getCover().length() > 0;
     }
 }

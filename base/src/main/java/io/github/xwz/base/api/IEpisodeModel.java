@@ -69,4 +69,6 @@ public interface IEpisodeModel extends Serializable {
     boolean isFilm();
 
     String getCover();
+
+    boolean hasCover();
 }

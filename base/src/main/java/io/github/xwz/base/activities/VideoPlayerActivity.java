@@ -303,6 +303,7 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
 
         Point size = new Point(getResources().getDimensionPixelSize(R.dimen.card_width),
                 getResources().getDimensionPixelSize(R.dimen.card_height));
+
         Picasso.with(this).load(mCurrentEpisode.getThumbnail()).resize(size.x, size.y).into(new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {

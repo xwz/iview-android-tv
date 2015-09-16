@@ -18,9 +18,9 @@ import android.util.Log;
 import java.util.List;
 
 import io.github.xwz.base.R;
-import io.github.xwz.base.adapters.EpisodePresenter;
-import io.github.xwz.base.content.IContentManager;
+import io.github.xwz.base.adapters.CardSelector;
 import io.github.xwz.base.api.IEpisodeModel;
+import io.github.xwz.base.content.IContentManager;
 
 public abstract class SearchFragment extends android.support.v17.leanback.app.SearchFragment
         implements android.support.v17.leanback.app.SearchFragment.SearchResultProvider {
@@ -99,8 +99,7 @@ public abstract class SearchFragment extends android.support.v17.leanback.app.Se
         public void run() {
             Log.d(TAG, "Searching: " + query);
             List<IEpisodeModel> results = getContentManger().searchShows(query);
-            EpisodePresenter card = new EpisodePresenter();
-            ArrayObjectAdapter row = new ArrayObjectAdapter(card);
+            ArrayObjectAdapter row = new ArrayObjectAdapter(new CardSelector());
             row.addAll(0, results);
             HeaderItem header = new HeaderItem(0, getResources().getString(R.string.search_results));
             adapter.add(new ListRow(header, row));

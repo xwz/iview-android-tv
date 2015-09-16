@@ -26,6 +26,8 @@ import io.github.xwz.sbs.BuildConfig;
 
 abstract class SBSApiBase extends HttpApiBase {
 
+    private static final String TAG = "SBSApiBase";
+
     private static final String API_URL = BuildConfig.API_URL;
     private static final String RELATED_URL = BuildConfig.RELATED_URL;
     private static final String VIDEO_URL = BuildConfig.VIDEO_URL;
@@ -175,6 +177,24 @@ abstract class SBSApiBase extends HttpApiBase {
         @SerializedName("plfile$downloadUrl")
         private String url;
 
+        @SerializedName("plfile$assetTypes")
+        private List<String> types;
+
+        public boolean hasPoster() {
+            return hasType("Poster");
+        }
+
+        public boolean hasType(String str) {
+            if (types != null) {
+                for (String type : types) {
+                    if (type != null && type.contains(str)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         public String toString() {
             return width + "x" + height + ":" + url;
         }
@@ -245,6 +265,23 @@ abstract class SBSApiBase extends HttpApiBase {
             return thumbnail;
         }
 
+        public String getCover() {
+            Thumbnail largest = null;
+            if (thumbnails != null) {
+                for (Thumbnail t : thumbnails) {
+                    if (t.hasPoster()) {
+                        if (largest == null || (t.height > t.width && t.height > largest.height)) {
+                            largest = t;
+                        }
+                    }
+                }
+            }
+            if (largest != null) {
+                return largest.url;
+            }
+            return null;
+        }
+
         public List<String> getCategories() {
             List<String> cats = new ArrayList<>();
             if (categories != null) {
@@ -278,7 +315,7 @@ abstract class SBSApiBase extends HttpApiBase {
         public String getRating() {
             if (ratings != null && ratings.size() > 0) {
                 String details = ratings.get(0).rating;
-                return details != null ? details.toUpperCase() : details;
+                return details != null && details.length() > 0 ? details.toUpperCase() : null;
             }
             return "";
         }
@@ -292,6 +329,15 @@ abstract class SBSApiBase extends HttpApiBase {
                 }
             }
             return 0;
+        }
+
+        public boolean isFilm() {
+            for (String cat : getCategories()) {
+                if (cat.contains("Film/")) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

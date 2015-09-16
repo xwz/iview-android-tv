@@ -13,7 +13,6 @@ import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
 import android.support.v17.leanback.widget.OnItemViewClickedListener;
 import android.support.v17.leanback.widget.Presenter;
-import android.support.v17.leanback.widget.PresenterSelector;
 import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
 import android.support.v4.content.LocalBroadcastManager;
@@ -32,11 +31,10 @@ import java.util.List;
 
 import io.github.xwz.base.R;
 import io.github.xwz.base.adapters.BaseArrayAdapter;
-import io.github.xwz.base.adapters.CategoryPresenter;
-import io.github.xwz.base.adapters.EpisodePresenter;
-import io.github.xwz.base.content.IContentManager;
+import io.github.xwz.base.adapters.CardSelector;
 import io.github.xwz.base.api.CategoryModel;
 import io.github.xwz.base.api.IEpisodeModel;
+import io.github.xwz.base.content.IContentManager;
 
 public abstract class MainFragment extends BrowseFragment {
 
@@ -152,14 +150,6 @@ public abstract class MainFragment extends BrowseFragment {
         LinkedHashMap<String, List<IEpisodeModel>> all = getContentManger().getAllShowsByCategories();
         int currentRows = adapter.size();
         int newRows = all.size();
-        final EpisodePresenter card = new EpisodePresenter();
-        final CategoryPresenter cat = new CategoryPresenter();
-        PresenterSelector selector = new PresenterSelector() {
-            @Override
-            public Presenter getPresenter(Object item) {
-                return item instanceof CategoryModel ? cat : card;
-            }
-        };
         List<String> categories = new ArrayList<>(all.keySet());
         for (int i = 0; i < newRows; i++) {
             String category = categories.get(i);
@@ -175,7 +165,7 @@ public abstract class MainFragment extends BrowseFragment {
                 BaseArrayAdapter<IEpisodeModel> items = (BaseArrayAdapter<IEpisodeModel>) row.getAdapter();
                 items.replaceItems(episodes);
             } else { // add
-                BaseArrayAdapter<IEpisodeModel> items = new BaseArrayAdapter<>(selector);
+                BaseArrayAdapter<IEpisodeModel> items = new BaseArrayAdapter<>(new CardSelector());
                 items.addAll(0, episodes);
                 HeaderItem header = new HeaderItem(category);
                 ListRow row = new ListRow(header, items);

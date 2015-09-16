@@ -2,6 +2,7 @@ package io.github.xwz.base.views;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Point;
 import android.os.Handler;
 import android.support.v17.leanback.widget.BaseCardView;
 import android.support.v17.leanback.widget.ImageCardView;
@@ -91,7 +92,9 @@ public class VideoPlayerView {
         card.setFocusableInTouchMode(true);
         card.setInfoVisibility(View.VISIBLE);
         card.setExtraVisibility(View.VISIBLE);
-        nextEpisode = new EpisodeCardView(context, card);
+        Point size = new Point(context.getResources().getDimensionPixelSize(R.dimen.card_width),
+                context.getResources().getDimensionPixelSize(R.dimen.card_height));
+        nextEpisode = new EpisodeCardView(context, card, size);
         nextEpisode.getImageCardView().setCardType(BaseCardView.CARD_TYPE_INFO_OVER);
 
         debugView.setVisibility(View.GONE);

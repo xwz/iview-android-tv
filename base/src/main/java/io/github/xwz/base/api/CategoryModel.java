@@ -171,4 +171,9 @@ public class CategoryModel implements IEpisodeModel {
     public String getCover() {
         return null;
     }
+
+    @Override
+    public boolean hasCover() {
+        return false;
+    }
 }

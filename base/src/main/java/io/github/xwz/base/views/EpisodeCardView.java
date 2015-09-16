@@ -4,11 +4,11 @@ import android.content.Context;
 import android.graphics.Point;
 import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.Presenter;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-import io.github.xwz.base.R;
 import io.github.xwz.base.api.IEpisodeModel;
 
 public class EpisodeCardView extends Presenter.ViewHolder {
@@ -18,14 +18,11 @@ public class EpisodeCardView extends Presenter.ViewHolder {
     private final Context mContext;
     private final Point size;
 
-    public EpisodeCardView(Context context, ImageCardView view) {
+    public EpisodeCardView(Context context, ImageCardView view, Point s) {
         super(view);
         mContext = context;
         card = view;
-        size = new Point(mContext.getResources().getDimensionPixelSize(R.dimen.card_width),
-                mContext.getResources().getDimensionPixelSize(R.dimen.card_height));
-        card.setMainImageDimensions(size.x, size.y);
-        card.setMainImageScaleType(ImageView.ScaleType.CENTER_CROP);
+        size = s;
     }
 
     public void setEpisode(IEpisodeModel ep) {
@@ -47,8 +44,12 @@ public class EpisodeCardView extends Presenter.ViewHolder {
         } else {
             card.setBadgeImage(null);
         }
+        String image = ep.getThumbnail();
+        if (ep.hasCover()) {
+            image = ep.getCover();
+        }
         Picasso.with(mContext)
-                .load(ep.getThumbnail())
+                .load(image)
                 .resize(size.x, size.y)
                 .into(card.getMainImageView());
     }

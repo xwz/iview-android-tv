@@ -29,9 +29,9 @@ import java.util.Map;
 
 import io.github.xwz.base.R;
 import io.github.xwz.base.Utils;
-import io.github.xwz.base.adapters.EpisodePresenter;
-import io.github.xwz.base.content.IContentManager;
+import io.github.xwz.base.adapters.CardSelector;
 import io.github.xwz.base.api.IEpisodeModel;
+import io.github.xwz.base.content.IContentManager;
 import io.github.xwz.base.views.EpisodeDetailsView;
 
 public abstract class DetailsFragment extends android.support.v17.leanback.app.RowsFragment {
@@ -113,7 +113,7 @@ public abstract class DetailsFragment extends android.support.v17.leanback.app.R
 
     private void setupAdapter(IEpisodeModel episode) {
         ArrayObjectAdapter adapter = new ArrayObjectAdapter(new ListRowPresenter());
-        otherEpisodes = new ArrayObjectAdapter(new EpisodePresenter());
+        otherEpisodes = new ArrayObjectAdapter(new CardSelector());
         otherEpisodes.add(0, episode);
         adapter.add(new ListRow(new HeaderItem(0, null), otherEpisodes));
         setAdapter(adapter);
@@ -156,7 +156,7 @@ public abstract class DetailsFragment extends android.support.v17.leanback.app.R
             if (IContentManager.OTHER_EPISODES.equals(title)) {
                 otherEpisodes.addAll(otherEpisodes.size(), list.getValue());
             } else {
-                ArrayObjectAdapter more = new ArrayObjectAdapter(new EpisodePresenter());
+                ArrayObjectAdapter more = new ArrayObjectAdapter(new CardSelector());
                 more.addAll(0, list.getValue());
                 adapter.add(new ListRow(new HeaderItem(0, title), more));
             }
