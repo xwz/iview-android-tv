@@ -17,7 +17,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import io.github.xwz.base.ImmutableMap;
 import io.github.xwz.base.api.HttpApiBase;
 import io.github.xwz.base.models.IEpisodeModel;
 import io.github.xwz.sbs.BuildConfig;
@@ -26,15 +29,10 @@ abstract class SBSApiBase extends HttpApiBase {
 
     private static final String API_URL = BuildConfig.API_URL;
     private static final String RELATED_URL = BuildConfig.RELATED_URL;
-    private static final String SMIL_URL = BuildConfig.SMIL_URL;
-    private static final String AUTH_TOKEN = BuildConfig.AUTH_TOKEN;
-
-    // http://www.sbs.com.au/api/video_feed/related?context=android&form=json&id=517455939941
-    // http://www.sbs.com.au/api/video_feed/smil?context=android&form=xml&id=517455939941
-
-    // Basic YW5kcm9pZDliYTNmMTgzYmM1MjY5MzI4YTM1YTBlNmQzYmJmMGYwMmY5ZTFhZWE6YW5kcm9pZA==
+    private static final String VIDEO_URL = BuildConfig.VIDEO_URL;
 
     private static final String CACHE_PATH = "sbs-api";
+    private static final Pattern ID_PATTERN = Pattern.compile("/(\\d+)$");
 
     private int lastEntryCount = 0;
 
@@ -54,8 +52,14 @@ abstract class SBSApiBase extends HttpApiBase {
         return buildUrl(RELATED_URL, params);
     }
 
-    Uri buildVideoUrl(Map<String, String> params) {
-        return buildUrl(SMIL_URL, params);
+    protected Uri createStreamUrl(String href) {
+        String id = getIdFromUrl(href);
+        if (id != null) {
+            Uri.Builder uri = Uri.parse(VIDEO_URL).buildUpon();
+            uri.appendPath(id);
+            return uri.build();
+        }
+        return null;
     }
 
     private Uri buildUrl(String path, Map<String, String> params) {
@@ -66,6 +70,14 @@ abstract class SBSApiBase extends HttpApiBase {
             }
         }
         return uri.build();
+    }
+
+    String getIdFromUrl(String url) {
+        Matcher m = ID_PATTERN.matcher(url);
+        if (m.find()) {
+            return m.group(1);
+        }
+        return null;
     }
 
     protected int getLastEntryCount() {

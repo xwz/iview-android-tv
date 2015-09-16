@@ -7,8 +7,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import io.github.xwz.base.ImmutableMap;
 import io.github.xwz.base.content.IContentManager;
@@ -18,7 +16,6 @@ import io.github.xwz.sbs.content.ContentManager;
 public class SBSRelatedApi extends SBSApiBase {
     private static final String TAG = "SBSRelatedApi";
     private static final int CACHE_EXPIRY = 3600; // 1h
-    private static final Pattern ID_PATTERN = Pattern.compile("/(\\d+)$");
 
     private final String id;
     private boolean success = false;
@@ -63,9 +60,8 @@ public class SBSRelatedApi extends SBSApiBase {
     }
 
     private List<IEpisodeModel> fetchRelated(String url) {
-        Matcher m = ID_PATTERN.matcher(url);
-        if (m.find()) {
-            String id = m.group(1);
+        String id = getIdFromUrl(url);
+        if (id != null) {
             List<IEpisodeModel> all = new ArrayList<>();
             List<IEpisodeModel> related = fetchContent(getRelatedUrl(id), CACHE_EXPIRY);
             for (IEpisodeModel ep : related) {

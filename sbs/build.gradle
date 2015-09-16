@@ -21,10 +21,9 @@ android {
 
     productFlavors {
         app {
-            buildConfigField 'String', 'AUTH_TOKEN', getAppProp('SBS_AUTH_TOKEN')
             buildConfigField 'String', 'API_URL', getAppProp('SBS_API_URL')
             buildConfigField 'String', 'RELATED_URL', getAppProp('SBS_RELATED_URL')
-            buildConfigField 'String', 'SMIL_URL', getAppProp('SBS_SMIL_URL')
+            buildConfigField 'String', 'VIDEO_URL', getAppProp('SBS_VIDEO_URL')
         }
     }
 }

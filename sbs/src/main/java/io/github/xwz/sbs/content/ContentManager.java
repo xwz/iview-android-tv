@@ -13,6 +13,7 @@ import io.github.xwz.base.content.ContentCacheManager;
 import io.github.xwz.base.content.IContentManager;
 import io.github.xwz.base.models.IEpisodeModel;
 import io.github.xwz.sbs.api.SBSApi;
+import io.github.xwz.sbs.api.SBSAuthApi;
 import io.github.xwz.sbs.api.SBSRelatedApi;
 
 public class ContentManager implements IContentManager {
@@ -103,12 +104,13 @@ public class ContentManager implements IContentManager {
 
     @Override
     public void fetchAuthToken(IEpisodeModel episode) {
-
+        mCache.broadcastChange(CONTENT_AUTH_FETCHING, episode.getHref());
+        new SBSAuthApi(mContext, episode.getHref()).execute(episode.getHref());
     }
 
     @Override
     public Uri getEpisodeStreamUrl(IEpisodeModel episode) {
-        return null;
+        return mCache.getEpisodeStreamUrl(episode.getHref());
     }
 
     @Override
