@@ -9,4 +9,9 @@ public class VideoPlayerActivity extends io.github.xwz.base.activities.VideoPlay
     protected IContentManager getContentManger() {
         return ContentManager.getInstance();
     }
+
+    @Override
+    protected Class getVideoPlayerActivityClass() {
+        return VideoPlayerActivity.class;
+    }
 }

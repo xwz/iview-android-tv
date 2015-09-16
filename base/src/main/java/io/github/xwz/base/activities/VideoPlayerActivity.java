@@ -320,8 +320,10 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
         });
     }
 
+    protected abstract Class getVideoPlayerActivityClass();
+
     private void updateMediaSessionIntent() {
-        Intent intent = new Intent(this, VideoPlayerActivity.class);
+        Intent intent = new Intent(this, getVideoPlayerActivityClass());
         intent.putExtra(IContentManager.CONTENT_ID, mCurrentEpisode);
         String[] others = mOtherEpisodeUrls.toArray(new String[mOtherEpisodeUrls.size()]);
         intent.putExtra(IContentManager.OTHER_EPISODES, others);
