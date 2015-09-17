@@ -5,14 +5,17 @@ import android.net.Uri;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import io.github.xwz.base.ImmutableMap;
-import io.github.xwz.base.content.IContentManager;
 import io.github.xwz.base.api.IEpisodeModel;
+import io.github.xwz.base.content.IContentManager;
 import io.github.xwz.sbs.content.ContentManager;
 
 public class SBSApi extends SBSApiBase {
@@ -73,6 +76,12 @@ public class SBSApi extends SBSApiBase {
             }
         }
 
+        for (Map.Entry<String, Uri> entry : getFeaturedUrls().entrySet()) {
+            updateProgress();
+            List<IEpisodeModel> features = fetchContent(entry.getValue(), CACHE_EXPIRY);
+            collections.put(entry.getKey(), features);
+        }
+
         // sort the collection names
         List<String> keys = new ArrayList<>();
         keys.addAll(collections.keySet());
@@ -101,6 +110,15 @@ public class SBSApi extends SBSApiBase {
 
     private void updateProgress() {
         ContentManager.getInstance().broadcastChange(ContentManager.CONTENT_SHOW_LIST_PROGRESS, PROGRESS[progress++ % PROGRESS.length]);
+    }
+
+    protected Map<String, Uri> getFeaturedUrls() {
+        return ImmutableMap.of(
+                "AAA1/Featured", getFeaturedUrl(),
+                "AAA2/What you missed last night", getLastNightUrl(),
+                "AAA3/Trending now", getTrendingUrl(),
+                "AAA4/Popular movies", getPopularFilms()
+                );
     }
 
     protected void onPreExecute() {
@@ -134,7 +152,38 @@ public class SBSApi extends SBSApiBase {
 
     private Uri getIndexUrl(int page) {
         String range = String.format("%d-%d", page * ITEMS_PER_PAGE + 1, (page + 1) * ITEMS_PER_PAGE);
-        Map<String, String> params = ImmutableMap.of("format", "json", "range", range);
+        Map<String, String> params = ImmutableMap.of("form", "json", "range", range);
         return buildApiUrl(params);
+    }
+
+    private Uri getFeaturedUrl() {
+        String range = String.format("%d-%d", 1, 30);
+        Map<String, String> params = ImmutableMap.of("form", "json", "range", range, "sort", "pubDate|asc", "byCategories", "!Film");
+        return buildFeaturedUrl(params);
+    }
+
+    private Uri getLastNightUrl() {
+        String range = String.format("%d-%d", 1, 30);
+        Calendar yesterday = new GregorianCalendar();
+        yesterday.setTime(new Date((new Date()).getTime() - 86400000));
+        yesterday.set(Calendar.MILLISECOND, 0);
+        yesterday.set(Calendar.SECOND, 0);
+        yesterday.set(Calendar.MINUTE, 30);
+        yesterday.set(Calendar.HOUR_OF_DAY, 17);
+        long start = yesterday.getTimeInMillis();
+        yesterday.set(Calendar.HOUR_OF_DAY, 23);
+        long end = yesterday.getTimeInMillis();
+        String date = String.format("%d~%d", start, end);
+        Map<String, String> params = ImmutableMap.of("form", "json", "byPubDate", date, "sort", "pubDate|desc", "range", range);
+        return buildApiUrl(params);
+    }
+
+    private Uri getTrendingUrl() {
+        return buildTrendingUrl(new HashMap<String, String>());
+    }
+
+    private Uri getPopularFilms() {
+        Map<String, String> params = ImmutableMap.of("section", "film");
+        return buildTrendingUrl(params);
     }
 }

@@ -22,7 +22,6 @@ android {
     productFlavors {
         app {
             buildConfigField 'String', 'API_URL', getAppProp('SBS_API_URL')
-            buildConfigField 'String', 'RELATED_URL', getAppProp('SBS_RELATED_URL')
             buildConfigField 'String', 'VIDEO_URL', getAppProp('SBS_VIDEO_URL')
         }
     }

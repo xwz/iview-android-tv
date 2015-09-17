@@ -29,8 +29,12 @@ abstract class SBSApiBase extends HttpApiBase {
     private static final String TAG = "SBSApiBase";
 
     private static final String API_URL = BuildConfig.API_URL;
-    private static final String RELATED_URL = BuildConfig.RELATED_URL;
     private static final String VIDEO_URL = BuildConfig.VIDEO_URL;
+
+    private static final String PATH_FEATURED = "f/Bgtm9B/sbs-featured-programs-prod";
+    private static final String PATH_PROGRAMS = "f/Bgtm9B/sbs-section-programs";
+    private static final String PATH_RELATED = "related";
+    private static final String PATH_TRENDING = "trending";
 
     private static final String CACHE_PATH = "sbs-api";
     private static final Pattern ID_PATTERN = Pattern.compile("/(\\d+)$");
@@ -46,11 +50,19 @@ abstract class SBSApiBase extends HttpApiBase {
     }
 
     Uri buildApiUrl(Map<String, String> params) {
-        return buildUrl(API_URL, params);
+        return buildUrlWithPath(PATH_PROGRAMS, params);
     }
 
     Uri buildRelatedUrl(Map<String, String> params) {
-        return buildUrl(RELATED_URL, params);
+        return buildUrlWithPath(PATH_RELATED, params);
+    }
+
+    Uri buildFeaturedUrl(Map<String, String> params) {
+        return buildUrlWithPath(PATH_FEATURED, params);
+    }
+
+    Uri buildTrendingUrl(Map<String, String> params) {
+        return buildUrlWithPath(PATH_TRENDING, params);
     }
 
     protected Uri createStreamUrl(String href) {
@@ -63,8 +75,11 @@ abstract class SBSApiBase extends HttpApiBase {
         return null;
     }
 
-    private Uri buildUrl(String path, Map<String, String> params) {
-        Uri.Builder uri = Uri.parse(path).buildUpon();
+    private Uri buildUrlWithPath(String path, Map<String, String> params) {
+        Uri.Builder uri = Uri.parse(API_URL).buildUpon();
+        for (String part : path.split("/")) {
+            uri.appendPath(part);
+        }
         if (params != null) {
             for (Map.Entry<String, String> param : params.entrySet()) {
                 uri.appendQueryParameter(param.getKey(), param.getValue());
