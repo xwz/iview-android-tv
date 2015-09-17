@@ -19,8 +19,8 @@ import java.util.List;
 
 import io.github.xwz.base.R;
 import io.github.xwz.base.adapters.CardSelector;
-import io.github.xwz.base.api.IEpisodeModel;
-import io.github.xwz.base.content.IContentManager;
+import io.github.xwz.base.api.EpisodeBaseModel;
+import io.github.xwz.base.content.ContentManagerBase;
 
 public abstract class SearchFragment extends android.support.v17.leanback.app.SearchFragment
         implements android.support.v17.leanback.app.SearchFragment.SearchResultProvider {
@@ -47,7 +47,7 @@ public abstract class SearchFragment extends android.support.v17.leanback.app.Se
         return adapter;
     }
 
-    protected abstract IContentManager getContentManger();
+    protected abstract ContentManagerBase getContentManger();
 
     protected abstract Class<?> getDetailsActivityClass();
 
@@ -55,9 +55,9 @@ public abstract class SearchFragment extends android.support.v17.leanback.app.Se
         return new OnItemViewClickedListener() {
             @Override
             public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
-                if (item instanceof IEpisodeModel) {
+                if (item instanceof EpisodeBaseModel) {
                     Intent intent = new Intent(getActivity(), getDetailsActivityClass());
-                    intent.putExtra(IContentManager.CONTENT_ID, (IEpisodeModel) item);
+                    intent.putExtra(ContentManagerBase.CONTENT_ID, (EpisodeBaseModel) item);
                     startActivity(intent);
                 }
             }
@@ -98,7 +98,7 @@ public abstract class SearchFragment extends android.support.v17.leanback.app.Se
         @Override
         public void run() {
             Log.d(TAG, "Searching: " + query);
-            List<IEpisodeModel> results = getContentManger().searchShows(query);
+            List<EpisodeBaseModel> results = getContentManger().searchShows(query);
             ArrayObjectAdapter row = new ArrayObjectAdapter(new CardSelector());
             row.addAll(0, results);
             HeaderItem header = new HeaderItem(0, getResources().getString(R.string.search_results));

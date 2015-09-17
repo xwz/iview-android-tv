@@ -15,8 +15,8 @@ import java.util.Map;
 
 import io.github.xwz.base.ImmutableMap;
 import io.github.xwz.base.Utils;
-import io.github.xwz.base.api.IEpisodeModel;
-import io.github.xwz.base.content.IContentManager;
+import io.github.xwz.base.api.EpisodeBaseModel;
+import io.github.xwz.base.content.ContentManagerBase;
 import io.github.xwz.sbs.content.ContentManager;
 
 public class SBSApi extends SBSApiBase {
@@ -28,8 +28,8 @@ public class SBSApi extends SBSApiBase {
     private int page = 0;
     private int progress = 0;
 
-    private final List<IEpisodeModel> episodes = new ArrayList<>();
-    private HashMap<String, List<IEpisodeModel>> showList = new HashMap<>();
+    private final List<EpisodeBaseModel> episodes = new ArrayList<>();
+    private HashMap<String, List<EpisodeBaseModel>> showList = new HashMap<>();
     private boolean success = false;
 
     private static final String[] PROGRESS = new String[]{
@@ -50,28 +50,28 @@ public class SBSApi extends SBSApiBase {
         }
 
         // Build a list of shows
-        List<IEpisodeModel> shows = new ArrayList<>();
-        for (List<IEpisodeModel> eps : showList.values()) {
-            IEpisodeModel show = eps.get(0);
+        List<EpisodeBaseModel> shows = new ArrayList<>();
+        for (List<EpisodeBaseModel> eps : showList.values()) {
+            EpisodeBaseModel show = eps.get(0);
 
             // calculate other episodes
-            for (IEpisodeModel ep : eps) {
-                List<IEpisodeModel> others = new ArrayList<>(eps);
+            for (EpisodeBaseModel ep : eps) {
+                List<EpisodeBaseModel> others = new ArrayList<>(eps);
                 others.remove(ep);
-                Map<String, List<IEpisodeModel>> more = new HashMap<>();
-                more.put(IContentManager.OTHER_EPISODES, others);
+                Map<String, List<EpisodeBaseModel>> more = new HashMap<>();
+                more.put(ContentManagerBase.OTHER_EPISODES, others);
                 ep.setOtherEpisodes(more);
-                ep.setHasExtra(others.size() > 0);
+                ((EpisodeModel)ep).setHasExtra(others.size() > 0);
             }
             shows.add(show);
         }
 
         // build a list of show collections by category
-        Map<String, List<IEpisodeModel>> collections = new HashMap<>();
-        for (IEpisodeModel show : shows) {
+        Map<String, List<EpisodeBaseModel>> collections = new HashMap<>();
+        for (EpisodeBaseModel show : shows) {
             for (String cat : show.getCategories()) {
                 if (!collections.containsKey(cat)) {
-                    collections.put(cat, new ArrayList<IEpisodeModel>());
+                    collections.put(cat, new ArrayList<EpisodeBaseModel>());
                 }
                 collections.get(cat).add(show);
             }
@@ -79,7 +79,7 @@ public class SBSApi extends SBSApiBase {
 
         for (Map.Entry<String, Uri> entry : getFeaturedUrls().entrySet()) {
             updateProgress("Loading " + Utils.stripCategory(entry.getKey()) + "...");
-            List<IEpisodeModel> features = fetchContent(entry.getValue(), CACHE_EXPIRY);
+            List<EpisodeBaseModel> features = fetchContent(entry.getValue(), CACHE_EXPIRY);
             collections.put(entry.getKey(), features);
         }
 
@@ -90,7 +90,7 @@ public class SBSApi extends SBSApiBase {
 
         // add collections by name
         for (String key : keys) {
-            List<IEpisodeModel> collection = collections.get(key);
+            List<EpisodeBaseModel> collection = collections.get(key);
             Log.d(TAG, "Found collection: " + key + " = " + collection.size());
             String[] parts = key.split("/");
             String name = parts.length > 1 ? parts[1] : key;
@@ -141,16 +141,16 @@ public class SBSApi extends SBSApiBase {
     }
 
     private void fetchAllTitles(int page) {
-        List<IEpisodeModel> all = fetchContent(getIndexUrl(page), CACHE_EXPIRY);
-        for (IEpisodeModel ep : all) {
+        List<EpisodeBaseModel> all = fetchContent(getIndexUrl(page), CACHE_EXPIRY);
+        for (EpisodeBaseModel ep : all) {
             addToShowList(ep.getSeriesTitle(), ep);
             episodes.add(ep);
         }
     }
 
-    private void addToShowList(String title, IEpisodeModel ep) {
+    private void addToShowList(String title, EpisodeBaseModel ep) {
         if (!showList.containsKey(title)) {
-            showList.put(title, new ArrayList<IEpisodeModel>());
+            showList.put(title, new ArrayList<EpisodeBaseModel>());
         }
         showList.get(title).add(ep);
     }

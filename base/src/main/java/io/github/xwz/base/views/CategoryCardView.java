@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import io.github.xwz.base.R;
 import io.github.xwz.base.Utils;
-import io.github.xwz.base.api.IEpisodeModel;
+import io.github.xwz.base.api.EpisodeBaseModel;
 
 public class CategoryCardView extends Presenter.ViewHolder {
 
@@ -43,7 +43,7 @@ public class CategoryCardView extends Presenter.ViewHolder {
         return layout;
     }
 
-    public void setEpisode(IEpisodeModel ep) {
+    public void setEpisode(EpisodeBaseModel ep) {
         title.setText(Utils.stripCategory(ep.getTitle()));
         badge.setText("" + ep.getEpisodeCount());
     }

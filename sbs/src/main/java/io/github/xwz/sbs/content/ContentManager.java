@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import io.github.xwz.base.api.EpisodeBaseModel;
 import io.github.xwz.base.content.ContentManagerBase;
-import io.github.xwz.base.api.IEpisodeModel;
+import io.github.xwz.sbs.api.EpisodeModel;
 import io.github.xwz.sbs.api.SBSApi;
 import io.github.xwz.sbs.api.SBSAuthApi;
 import io.github.xwz.sbs.api.SBSRelatedApi;
@@ -38,9 +39,9 @@ public class ContentManager extends ContentManagerBase {
     }
 
     @Override
-    public void fetchEpisode(IEpisodeModel episode) {
+    public void fetchEpisode(EpisodeBaseModel episode) {
         broadcastChange(CONTENT_EPISODE_FETCHING, episode.getHref());
-        IEpisodeModel existing = cache().getEpisode(episode.getHref());
+        EpisodeModel existing = (EpisodeModel)cache().getEpisode(episode.getHref());
         if (existing != null && existing.hasExtras() && existing.hasOtherEpisodes()) {
             cache().broadcastChangeDelayed(100, CONTENT_EPISODE_DONE, episode.getHref(), null);
         } else {
@@ -49,14 +50,14 @@ public class ContentManager extends ContentManagerBase {
     }
 
     @Override
-    public void fetchAuthToken(IEpisodeModel episode) {
+    public void fetchAuthToken(EpisodeBaseModel episode) {
         cache().broadcastChange(CONTENT_AUTH_FETCHING, episode.getHref());
         new SBSAuthApi(getContext()  , episode.getHref()).execute(episode.getHref());
     }
 
     @Override
-    public List<IEpisodeModel> getRecommendations() {
-        List<IEpisodeModel> all = getAllShows();
+    public List<EpisodeBaseModel> getRecommendations() {
+        List<EpisodeBaseModel> all = getAllShows();
         if (all.size() > 40) {
             return getAllShows().subList(30, 32);
         }

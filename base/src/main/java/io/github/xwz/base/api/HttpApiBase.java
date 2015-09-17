@@ -170,16 +170,16 @@ public abstract class HttpApiBase extends AsyncTask<String, Void, Void> {
         return cache;
     }
 
-    protected RadixTree<String> buildWordsFromShows(Collection<IEpisodeModel> shows) {
+    protected RadixTree<String> buildWordsFromShows(Collection<EpisodeBaseModel> shows) {
         RadixTree<String> dict = new RadixTree<>();
-        for (IEpisodeModel ep : shows) {
+        for (EpisodeBaseModel ep : shows) {
             dict.putAll(getWords(ep));
         }
         Log.d(TAG, "dict:" + dict.size());
         return dict;
     }
 
-    private Map<String, String> getWords(IEpisodeModel episode) {
+    private Map<String, String> getWords(EpisodeBaseModel episode) {
         Map<String, String> words = new HashMap<>();
         if (episode.getSeriesTitle() != null) {
             words.putAll(splitWords(episode.getSeriesTitle(), episode));
@@ -190,7 +190,7 @@ public abstract class HttpApiBase extends AsyncTask<String, Void, Void> {
         return words;
     }
 
-    private Map<String, String> splitWords(String s, IEpisodeModel episode) {
+    private Map<String, String> splitWords(String s, EpisodeBaseModel episode) {
         String[] words = s.split("\\s+");
         Map<String, String> result = new HashMap<>();
         for (String w : words) {

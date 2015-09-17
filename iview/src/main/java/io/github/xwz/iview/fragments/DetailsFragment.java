@@ -1,13 +1,13 @@
 package io.github.xwz.iview.fragments;
 
+import io.github.xwz.base.content.ContentManagerBase;
 import io.github.xwz.iview.activities.VideoPlayerActivity;
 import io.github.xwz.iview.content.ContentManager;
-import io.github.xwz.base.content.IContentManager;
 
 public class DetailsFragment extends io.github.xwz.base.fragments.DetailsFragment {
 
     @Override
-    protected IContentManager getContentManger() {
+    protected ContentManagerBase getContentManger() {
         return ContentManager.getInstance();
     }
 

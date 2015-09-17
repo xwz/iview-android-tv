@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import io.github.xwz.base.ImmutableMap;
-import io.github.xwz.base.api.IEpisodeModel;
-import io.github.xwz.base.content.IContentManager;
+import io.github.xwz.base.api.EpisodeBaseModel;
+import io.github.xwz.base.content.ContentManagerBase;
 import io.github.xwz.sbs.content.ContentManager;
 
 public class SBSRelatedApi extends SBSApiBase {
@@ -38,16 +38,16 @@ public class SBSRelatedApi extends SBSApiBase {
         if (current != null) {
             Log.d(TAG, "Fetched related info for: " + current);
             String series = current.getSeriesTitle();
-            List<IEpisodeModel> related = fetchRelated(url);
+            List<EpisodeBaseModel> related = fetchRelated(url);
             if (related != null) {
-                List<IEpisodeModel> more = new ArrayList<>();
-                for (IEpisodeModel ep : related) {
+                List<EpisodeBaseModel> more = new ArrayList<>();
+                for (EpisodeBaseModel ep : related) {
                     if (series != null && !series.equals(ep.getSeriesTitle())) {
                         more.add(ep);
                     }
                 }
                 if (more.size() > 0) {
-                    current.setOtherEpisodes(IContentManager.MORE_LIKE_THIS, more);
+                    current.setOtherEpisodes(ContentManagerBase.MORE_LIKE_THIS, more);
                 }
                 current.setHasExtra(true);
                 current.setHasFetchedRelated(true);
@@ -59,15 +59,15 @@ public class SBSRelatedApi extends SBSApiBase {
         return false;
     }
 
-    private List<IEpisodeModel> fetchRelated(String url) {
+    private List<EpisodeBaseModel> fetchRelated(String url) {
         String id = getIdFromUrl(url);
         if (id != null) {
-            List<IEpisodeModel> all = new ArrayList<>();
-            List<IEpisodeModel> related = fetchContent(getRelatedUrl(id), CACHE_EXPIRY);
-            for (IEpisodeModel ep : related) {
+            List<EpisodeBaseModel> all = new ArrayList<>();
+            List<EpisodeBaseModel> related = fetchContent(getRelatedUrl(id), CACHE_EXPIRY);
+            for (EpisodeBaseModel ep : related) {
 
                 // load from existing cache if possible, has better data.
-                IEpisodeModel info = ContentManager.getInstance().getEpisode(ep.getHref());
+                EpisodeBaseModel info = ContentManager.getInstance().getEpisode(ep.getHref());
                 if (info != null) {
                     all.add(info);
                 } else {

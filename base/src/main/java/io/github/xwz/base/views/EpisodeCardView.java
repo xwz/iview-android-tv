@@ -4,12 +4,10 @@ import android.content.Context;
 import android.graphics.Point;
 import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.Presenter;
-import android.view.View;
-import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-import io.github.xwz.base.api.IEpisodeModel;
+import io.github.xwz.base.api.EpisodeBaseModel;
 
 public class EpisodeCardView extends Presenter.ViewHolder {
     private static final String TAG = "EpisodeCardView";
@@ -27,7 +25,7 @@ public class EpisodeCardView extends Presenter.ViewHolder {
         canShowCover = showCover;
     }
 
-    public void setEpisode(IEpisodeModel ep) {
+    public void setEpisode(EpisodeBaseModel ep) {
         String series = ep.getSeriesTitle();
         String title = ep.getTitle();
         if (series == null || series.length() == 0) {

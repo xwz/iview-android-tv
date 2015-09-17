@@ -16,17 +16,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.github.xwz.iview.content.ContentManager;
 import io.github.xwz.base.ImmutableMap;
-import io.github.xwz.base.api.IEpisodeModel;
+import io.github.xwz.base.api.EpisodeBaseModel;
+import io.github.xwz.iview.content.ContentManager;
 
 public class TvShowListApi extends IViewApi {
     private static final String TAG = "TvShowListApi";
     private static final int CACHE_EXPIRY = 600; // 10 mins
 
-    private final Map<String, IEpisodeModel> episodes = new HashMap<>();
-    private final List<IEpisodeModel> shows = new ArrayList<>();
-    private LinkedHashMap<String, List<IEpisodeModel>> collections = new LinkedHashMap<>();
+    private final Map<String, EpisodeBaseModel> episodes = new HashMap<>();
+    private final List<EpisodeBaseModel> shows = new ArrayList<>();
+    private LinkedHashMap<String, List<EpisodeBaseModel>> collections = new LinkedHashMap<>();
     private boolean success = false;
 
     public TvShowListApi(Context context) {
@@ -46,7 +46,7 @@ public class TvShowListApi extends IViewApi {
         updateProgress();
         fetchTitlesFromCollection();
 
-        for (Map.Entry<String, List<IEpisodeModel>> collection : collections.entrySet()) {
+        for (Map.Entry<String, List<EpisodeBaseModel>> collection : collections.entrySet()) {
             Log.d(TAG, "Found collection: " + collection.getKey());
             ContentManager.cache().addCollection(collection.getKey(), collection.getValue());
         }
@@ -73,8 +73,8 @@ public class TvShowListApi extends IViewApi {
     private void fetchTitlesFromCollection() {
         String response = fetchUrl(getHomeUrl(), CACHE_EXPIRY);
         JSONObject data = parseJSON(response);
-        List<IEpisodeModel> titles = getEpisodesFromData(data, true);
-        for (IEpisodeModel ep : titles) {
+        List<EpisodeBaseModel> titles = getEpisodesFromData(data, true);
+        for (EpisodeBaseModel ep : titles) {
             episodes.put(ep.getHref(), ep);
         }
     }
@@ -82,9 +82,9 @@ public class TvShowListApi extends IViewApi {
     private void fetchTitlesFromIndex() {
         String response = fetchUrl(getIndexUrl(), CACHE_EXPIRY);
         JSONObject data = parseJSON(response);
-        List<IEpisodeModel> titles = getEpisodesFromData(data, false);
+        List<EpisodeBaseModel> titles = getEpisodesFromData(data, false);
         Log.d(TAG, "Found " + titles.size() + " episode from index query");
-        for (IEpisodeModel title : titles) {
+        for (EpisodeBaseModel title : titles) {
             if (episodes.containsKey(title.getHref())) {
                 title.setCategories(episodes.get(title.getHref()).getCategories());
             } else {
@@ -97,8 +97,8 @@ public class TvShowListApi extends IViewApi {
     private void fetchTitlesInCategory(String cat) {
         String response = fetchUrl(getCategoryUrl(cat), CACHE_EXPIRY);
         JSONObject data = parseJSON(response);
-        List<IEpisodeModel> titles = getEpisodesFromData(data, false);
-        for (IEpisodeModel title : titles) {
+        List<EpisodeBaseModel> titles = getEpisodesFromData(data, false);
+        for (EpisodeBaseModel title : titles) {
             if (episodes.containsKey(title.getHref())) {
                 title = episodes.get(title.getHref());
             }
@@ -107,8 +107,8 @@ public class TvShowListApi extends IViewApi {
         }
     }
 
-    private List<IEpisodeModel> getEpisodesFromData(JSONObject data, boolean addToCollection) {
-        List<IEpisodeModel> titles = new ArrayList<>();
+    private List<EpisodeBaseModel> getEpisodesFromData(JSONObject data, boolean addToCollection) {
+        List<EpisodeBaseModel> titles = new ArrayList<>();
         if (data != null) {
             Iterator<String> keys = data.keys();
             while (keys.hasNext()) {
@@ -126,13 +126,13 @@ public class TvShowListApi extends IViewApi {
         return titles;
     }
 
-    private List<IEpisodeModel> getEpisodesFromList(JSONArray groups, boolean addToCollection) {
-        List<IEpisodeModel> titles = new ArrayList<>();
+    private List<EpisodeBaseModel> getEpisodesFromList(JSONArray groups, boolean addToCollection) {
+        List<EpisodeBaseModel> titles = new ArrayList<>();
         for (int i = 0, k = groups.length(); i < k; i++) {
             try {
                 if (groups.get(i) instanceof JSONObject) {
                     JSONObject group = groups.getJSONObject(i);
-                    List<IEpisodeModel> episodes = new ArrayList<>();
+                    List<EpisodeBaseModel> episodes = new ArrayList<>();
                     if (group.has("episodes") && group.get("episodes") instanceof JSONArray) {
                         JSONArray data = group.getJSONArray("episodes");
                         for (int j = 0, m = data.length(); j < m; j++) {

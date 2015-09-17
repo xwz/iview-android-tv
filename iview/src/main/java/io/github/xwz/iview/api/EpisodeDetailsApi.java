@@ -12,8 +12,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.github.xwz.base.api.EpisodeBaseModel;
 import io.github.xwz.iview.content.ContentManager;
-import io.github.xwz.base.api.IEpisodeModel;
 
 public class EpisodeDetailsApi extends IViewApi {
     private static final String TAG = "EpisodeDetailsApi";
@@ -35,11 +35,12 @@ public class EpisodeDetailsApi extends IViewApi {
     }
 
     boolean updateEpisode(String url) {
-        IEpisodeModel ep = fetchEpisodeDetails(url);
+        EpisodeModel ep = fetchEpisodeDetails(url);
         if (ep != null) {
             if (ep.getRelated() != null) {
                 if (fetchRelatedEpisode(ep, ep.getRelated())) {
-                    ContentManager.cache().updateEpisode(ep);
+                    EpisodeModel existing = (EpisodeModel)ContentManager.cache().updateEpisode(ep);
+                    existing.merge(ep);
                     success = true;
                 }
             }
@@ -53,7 +54,7 @@ public class EpisodeDetailsApi extends IViewApi {
         return success;
     }
 
-    private IEpisodeModel fetchEpisodeDetails(String url) {
+    private EpisodeModel fetchEpisodeDetails(String url) {
         Log.d(TAG, "Fetching episode details: " + url);
         String response = fetchUrl(buildApiUrl(url), CACHE_EXPIRY);
         JSONObject data = parseJSON(response);
@@ -63,12 +64,12 @@ public class EpisodeDetailsApi extends IViewApi {
         return null;
     }
 
-    private boolean fetchRelatedEpisode(IEpisodeModel ep, String related) {
+    private boolean fetchRelatedEpisode(EpisodeModel ep, String related) {
         String response = fetchUrl(buildApiUrl(related), CACHE_EXPIRY);
         JSONObject data = parseJSON(response);
         try {
             if (data != null && data.has("index") && data.get("index") instanceof JSONArray) {
-                Map<String, List<IEpisodeModel>> others = getEpisodesFromList(data.getJSONArray("index"));
+                Map<String, List<EpisodeBaseModel>> others = getEpisodesFromList(data.getJSONArray("index"));
                 ep.setOtherEpisodes(others);
                 return true;
             }
@@ -78,14 +79,14 @@ public class EpisodeDetailsApi extends IViewApi {
         return false;
     }
 
-    private Map<String, List<IEpisodeModel>> getEpisodesFromList(JSONArray groups) {
-        Map<String, List<IEpisodeModel>> related = new LinkedHashMap<>();
+    private Map<String, List<EpisodeBaseModel>> getEpisodesFromList(JSONArray groups) {
+        Map<String, List<EpisodeBaseModel>> related = new LinkedHashMap<>();
         for (int i = 0, k = groups.length(); i < k; i++) {
             try {
                 if (groups.get(i) instanceof JSONObject) {
                     JSONObject group = groups.getJSONObject(i);
                     if (group.has("episodes") && group.get("episodes") instanceof JSONArray) {
-                        List<IEpisodeModel> titles = new ArrayList<>();
+                        List<EpisodeBaseModel> titles = new ArrayList<>();
                         JSONArray episodes = group.getJSONArray("episodes");
                         for (int j = 0, m = episodes.length(); j < m; j++) {
                             titles.add(EpisodeModel.create(episodes.getJSONObject(j)));

@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import io.github.xwz.base.api.EpisodeBaseModel;
 import io.github.xwz.base.api.HttpApiBase;
-import io.github.xwz.base.api.IEpisodeModel;
 import io.github.xwz.sbs.BuildConfig;
 
 abstract class SBSApiBase extends HttpApiBase {
@@ -100,9 +100,9 @@ abstract class SBSApiBase extends HttpApiBase {
         return lastEntryCount;
     }
 
-    List<IEpisodeModel> fetchContent(Uri url, int staleness) {
+    List<EpisodeBaseModel> fetchContent(Uri url, int staleness) {
         InputStream response = fetchStream(url, staleness);
-        List<IEpisodeModel> all = new ArrayList<>();
+        List<EpisodeBaseModel> all = new ArrayList<>();
         if (response != null) {
             try {
                 JsonReader reader = new JsonReader(new InputStreamReader(response, "UTF-8"));
@@ -131,14 +131,14 @@ abstract class SBSApiBase extends HttpApiBase {
         return all;
     }
 
-    private List<IEpisodeModel> readEntriesArray(JsonReader reader) throws IOException {
+    private List<EpisodeModel> readEntriesArray(JsonReader reader) throws IOException {
         reader.beginArray();
         Gson gson = new GsonBuilder().create();
-        List<IEpisodeModel> all = new ArrayList<>();
+        List<EpisodeModel> all = new ArrayList<>();
         while (reader.hasNext()) {
             try {
                 Entry entry = gson.fromJson(reader, Entry.class);
-                IEpisodeModel ep = EpisodeModel.create(entry);
+                EpisodeModel ep = EpisodeModel.create(entry);
                 all.add(ep);
             } catch (JsonSyntaxException e) {
                 e.printStackTrace();

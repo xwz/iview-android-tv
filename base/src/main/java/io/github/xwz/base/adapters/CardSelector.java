@@ -4,7 +4,7 @@ import android.support.v17.leanback.widget.Presenter;
 import android.support.v17.leanback.widget.PresenterSelector;
 
 import io.github.xwz.base.api.CategoryModel;
-import io.github.xwz.base.api.IEpisodeModel;
+import io.github.xwz.base.api.EpisodeBaseModel;
 
 public class CardSelector extends PresenterSelector {
     final EpisodePresenter card = new EpisodePresenter();
@@ -13,11 +13,12 @@ public class CardSelector extends PresenterSelector {
 
     @Override
     public Presenter getPresenter(Object item) {
-        if (item instanceof IEpisodeModel) {
-            IEpisodeModel model = (IEpisodeModel) item;
-            if (model instanceof CategoryModel) {
-                return cat;
-            } else if (model.hasCover()) {
+        if (item instanceof CategoryModel) {
+            return cat;
+        }
+        if (item instanceof EpisodeBaseModel) {
+            EpisodeBaseModel model = (EpisodeBaseModel) item;
+            if (model.hasCover()) {
                 return film;
             }
         }

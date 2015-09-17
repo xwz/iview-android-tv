@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 
 import io.github.xwz.iview.BuildConfig;
 import io.github.xwz.iview.content.ContentManager;
-import io.github.xwz.base.api.IEpisodeModel;
 
 public class AuthApi extends IViewApi {
 
@@ -52,6 +51,8 @@ public class AuthApi extends IViewApi {
             } else {
                 Log.w(TAG, "Unable to build stream URL for:" + id);
             }
+        } else {
+            Log.w(TAG, "Unable to find stream URL for:" + id);
         }
     }
 
@@ -59,7 +60,7 @@ public class AuthApi extends IViewApi {
         Log.d(TAG, "Need to update episode details");
         EpisodeDetailsApi api = new EpisodeDetailsApi(getContext(), href);
         if (api.updateEpisode(href)) {
-            IEpisodeModel ep = ContentManager.cache().getEpisode(href);
+            EpisodeModel ep = (EpisodeModel) ContentManager.cache().getEpisode(href);
             return ep.getStream();
         } else {
             ContentManager.getInstance().broadcastChange(ContentManager.CONTENT_AUTH_ERROR, ContentManager.AUTH_FAILED_URL, id);

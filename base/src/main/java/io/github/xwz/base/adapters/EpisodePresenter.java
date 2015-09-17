@@ -4,12 +4,11 @@ import android.content.Context;
 import android.graphics.Point;
 import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.Presenter;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import io.github.xwz.base.R;
-import io.github.xwz.base.api.IEpisodeModel;
+import io.github.xwz.base.api.EpisodeBaseModel;
 import io.github.xwz.base.views.EpisodeCardView;
 
 public class EpisodePresenter extends Presenter {
@@ -38,7 +37,7 @@ public class EpisodePresenter extends Presenter {
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, Object item) {
-        ((EpisodeCardView) viewHolder).setEpisode((IEpisodeModel) item);
+        ((EpisodeCardView) viewHolder).setEpisode((EpisodeBaseModel) item);
     }
 
     @Override

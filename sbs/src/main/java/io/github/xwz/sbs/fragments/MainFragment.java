@@ -3,7 +3,7 @@ package io.github.xwz.sbs.fragments;
 import android.support.v17.leanback.widget.BrowseFrameLayout;
 import android.view.View;
 
-import io.github.xwz.base.content.IContentManager;
+import io.github.xwz.base.content.ContentManagerBase;
 import io.github.xwz.sbs.R;
 import io.github.xwz.sbs.activities.CategoryActivity;
 import io.github.xwz.sbs.activities.DetailsActivity;
@@ -14,7 +14,7 @@ import io.github.xwz.sbs.content.ContentManager;
 public class MainFragment extends io.github.xwz.base.fragments.MainFragment {
 
     @Override
-    protected IContentManager getContentManger() {
+    protected ContentManagerBase getContentManger() {
         return ContentManager.getInstance();
     }
 

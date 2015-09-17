@@ -10,10 +10,11 @@ import java.util.List;
 import java.util.Map;
 
 import io.github.xwz.base.ImmutableMap;
+import io.github.xwz.base.api.EpisodeBaseModel;
 import io.github.xwz.base.content.ContentManagerBase;
-import io.github.xwz.base.api.IEpisodeModel;
 import io.github.xwz.iview.api.AuthApi;
 import io.github.xwz.iview.api.EpisodeDetailsApi;
+import io.github.xwz.iview.api.EpisodeModel;
 import io.github.xwz.iview.api.TvShowListApi;
 
 public class ContentManager extends ContentManagerBase {
@@ -58,15 +59,16 @@ public class ContentManager extends ContentManagerBase {
     }
 
     @Override
-    public void fetchAuthToken(IEpisodeModel episode) {
-        cache().broadcastChange(CONTENT_AUTH_FETCHING, episode.getHref());
-        new AuthApi(getContext(), episode.getHref()).execute(episode.getStream());
+    public void fetchAuthToken(EpisodeBaseModel episode) {
+        EpisodeModel ep = (EpisodeModel)episode;
+        cache().broadcastChange(CONTENT_AUTH_FETCHING, ep.getHref());
+        new AuthApi(getContext(), episode.getHref()).execute(ep.getStream());
     }
 
     @Override
-    public void fetchEpisode(IEpisodeModel episode) {
+    public void fetchEpisode(EpisodeBaseModel episode) {
         broadcastChange(CONTENT_EPISODE_FETCHING, episode.getHref());
-        IEpisodeModel existing = getEpisode(episode.getHref());
+        EpisodeModel existing = (EpisodeModel)getEpisode(episode.getHref());
         if (existing != null && existing.hasExtras() && existing.hasOtherEpisodes()) {
             cache().broadcastChangeDelayed(100, CONTENT_EPISODE_DONE, episode.getHref(), null);
         } else {
@@ -75,14 +77,14 @@ public class ContentManager extends ContentManagerBase {
     }
 
     @Override
-    public LinkedHashMap<String, List<IEpisodeModel>> getAllShowsByCategories() {
-        List<IEpisodeModel> shows = getAllShows();
-        LinkedHashMap<String, List<IEpisodeModel>> all = new LinkedHashMap<>();
+    public LinkedHashMap<String, List<EpisodeBaseModel>> getAllShowsByCategories() {
+        List<EpisodeBaseModel> shows = getAllShows();
+        LinkedHashMap<String, List<EpisodeBaseModel>> all = new LinkedHashMap<>();
         all.putAll(cache().getCollections());
 
         for (Map.Entry<String, String> channel : CHANNELS.entrySet()) {
-            List<IEpisodeModel> episodes = new ArrayList<>();
-            for (IEpisodeModel show : shows) {
+            List<EpisodeBaseModel> episodes = new ArrayList<>();
+            for (EpisodeBaseModel show : shows) {
                 if (channel.getKey().equals(show.getChannel())) {
                     episodes.add(show);
                 }
@@ -90,8 +92,8 @@ public class ContentManager extends ContentManagerBase {
             all.put(channel.getValue(), episodes);
         }
         for (Map.Entry<String, String> cat : CATEGORIES.entrySet()) {
-            List<IEpisodeModel> episodes = new ArrayList<>();
-            for (IEpisodeModel show : shows) {
+            List<EpisodeBaseModel> episodes = new ArrayList<>();
+            for (EpisodeBaseModel show : shows) {
                 if (show.getCategories().contains(cat.getKey())) {
                     episodes.add(show);
                 }
@@ -102,8 +104,8 @@ public class ContentManager extends ContentManagerBase {
     }
 
     @Override
-    public List<IEpisodeModel> getRecommendations() {
-        List<IEpisodeModel> all = getAllShows();
+    public List<EpisodeBaseModel> getRecommendations() {
+        List<EpisodeBaseModel> all = getAllShows();
         if (all.size() > 40) {
             return getAllShows().subList(30, 32);
         }

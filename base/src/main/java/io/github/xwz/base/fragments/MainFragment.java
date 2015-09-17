@@ -34,8 +34,8 @@ import io.github.xwz.base.Utils;
 import io.github.xwz.base.adapters.BaseArrayAdapter;
 import io.github.xwz.base.adapters.CardSelector;
 import io.github.xwz.base.api.CategoryModel;
-import io.github.xwz.base.api.IEpisodeModel;
-import io.github.xwz.base.content.IContentManager;
+import io.github.xwz.base.api.EpisodeBaseModel;
+import io.github.xwz.base.content.ContentManagerBase;
 
 public abstract class MainFragment extends BrowseFragment {
 
@@ -49,17 +49,17 @@ public abstract class MainFragment extends BrowseFragment {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             Log.d(TAG, "Action: " + action);
-            if (IContentManager.CONTENT_SHOW_LIST_DONE.equals(action)) {
+            if (ContentManagerBase.CONTENT_SHOW_LIST_DONE.equals(action)) {
                 updateAdapter();
                 getContentManger().updateRecommendations(getActivity());
-            } else if (IContentManager.CONTENT_SHOW_LIST_PROGRESS.equals(action)) {
-                String msg = intent.getStringExtra(IContentManager.CONTENT_TAG);
+            } else if (ContentManagerBase.CONTENT_SHOW_LIST_PROGRESS.equals(action)) {
+                String msg = intent.getStringExtra(ContentManagerBase.CONTENT_TAG);
                 updateProgress(msg);
             }
         }
     };
 
-    protected abstract IContentManager getContentManger();
+    protected abstract ContentManagerBase getContentManger();
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -130,11 +130,11 @@ public abstract class MainFragment extends BrowseFragment {
             public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
                 if (item instanceof CategoryModel) {
                     Intent intent = new Intent(getActivity(), getCategoryActivityClass());
-                    intent.putExtra(IContentManager.CONTENT_ID, ((CategoryModel) item).getTitle());
+                    intent.putExtra(ContentManagerBase.CONTENT_ID, ((CategoryModel) item).getTitle());
                     startActivity(intent);
-                } else if (item instanceof IEpisodeModel) {
+                } else if (item instanceof EpisodeBaseModel) {
                     Intent intent = new Intent(getActivity(), getDetailsActivityClass());
-                    intent.putExtra(IContentManager.CONTENT_ID, (IEpisodeModel) item);
+                    intent.putExtra(ContentManagerBase.CONTENT_ID, (EpisodeBaseModel) item);
                     startActivity(intent);
                 }
             }
@@ -148,13 +148,13 @@ public abstract class MainFragment extends BrowseFragment {
     protected abstract Class<?> getCategoryActivityClass();
 
     private void updateRows(ArrayObjectAdapter adapter) {
-        LinkedHashMap<String, List<IEpisodeModel>> all = getContentManger().getAllShowsByCategories();
+        LinkedHashMap<String, List<EpisodeBaseModel>> all = getContentManger().getAllShowsByCategories();
         int currentRows = adapter.size();
         int newRows = all.size();
         List<String> categories = new ArrayList<>(all.keySet());
         for (int i = 0; i < newRows; i++) {
             String category = categories.get(i);
-            List<IEpisodeModel> episodes = new ArrayList<>(all.get(category));
+            List<EpisodeBaseModel> episodes = new ArrayList<>(all.get(category));
             if (SHOW_CATEGORY_COUNT > 0 && episodes.size() > SHOW_CATEGORY_COUNT) {
                 CategoryModel collection = new CategoryModel(category);
                 collection.setEpisodeCount(episodes.size());
@@ -162,11 +162,11 @@ public abstract class MainFragment extends BrowseFragment {
             }
             if (i < currentRows) { // update row
                 ListRow row = (ListRow) adapter.get(i);
-                row.setHeaderItem(new HeaderItem(category));
-                BaseArrayAdapter<IEpisodeModel> items = (BaseArrayAdapter<IEpisodeModel>) row.getAdapter();
+                row.setHeaderItem(new HeaderItem(Utils.stripCategory(category)));
+                BaseArrayAdapter<EpisodeBaseModel> items = (BaseArrayAdapter<EpisodeBaseModel>) row.getAdapter();
                 items.replaceItems(episodes);
             } else { // add
-                BaseArrayAdapter<IEpisodeModel> items = new BaseArrayAdapter<>(new CardSelector());
+                BaseArrayAdapter<EpisodeBaseModel> items = new BaseArrayAdapter<>(new CardSelector());
                 items.addAll(0, episodes);
                 HeaderItem header = new HeaderItem(Utils.stripCategory(category));
                 ListRow row = new ListRow(header, items);
@@ -207,10 +207,10 @@ public abstract class MainFragment extends BrowseFragment {
     private void registerReceiver() {
         Log.i(TAG, "Register receiver");
         IntentFilter filter = new IntentFilter();
-        filter.addAction(IContentManager.CONTENT_SHOW_LIST_START);
-        filter.addAction(IContentManager.CONTENT_SHOW_LIST_DONE);
-        filter.addAction(IContentManager.CONTENT_SHOW_LIST_ERROR);
-        filter.addAction(IContentManager.CONTENT_SHOW_LIST_PROGRESS);
+        filter.addAction(ContentManagerBase.CONTENT_SHOW_LIST_START);
+        filter.addAction(ContentManagerBase.CONTENT_SHOW_LIST_DONE);
+        filter.addAction(ContentManagerBase.CONTENT_SHOW_LIST_ERROR);
+        filter.addAction(ContentManagerBase.CONTENT_SHOW_LIST_PROGRESS);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
     }
 }

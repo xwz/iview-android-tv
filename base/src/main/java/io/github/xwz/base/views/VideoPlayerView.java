@@ -27,9 +27,9 @@ import com.google.android.exoplayer.util.Util;
 import java.util.Arrays;
 import java.util.List;
 
+import io.github.xwz.base.api.EpisodeBaseModel;
 import io.github.xwz.base.player.VideoPlayer;
 import io.github.xwz.base.R;
-import io.github.xwz.base.api.IEpisodeModel;
 
 public class VideoPlayerView {
     private static final String TAG = "VideoPlayerView";
@@ -149,7 +149,7 @@ public class VideoPlayerView {
         }
     }
 
-    public void setEpisode(IEpisodeModel episode) {
+    public void setEpisode(EpisodeBaseModel episode) {
         episodeTitle.setText(episode.getTitle());
         seriesTitle.setText(episode.getSeriesTitle());
         duration.setText(episode.getDurationText());
@@ -275,7 +275,7 @@ public class VideoPlayerView {
         }, 3000);
     }
 
-    public void suggestNextEpisode(IEpisodeModel episode) {
+    public void suggestNextEpisode(EpisodeBaseModel episode) {
         nextEpisode.setEpisode(episode);
         nextEpisodeCard.setVisibility(View.VISIBLE);
     }

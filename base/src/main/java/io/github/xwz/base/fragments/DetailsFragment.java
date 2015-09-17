@@ -30,8 +30,8 @@ import java.util.Map;
 import io.github.xwz.base.R;
 import io.github.xwz.base.Utils;
 import io.github.xwz.base.adapters.CardSelector;
-import io.github.xwz.base.api.IEpisodeModel;
-import io.github.xwz.base.content.IContentManager;
+import io.github.xwz.base.api.EpisodeBaseModel;
+import io.github.xwz.base.content.ContentManagerBase;
 import io.github.xwz.base.views.EpisodeDetailsView;
 
 public abstract class DetailsFragment extends android.support.v17.leanback.app.RowsFragment {
@@ -39,8 +39,8 @@ public abstract class DetailsFragment extends android.support.v17.leanback.app.R
     private static final String TAG = "DetailsFragment";
     private EpisodeDetailsView mDetailView;
     private int mHeaderHeight;
-    private IEpisodeModel mCurrentEpisode;
-    private IEpisodeModel mLoadedEpisode;
+    private EpisodeBaseModel mCurrentEpisode;
+    private EpisodeBaseModel mLoadedEpisode;
     private ArrayObjectAdapter otherEpisodes;
     private boolean loadedOtherEpisodes = false;
     private List<String> mOtherEpisodeUrls = new ArrayList<>();
@@ -49,11 +49,11 @@ public abstract class DetailsFragment extends android.support.v17.leanback.app.R
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            Log.d(TAG, "Action: " + action + ", tag: " + intent.getStringExtra(IContentManager.CONTENT_TAG));
-            if (IContentManager.CONTENT_EPISODE_DONE.equals(action)) {
+            Log.d(TAG, "Action: " + action + ", tag: " + intent.getStringExtra(ContentManagerBase.CONTENT_TAG));
+            if (ContentManagerBase.CONTENT_EPISODE_DONE.equals(action)) {
                 updateEpisodeData(intent);
             }
-            if (IContentManager.CONTENT_EPISODE_ERROR.equals(action)) {
+            if (ContentManagerBase.CONTENT_EPISODE_ERROR.equals(action)) {
                 Utils.showToast(getActivity(), "Unable to find episode details.");
             }
         }
@@ -63,12 +63,12 @@ public abstract class DetailsFragment extends android.support.v17.leanback.app.R
         return mOtherEpisodeUrls;
     }
 
-    protected abstract IContentManager getContentManger();
+    protected abstract ContentManagerBase getContentManger();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        IEpisodeModel episode = (IEpisodeModel) getActivity().getIntent().getSerializableExtra(IContentManager.CONTENT_ID);
+        EpisodeBaseModel episode = (EpisodeBaseModel) getActivity().getIntent().getSerializableExtra(ContentManagerBase.CONTENT_ID);
         if (episode == null) {
             episode = getEpisodeFromGlobalSearchIntent();
         }
@@ -79,7 +79,7 @@ public abstract class DetailsFragment extends android.support.v17.leanback.app.R
         }
     }
 
-    private void setupEpisode(IEpisodeModel episode) {
+    private void setupEpisode(EpisodeBaseModel episode) {
         mLoadedEpisode = episode;
         setCurrentEpisode(episode);
 
@@ -90,14 +90,14 @@ public abstract class DetailsFragment extends android.support.v17.leanback.app.R
         setupListeners();
     }
 
-    private IEpisodeModel getEpisodeFromGlobalSearchIntent() {
+    private EpisodeBaseModel getEpisodeFromGlobalSearchIntent() {
         Intent intent = getActivity().getIntent();
         String action = intent.getAction();
-        if (IContentManager.GLOBAL_SEARCH_INTENT.equals(action)) {
+        if (ContentManagerBase.GLOBAL_SEARCH_INTENT.equals(action)) {
             Log.d(TAG, "getEpisodeFromGlobalSearchIntent");
             Bundle data = intent.getExtras();
             if (data != null) {
-                String href = data.getString(IContentManager.KEY_EXTRA_NAME);
+                String href = data.getString(ContentManagerBase.KEY_EXTRA_NAME);
                 Log.d(TAG, "Search result: " + href);
                 return getContentManger().getEpisode(href);
             }
@@ -111,7 +111,7 @@ public abstract class DetailsFragment extends android.support.v17.leanback.app.R
         setOnItemViewSelectedListener(getItemSelectedListener());
     }
 
-    private void setupAdapter(IEpisodeModel episode) {
+    private void setupAdapter(EpisodeBaseModel episode) {
         ArrayObjectAdapter adapter = new ArrayObjectAdapter(new ListRowPresenter());
         otherEpisodes = new ArrayObjectAdapter(new CardSelector());
         otherEpisodes.add(0, episode);
@@ -119,7 +119,7 @@ public abstract class DetailsFragment extends android.support.v17.leanback.app.R
         setAdapter(adapter);
     }
 
-    private void setCurrentEpisode(IEpisodeModel episode) {
+    private void setCurrentEpisode(EpisodeBaseModel episode) {
         Log.d(TAG, "Showing details: " + episode);
         if (!episode.equals(mCurrentEpisode)) {
             mCurrentEpisode = episode;
@@ -131,8 +131,8 @@ public abstract class DetailsFragment extends android.support.v17.leanback.app.R
     }
 
     private void updateEpisodeData(Intent intent) {
-        String href = intent.getStringExtra(IContentManager.CONTENT_TAG);
-        IEpisodeModel ep = getContentManger().getEpisode(href);
+        String href = intent.getStringExtra(ContentManagerBase.CONTENT_TAG);
+        EpisodeBaseModel ep = getContentManger().getEpisode(href);
         if (ep != null) {
             if (ep.equals(mCurrentEpisode)) {
                 mCurrentEpisode.merge(ep);
@@ -141,19 +141,19 @@ public abstract class DetailsFragment extends android.support.v17.leanback.app.R
             if (ep.equals(mLoadedEpisode) && !loadedOtherEpisodes) {
                 updateRelatedEpisodes(ep.getOtherEpisodes());
                 loadedOtherEpisodes = true;
-                mOtherEpisodeUrls = mLoadedEpisode.getOtherEpisodeUrls(IContentManager.OTHER_EPISODES);
+                mOtherEpisodeUrls = mLoadedEpisode.getOtherEpisodeUrls(ContentManagerBase.OTHER_EPISODES);
                 Log.d(TAG, "Other episodes:" + mOtherEpisodeUrls);
             }
         }
     }
 
-    private void updateRelatedEpisodes(Map<String, List<IEpisodeModel>> others) {
+    private void updateRelatedEpisodes(Map<String, List<EpisodeBaseModel>> others) {
         boolean updated = false;
         ArrayObjectAdapter adapter = (ArrayObjectAdapter) getAdapter();
-        for (Map.Entry<String, List<IEpisodeModel>> list : others.entrySet()) {
+        for (Map.Entry<String, List<EpisodeBaseModel>> list : others.entrySet()) {
             String title = list.getKey();
             Log.d(TAG, "More: " + title);
-            if (IContentManager.OTHER_EPISODES.equals(title)) {
+            if (ContentManagerBase.OTHER_EPISODES.equals(title)) {
                 otherEpisodes.addAll(otherEpisodes.size(), list.getValue());
             } else {
                 ArrayObjectAdapter more = new ArrayObjectAdapter(new CardSelector());
@@ -239,12 +239,12 @@ public abstract class DetailsFragment extends android.support.v17.leanback.app.R
             @Override
             public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
                 Log.d(TAG, "Clicked item:" + item);
-                if (item instanceof IEpisodeModel) {
-                    IEpisodeModel ep = (IEpisodeModel) item;
+                if (item instanceof EpisodeBaseModel) {
+                    EpisodeBaseModel ep = (EpisodeBaseModel) item;
                     Intent intent = new Intent(getActivity(), getPlayerActivityClass());
-                    intent.putExtra(IContentManager.CONTENT_ID, ep);
+                    intent.putExtra(ContentManagerBase.CONTENT_ID, ep);
                     String[] others = getOtherEpisodeUrls().toArray(new String[getOtherEpisodeUrls().size()]);
-                    intent.putExtra(IContentManager.OTHER_EPISODES, others);
+                    intent.putExtra(ContentManagerBase.OTHER_EPISODES, others);
                     startActivity(intent);
                 }
             }
@@ -256,8 +256,8 @@ public abstract class DetailsFragment extends android.support.v17.leanback.app.R
             @Override
             public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
                 Log.d(TAG, "Selected item:" + item);
-                if (item instanceof IEpisodeModel) {
-                    setCurrentEpisode((IEpisodeModel) item);
+                if (item instanceof EpisodeBaseModel) {
+                    setCurrentEpisode((EpisodeBaseModel) item);
                 }
             }
         };
@@ -277,9 +277,9 @@ public abstract class DetailsFragment extends android.support.v17.leanback.app.R
     private void registerReceiver() {
         Log.i(TAG, "Register receiver");
         IntentFilter filter = new IntentFilter();
-        filter.addAction(IContentManager.CONTENT_EPISODE_START);
-        filter.addAction(IContentManager.CONTENT_EPISODE_DONE);
-        filter.addAction(IContentManager.CONTENT_EPISODE_ERROR);
+        filter.addAction(ContentManagerBase.CONTENT_EPISODE_START);
+        filter.addAction(ContentManagerBase.CONTENT_EPISODE_DONE);
+        filter.addAction(ContentManagerBase.CONTENT_EPISODE_ERROR);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
     }
 }

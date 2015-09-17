@@ -15,11 +15,10 @@ import android.view.View;
 import java.util.List;
 
 import io.github.xwz.base.Utils;
-import io.github.xwz.base.adapters.CardSelector;
 import io.github.xwz.base.adapters.EpisodePresenter;
 import io.github.xwz.base.adapters.FilmPresenter;
-import io.github.xwz.base.api.IEpisodeModel;
-import io.github.xwz.base.content.IContentManager;
+import io.github.xwz.base.api.EpisodeBaseModel;
+import io.github.xwz.base.content.ContentManagerBase;
 
 public abstract class CategoryFragment extends VerticalGridFragment {
     private static final String TAG = "CategoryFragment";
@@ -33,7 +32,7 @@ public abstract class CategoryFragment extends VerticalGridFragment {
     public void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
-        category = getActivity().getIntent().getStringExtra(IContentManager.CONTENT_ID);
+        category = getActivity().getIntent().getStringExtra(ContentManagerBase.CONTENT_ID);
         isFilm = category.contains("Film/") || category.equals("Film");
         setupFragment();
         setupListeners();
@@ -49,7 +48,7 @@ public abstract class CategoryFragment extends VerticalGridFragment {
         setGridPresenter(gridPresenter);
         setTitle(Utils.stripCategory(category));
 
-        List<IEpisodeModel> all = getContentManger().getAllShowsByCategory(category);
+        List<EpisodeBaseModel> all = getContentManger().getAllShowsByCategory(category);
         ArrayObjectAdapter adapter;
         if (isFilm) {
            adapter = new ArrayObjectAdapter(new FilmPresenter(true));
@@ -80,16 +79,16 @@ public abstract class CategoryFragment extends VerticalGridFragment {
         return new OnItemViewClickedListener() {
             @Override
             public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
-                if (item instanceof IEpisodeModel) {
+                if (item instanceof EpisodeBaseModel) {
                     Intent intent = new Intent(getActivity(), getDetailsActivityClass());
-                    intent.putExtra(IContentManager.CONTENT_ID, (IEpisodeModel) item);
+                    intent.putExtra(ContentManagerBase.CONTENT_ID, (EpisodeBaseModel) item);
                     startActivity(intent);
                 }
             }
         };
     }
 
-    protected abstract IContentManager getContentManger();
+    protected abstract ContentManagerBase getContentManger();
 
     protected abstract Class<?> getSearchActivityClass();
 

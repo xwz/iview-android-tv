@@ -7,15 +7,20 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import io.github.xwz.base.Utils;
 import io.github.xwz.base.content.ContentDatabase;
 
 @Table(databaseName = ContentDatabase.NAME)
-public class EpisodeBaseModel extends BaseModel {
+public class EpisodeBaseModel extends BaseModel implements Serializable {
 
     @Column
     @PrimaryKey
@@ -59,6 +64,11 @@ public class EpisodeBaseModel extends BaseModel {
     @Column
     private boolean isFilm = false;
 
+    @Column
+    private String related;
+
+    private Map<String, List<EpisodeBaseModel>> others = new HashMap<>();
+
     public List<String> getCategories() {
         return new ArrayList<>(categories);
     }
@@ -78,9 +88,105 @@ public class EpisodeBaseModel extends BaseModel {
         super.update();
     }
 
+    public void addCategory(String cat) {
+        categories.add(cat);
+    }
+
+    public void setCategories(List<String> cats) {
+        categories = new HashSet<>(cats);
+    }
+
     private void updateCategoriesSerialized() {
         Gson gson = new GsonBuilder().create();
         categoriesSerialized = gson.toJson(categories);
+    }
+
+    public String getDurationText() {
+        if (getRating() != null) {
+            return getRating() + ", " + Utils.formatMillis(getDuration() * 1000);
+        } else {
+            return Utils.formatMillis(getDuration() * 1000);
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof EpisodeBaseModel))
+            return false;
+        EpisodeBaseModel other = (EpisodeBaseModel) o;
+        return other.getHref().equals(this.getHref());
+    }
+
+    public void merge(EpisodeBaseModel ep) {
+        this.href = ep.href == null ? this.href : ep.href;
+        this.seriesTitle = ep.seriesTitle == null ? this.seriesTitle : ep.seriesTitle;
+        this.channel = ep.channel == null ? this.channel : ep.channel;
+        this.thumbnail = ep.thumbnail == null ? this.thumbnail : ep.thumbnail;
+        this.episodeHouseNumber = ep.episodeHouseNumber == null ? this.episodeHouseNumber : ep.episodeHouseNumber;
+        this.categories.addAll(ep.categories);
+        this.title = ep.title == null ? this.title : ep.title;
+        this.duration = ep.duration;
+        this.rating = ep.rating == null ? this.rating : ep.rating;
+        this.episodeCount = ep.episodeCount;
+        this.description = ep.description == null ? this.description : ep.description;
+        this.cover = ep.cover == null ? this.cover : ep.cover;
+        this.isFilm = ep.isFilm;
+        this.others = ep.others.size() == 0 ? this.others : new LinkedHashMap<>(ep.others);
+        this.related = ep.related == null ? this.related : ep.related;
+    }
+
+    protected boolean hasOther(String key) {
+        return others.containsKey(key);
+    }
+
+    public void setOtherEpisodes(Map<String, List<EpisodeBaseModel>> more) {
+        others = more;
+    }
+
+    public void setOtherEpisodes(String key, List<EpisodeBaseModel> more) {
+        others.put(key, more);
+    }
+
+    public Map<String, List<EpisodeBaseModel>> getOtherEpisodes() {
+        return new LinkedHashMap<>(others);
+    }
+
+    private List<EpisodeBaseModel> getOtherEpisodes(String cat) {
+        for (Map.Entry<String, List<EpisodeBaseModel>> episodes : getOtherEpisodes().entrySet()) {
+            if (episodes.getKey().equals(cat)) {
+                return episodes.getValue();
+            }
+        }
+        return new ArrayList<>();
+    }
+
+    public List<String> getOtherEpisodeUrls(String cat) {
+        List<String> urls = new ArrayList<>();
+        for (EpisodeBaseModel ep : getOtherEpisodes(cat)) {
+            urls.add(ep.getHref());
+        }
+        return urls;
+    }
+
+    public boolean hasOtherEpisodes() {
+        return others.size() > 0;
+    }
+
+    public boolean matches(String query) {
+        boolean found = false;
+        if (getSeriesTitle() != null) {
+            found = found || getSeriesTitle().toLowerCase().contains(query);
+        }
+        if (getTitle() != null) {
+            found = found || getTitle().toLowerCase().contains(query);
+        }
+        return found;
+    }
+
+    public boolean hasCover() {
+        return getIsFilm() && getCover() != null && getCover().length() > 0;
     }
 
     public String getSeriesTitle() {
@@ -177,5 +283,17 @@ public class EpisodeBaseModel extends BaseModel {
 
     public void setIsFilm(boolean film) {
         this.isFilm = film;
+    }
+
+    public String getRelated() {
+        return related;
+    }
+
+    public void setRelated(String related) {
+        this.related = related;
+    }
+
+    public String toString() {
+        return getHref() + ": '" + getSeriesTitle() + "' - '" + getTitle() + "'";
     }
 }
