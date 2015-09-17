@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import io.github.xwz.base.R;
+import io.github.xwz.base.Utils;
 import io.github.xwz.base.api.IEpisodeModel;
 
 public class CategoryCardView extends Presenter.ViewHolder {
@@ -28,7 +29,7 @@ public class CategoryCardView extends Presenter.ViewHolder {
     }
 
     private View loadCategoryView(Context context, ViewGroup parent) {
-        Point size = new Point(mContext.getResources().getDimensionPixelSize(R.dimen.card_width),
+        Point size = new Point(mContext.getResources().getDimensionPixelSize(R.dimen.poster_width),
                 mContext.getResources().getDimensionPixelSize(R.dimen.card_height));
         int infoHeight = context.getResources().getDimensionPixelSize(R.dimen.lb_basic_card_info_height);
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -43,12 +44,7 @@ public class CategoryCardView extends Presenter.ViewHolder {
     }
 
     public void setEpisode(IEpisodeModel ep) {
-        String[] parts = ep.getTitle().split("/");
-        if (parts.length > 1) {
-            title.setText(parts[1]);
-        } else {
-            title.setText(ep.getTitle());
-        }
+        title.setText(Utils.stripCategory(ep.getTitle()));
         badge.setText("" + ep.getEpisodeCount());
     }
 }

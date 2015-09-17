@@ -246,6 +246,9 @@ abstract class SBSApiBase extends HttpApiBase {
         @SerializedName("media$ratings")
         private List<Rating> ratings;
 
+        @SerializedName("pl1$collections")
+        private List<String> collections;
+
         public String toString() {
             return id + " : " + title + " : " + series;
         }
@@ -284,15 +287,24 @@ abstract class SBSApiBase extends HttpApiBase {
 
         public List<String> getCategories() {
             List<String> cats = new ArrayList<>();
+            boolean isFilm = false;
             if (categories != null) {
                 for (Category c : categories) {
                     String scheme = c.getScheme();
                     if ("Channel".equals(scheme) || "Genre".equals(scheme) || "Film".equals(scheme)) {
                         String name = c.getName();
+                        if ("Film".equals(scheme)) {
+                            isFilm = true;
+                        }
                         if (name != null && !scheme.equals(name)) {
-                            cats.add(scheme + "/" + name);
+                            cats.add(scheme + "/" + name.trim());
                         }
                     }
+                }
+            }
+            if (collections != null && isFilm) {
+                for (String collection : collections) {
+                    cats.add("Film/" + collection.trim());
                 }
             }
             return cats;

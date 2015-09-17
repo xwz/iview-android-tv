@@ -14,6 +14,7 @@ import android.view.View;
 
 import java.util.List;
 
+import io.github.xwz.base.Utils;
 import io.github.xwz.base.adapters.CardSelector;
 import io.github.xwz.base.adapters.EpisodePresenter;
 import io.github.xwz.base.adapters.FilmPresenter;
@@ -36,13 +37,17 @@ public abstract class CategoryFragment extends VerticalGridFragment {
         isFilm = category.contains("Film/") || category.equals("Film");
         setupFragment();
         setupListeners();
+        setupHeader();
+    }
+
+    protected void setupHeader() {
     }
 
     private void setupFragment() {
         VerticalGridPresenter gridPresenter = new VerticalGridPresenter();
         gridPresenter.setNumberOfColumns(isFilm ? FILM_COLUMNS : SHOW_COLUMNS);
         setGridPresenter(gridPresenter);
-        setTitle(category);
+        setTitle(Utils.stripCategory(category));
 
         List<IEpisodeModel> all = getContentManger().getAllShowsByCategory(category);
         ArrayObjectAdapter adapter;

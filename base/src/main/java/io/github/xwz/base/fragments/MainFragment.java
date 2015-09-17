@@ -30,6 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import io.github.xwz.base.R;
+import io.github.xwz.base.Utils;
 import io.github.xwz.base.adapters.BaseArrayAdapter;
 import io.github.xwz.base.adapters.CardSelector;
 import io.github.xwz.base.api.CategoryModel;
@@ -41,7 +42,7 @@ public abstract class MainFragment extends BrowseFragment {
     private static final String TAG = "MainFragment";
     private ProgressBar progress;
     private TextView progressText;
-    private static final int SHOW_CATEGORY_COUNT = 20;
+    private static final int SHOW_CATEGORY_COUNT = 30;
 
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -167,7 +168,7 @@ public abstract class MainFragment extends BrowseFragment {
             } else { // add
                 BaseArrayAdapter<IEpisodeModel> items = new BaseArrayAdapter<>(new CardSelector());
                 items.addAll(0, episodes);
-                HeaderItem header = new HeaderItem(category);
+                HeaderItem header = new HeaderItem(Utils.stripCategory(category));
                 ListRow row = new ListRow(header, items);
                 adapter.add(row);
             }

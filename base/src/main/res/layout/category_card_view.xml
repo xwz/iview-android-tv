@@ -8,7 +8,7 @@
 
     <TextView
         android:id="@+id/title_badge"
-        android:textSize="@dimen/fontExtraLarge"
+        android:textSize="@dimen/fontLarge"
         tools:text="See all 700"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,7 +19,7 @@
         android:id="@+id/title"
         tools:text="Web Exclusive Drama and Stuff"
         android:textColor="@color/lb_basic_card_title_text_color"
-        android:textSize="@dimen/fontHuge"
+        android:textSize="@dimen/fontExtraLarge"
         android:gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

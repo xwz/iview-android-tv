@@ -71,4 +71,13 @@ public class Utils {
         }
         return result;
     }
+
+    public static String stripCategory(String str) {
+        String[] parts = str.split("/");
+        if (parts.length > 1) {
+            return parts[1];
+        } else {
+            return str;
+        }
+    }
 }
