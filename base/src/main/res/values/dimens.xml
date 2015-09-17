@@ -20,7 +20,7 @@
     <dimen name="card_width">208dp</dimen>
     <dimen name="card_height">117dp</dimen>
     <dimen name="poster_height">169dp</dimen>
-    <dimen name="poster_width">113dp</dimen>
+    <dimen name="poster_width">125dp</dimen>
 
     <dimen name="episode_detail_padding_top">@dimen/marginBaseQuintuple</dimen>
     <dimen name="episode_detail_padding_left">300dp</dimen>
