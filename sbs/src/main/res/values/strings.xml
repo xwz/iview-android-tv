@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">SBS</string>
     <string name="settings_description">SBS Videos</string>
+    <string name="search_label">@string/app_name</string>
+    <string name="search_hint">Search for videos</string>
 </resources>

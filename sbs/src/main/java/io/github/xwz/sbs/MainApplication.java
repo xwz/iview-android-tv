@@ -2,6 +2,8 @@ package io.github.xwz.sbs;
 
 import android.app.Application;
 
+import com.raizlabs.android.dbflow.config.FlowManager;
+
 import io.github.xwz.base.IApplication;
 import io.github.xwz.sbs.content.ContentManager;
 
@@ -12,6 +14,7 @@ public class MainApplication extends Application implements IApplication {
     public void onCreate() {
         super.onCreate();
         new ContentManager(this).fetchShowList(true);
+        FlowManager.init(this);
     }
 
     @Override
