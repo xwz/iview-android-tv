@@ -64,7 +64,7 @@ public class CategoryModel implements IEpisodeModel {
 
     @Override
     public String toString() {
-        return category;
+        return "Category: " + category;
     }
 
     @Override

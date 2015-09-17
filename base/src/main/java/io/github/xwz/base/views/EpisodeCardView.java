@@ -17,12 +17,14 @@ public class EpisodeCardView extends Presenter.ViewHolder {
     private final ImageCardView card;
     private final Context mContext;
     private final Point size;
+    private boolean canShowCover;
 
-    public EpisodeCardView(Context context, ImageCardView view, Point s) {
+    public EpisodeCardView(Context context, ImageCardView view, Point s, boolean showCover) {
         super(view);
         mContext = context;
         card = view;
         size = s;
+        canShowCover = showCover;
     }
 
     public void setEpisode(IEpisodeModel ep) {
@@ -45,7 +47,7 @@ public class EpisodeCardView extends Presenter.ViewHolder {
             card.setBadgeImage(null);
         }
         String image = ep.getThumbnail();
-        if (ep.hasCover()) {
+        if (canShowCover && ep.hasCover()) {
             image = ep.getCover();
         }
         Picasso.with(mContext)

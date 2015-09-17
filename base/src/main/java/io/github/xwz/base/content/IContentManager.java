@@ -54,6 +54,7 @@ public interface IContentManager {
     String KEY_EXTRA_NAME = SearchManager.EXTRA_DATA_KEY;
 
     LinkedHashMap<String, List<IEpisodeModel>> getAllShowsByCategories();
+    List<IEpisodeModel> getAllShowsByCategory(String cat);
     void fetchShowList(boolean force);
     IEpisodeModel getEpisode(String href);
     void fetchEpisode(IEpisodeModel episode);

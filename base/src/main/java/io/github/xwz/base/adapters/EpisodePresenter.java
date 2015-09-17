@@ -18,7 +18,7 @@ public class EpisodePresenter extends Presenter {
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
         Context context = parent.getContext();
-        return new EpisodeCardView(context, getCardView(context), getCardSize(context));
+        return new EpisodeCardView(context, getCardView(context), getCardSize(context), false);
     }
 
     protected Point getCardSize(Context context) {

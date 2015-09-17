@@ -94,7 +94,7 @@ public class VideoPlayerView {
         card.setExtraVisibility(View.VISIBLE);
         Point size = new Point(context.getResources().getDimensionPixelSize(R.dimen.card_width),
                 context.getResources().getDimensionPixelSize(R.dimen.card_height));
-        nextEpisode = new EpisodeCardView(context, card, size);
+        nextEpisode = new EpisodeCardView(context, card, size, false);
         nextEpisode.getImageCardView().setCardType(BaseCardView.CARD_TYPE_INFO_OVER);
 
         debugView.setVisibility(View.GONE);

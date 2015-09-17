@@ -27,6 +27,7 @@
         </activity>
 
         <activity android:name="io.github.xwz.sbs.activities.SearchActivity"/>
+        <activity android:name="io.github.xwz.sbs.activities.CategoryActivity"/>
 
         <activity android:name="io.github.xwz.sbs.activities.DetailsActivity">
             <intent-filter>

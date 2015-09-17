@@ -123,6 +123,14 @@ public abstract class ContentManagerBase implements IContentManager {
         return mCache.getAllShows();
     }
 
+    public List<IEpisodeModel> getAllShowsByCategory(String cat) {
+        List<IEpisodeModel> all = getAllShowsByCategories().get(cat);
+        if (all == null) {
+            all = new ArrayList<>();
+        }
+        return all;
+    }
+
     public IEpisodeModel getEpisode(String href) {
         return mCache.getEpisode(href);
     }

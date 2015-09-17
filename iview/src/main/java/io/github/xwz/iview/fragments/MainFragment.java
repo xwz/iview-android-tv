@@ -4,6 +4,7 @@ import android.support.v17.leanback.widget.BrowseFrameLayout;
 import android.view.View;
 
 import io.github.xwz.iview.R;
+import io.github.xwz.iview.activities.CategoryActivity;
 import io.github.xwz.iview.activities.DetailsActivity;
 import io.github.xwz.iview.activities.SearchActivity;
 import io.github.xwz.iview.content.ContentManager;
@@ -39,6 +40,6 @@ public class MainFragment extends io.github.xwz.base.fragments.MainFragment {
 
     @Override
     protected Class<?> getCategoryActivityClass() {
-        return null;
+        return CategoryActivity.class;
     }
 }
