@@ -22,6 +22,9 @@
     <dimen name="poster_height">169dp</dimen>
     <dimen name="poster_width">125dp</dimen>
 
+    <dimen name="poster_height_large">210dp</dimen>
+    <dimen name="poster_width_large">140dp</dimen>
+
     <dimen name="episode_detail_padding_top">@dimen/marginBaseQuintuple</dimen>
     <dimen name="episode_detail_padding_left">300dp</dimen>
     <dimen name="episode_detail_padding_bottom">@dimen/lb_browse_padding_start</dimen>

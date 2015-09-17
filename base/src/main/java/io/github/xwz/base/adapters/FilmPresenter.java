@@ -14,14 +14,14 @@ import io.github.xwz.base.views.EpisodeCardView;
 
 public class FilmPresenter extends EpisodePresenter {
 
-    private boolean showDetails = false;
+    private boolean large = false;
 
     public FilmPresenter() {
 
     }
 
     public FilmPresenter(boolean details) {
-        showDetails = details;
+        large = details;
     }
 
     @Override
@@ -32,8 +32,13 @@ public class FilmPresenter extends EpisodePresenter {
 
     @Override
     protected Point getCardSize(Context context) {
-        return new Point(context.getResources().getDimensionPixelSize(R.dimen.poster_width),
-                context.getResources().getDimensionPixelSize(R.dimen.poster_height));
+        if (large) {
+            return new Point(context.getResources().getDimensionPixelSize(R.dimen.poster_width_large),
+                    context.getResources().getDimensionPixelSize(R.dimen.poster_height_large));
+        } else {
+            return new Point(context.getResources().getDimensionPixelSize(R.dimen.poster_width),
+                    context.getResources().getDimensionPixelSize(R.dimen.poster_height));
+        }
     }
 
     @Override
