@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.github.xwz.base.ImmutableMap;
+import io.github.xwz.base.Utils;
 import io.github.xwz.base.api.IEpisodeModel;
 import io.github.xwz.base.content.IContentManager;
 import io.github.xwz.sbs.content.ContentManager;
@@ -77,7 +78,7 @@ public class SBSApi extends SBSApiBase {
         }
 
         for (Map.Entry<String, Uri> entry : getFeaturedUrls().entrySet()) {
-            updateProgress();
+            updateProgress("Loading " + Utils.stripCategory(entry.getKey()) + "...");
             List<IEpisodeModel> features = fetchContent(entry.getValue(), CACHE_EXPIRY);
             collections.put(entry.getKey(), features);
         }
@@ -109,7 +110,11 @@ public class SBSApi extends SBSApiBase {
     }
 
     private void updateProgress() {
-        ContentManager.getInstance().broadcastChange(ContentManager.CONTENT_SHOW_LIST_PROGRESS, PROGRESS[progress++ % PROGRESS.length]);
+        updateProgress(PROGRESS[progress++ % PROGRESS.length]);
+    }
+
+    private void updateProgress(String str) {
+        ContentManager.getInstance().broadcastChange(ContentManager.CONTENT_SHOW_LIST_PROGRESS, str);
     }
 
     protected Map<String, Uri> getFeaturedUrls() {
@@ -118,7 +123,7 @@ public class SBSApi extends SBSApiBase {
                 "AAA2/What you missed last night", getLastNightUrl(),
                 "AAA3/Trending now", getTrendingUrl(),
                 "AAA4/Popular movies", getPopularFilms()
-                );
+        );
     }
 
     protected void onPreExecute() {
