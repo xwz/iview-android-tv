@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import io.github.xwz.base.IApplication;
 import io.github.xwz.base.R;
@@ -81,9 +81,9 @@ public class EpisodeCardView extends Presenter.ViewHolder {
         if (canShowCover && ep.hasCover()) {
             image = ep.getCover();
         }
-        Picasso.with(mContext)
+        Glide.with(mContext)
                 .load(image)
-                .resize(size.x, size.y)
+                .override(size.x, size.y)
                 .into(card.getMainImageView());
     }
 

@@ -20,14 +20,16 @@ import android.view.View;
 import android.widget.MediaController;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.exoplayer.ExoPlayer;
 import com.google.android.exoplayer.audio.AudioCapabilities;
 import com.google.android.exoplayer.audio.AudioCapabilitiesReceiver;
 import com.google.android.exoplayer.drm.UnsupportedDrmException;
 import com.google.android.exoplayer.text.Cue;
 import com.google.android.exoplayer.util.Util;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -310,19 +312,11 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
         Point size = new Point(getResources().getDimensionPixelSize(R.dimen.card_width),
                 getResources().getDimensionPixelSize(R.dimen.card_height));
 
-        Picasso.with(this).load(mCurrentEpisode.getThumbnail()).resize(size.x, size.y).into(new Target() {
+        Glide.with(this).load(mCurrentEpisode.getThumbnail()).asBitmap().into(new SimpleTarget<Bitmap>(size.x, size.y) {
             @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+            public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
                 builder.putBitmap(MediaMetadata.METADATA_KEY_ART, bitmap);
                 mediaSession.setMetadata(builder.build());
-            }
-
-            @Override
-            public void onBitmapFailed(Drawable errorDrawable) {
-            }
-
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
             }
         });
     }

@@ -1,6 +1,7 @@
 package io.github.xwz.base.views;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.os.Handler;
 import android.support.v17.leanback.widget.Presenter;
@@ -8,12 +9,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.Transformation;
 
 import io.github.xwz.base.R;
 import io.github.xwz.base.api.EpisodeBaseModel;
-import jp.wasabeef.picasso.transformations.gpu.VignetteFilterTransformation;
+import jp.wasabeef.glide.transformations.gpu.VignetteFilterTransformation;
 
 public class EpisodeDetailsView extends Presenter.ViewHolder {
     private final Context mContext;
@@ -26,7 +27,7 @@ public class EpisodeDetailsView extends Presenter.ViewHolder {
     private final TextView duration;
     private final ImageView image;
 
-    private final Transformation transformation;
+    private final Transformation<Bitmap> transformation;
     private final Handler handler = new Handler();
     private final EpisodeLoader loader;
 
@@ -40,8 +41,7 @@ public class EpisodeDetailsView extends Presenter.ViewHolder {
         duration = (TextView) view.findViewById(R.id.duration);
         image = (ImageView) view.findViewById(R.id.image);
 
-        transformation = new VignetteFilterTransformation(mContext,
-                new PointF(0.65f, 0.5f), new float[]{0.0f, 0.0f, 0.0f}, 0.2f, 0.85f);
+        transformation = new VignetteFilterTransformation(context, new PointF(0.65f, 0.5f), new float[]{0.0f, 0.0f, 0.0f}, 0.2f, 0.85f);
         loader = new EpisodeLoader();
     }
 
@@ -89,11 +89,10 @@ public class EpisodeDetailsView extends Presenter.ViewHolder {
 
         @Override
         public void run() {
-            Picasso.with(mContext)
+            Glide.with(mContext)
                     .load(episode.getThumbnail())
-                    .fit()
                     .centerCrop()
-                    .transform(transformation)
+                    .bitmapTransform(transformation)
                     .into(image);
         }
     }

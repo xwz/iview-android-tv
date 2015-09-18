@@ -11,9 +11,10 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.util.Log;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 import io.github.xwz.base.content.RecommendationBuilder;
 import io.github.xwz.sbs.R;
@@ -46,10 +47,8 @@ public class RecommendationsService extends IntentService {
     }
 
     private void buildNotification(EpisodeModel ep, final int id) throws IOException {
-        Point size = new Point(getResources().getDimensionPixelSize(R.dimen.card_width),
-                getResources().getDimensionPixelSize(R.dimen.card_height));
-        Bitmap image = Picasso.with(this).load(ep.getThumbnail()).resize(size.x, size.y).get();
-        Bitmap background = Picasso.with(this).load(ep.getThumbnail()).get();
+        Bitmap image = getImage(ep.getThumbnail());
+        Bitmap background = getBackground(ep.getThumbnail());
 
         final RecommendationBuilder builder = new RecommendationBuilder(this, id);
         builder.setBackgroundPrefix(BACKGROUND_URI_PREFIX);
@@ -66,6 +65,30 @@ public class RecommendationsService extends IntentService {
                 .build();
         manager.notify(RECOMMENDATION_TAG, id, notification);
         Log.d(TAG, "Recommending: " + ep);
+    }
+
+    private Bitmap getBackground(String url) {
+        try {
+            return Glide.with(this).load(url).asBitmap().into(960, 540).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private Bitmap getImage(String url) {
+        Point size = new Point(getResources().getDimensionPixelSize(R.dimen.card_width),
+                getResources().getDimensionPixelSize(R.dimen.card_height));
+        try {
+            return Glide.with(this).load(url).asBitmap().into(size.x, size.y).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private PendingIntent buildPendingIntent(EpisodeModel ep) {
