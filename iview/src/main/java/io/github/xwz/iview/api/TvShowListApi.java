@@ -72,6 +72,7 @@ public class TvShowListApi extends IViewApi {
         ContentManager.db().putCollections(collections);
 
         updateProgress();
+        Log.d(TAG, "DONE");
         success = true;
         return null;
     }
@@ -184,7 +185,9 @@ public class TvShowListApi extends IViewApi {
     }
 
     protected void onPostExecute(Void v) {
-        if (!success) {
+        if (success) {
+            ContentManager.getInstance().broadcastChange(ContentManager.CONTENT_SHOW_LIST_DONE);
+        } else {
             ContentManager.getInstance().broadcastChange(ContentManager.CONTENT_SHOW_LIST_ERROR);
         }
         episodes.clear();
