@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.ContextMenu;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,6 +43,10 @@ public class TvShowListApi extends IViewApi {
 
     @Override
     protected Void doInBackground(String... urls) {
+        if (ContentManager.db().loadFromDbCache(ContentManager.cache(), EpisodeModel.class)) {
+            ContentManager.getInstance().broadcastChange(ContentManager.CONTENT_SHOW_LIST_DONE);
+        }
+
         updateProgress();
         fetchTitlesFromCollection();
 
@@ -57,9 +60,16 @@ public class TvShowListApi extends IViewApi {
         updateProgress();
 
         ContentManager.cache().putShows(shows);
-        ContentManager.cache().addEpisodes(episodes.values());
+        ContentManager.cache().putEpisodes(episodes.values());
         ContentManager.cache().putCollections(collections);
-        ContentManager.cache().setDictionary(buildWordsFromShows(shows));
+        ContentManager.cache().buildDictionary(shows);
+
+        ContentManager.db().clearCache();
+        ContentManager.db().putShows(shows);
+        updateProgress();
+        ContentManager.db().putEpisodes(episodes.values());
+        updateProgress();
+        ContentManager.db().putCollections(collections);
 
         updateProgress();
         success = true;
@@ -174,9 +184,7 @@ public class TvShowListApi extends IViewApi {
     }
 
     protected void onPostExecute(Void v) {
-        if (success) {
-            ContentManager.getInstance().broadcastChange(ContentManager.CONTENT_SHOW_LIST_DONE);
-        } else {
+        if (!success) {
             ContentManager.getInstance().broadcastChange(ContentManager.CONTENT_SHOW_LIST_ERROR);
         }
         episodes.clear();

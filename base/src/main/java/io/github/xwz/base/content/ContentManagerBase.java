@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import io.github.xwz.base.api.ContentDatabaseCache;
 import io.github.xwz.base.api.EpisodeBaseModel;
 
 public abstract class ContentManagerBase {
@@ -64,6 +65,7 @@ public abstract class ContentManagerBase {
 
     private Context mContext = null;
     private ContentCacheManager mCache = null;
+    private ContentDatabaseCache mDb = null;
 
     public enum RecommendationPosition {
         FIRST(0), SECOND(1);
@@ -82,6 +84,7 @@ public abstract class ContentManagerBase {
         instance = this;
         mContext = context;
         mCache = new ContentCacheManager(context);
+        mDb = new ContentDatabaseCache();
     }
 
     public static ContentManagerBase getInstance() {
@@ -90,6 +93,10 @@ public abstract class ContentManagerBase {
 
     public static ContentCacheManager cache() {
         return getInstance().mCache;
+    }
+
+    public static ContentDatabaseCache db() {
+        return getInstance().mDb;
     }
 
     protected Context getContext() {

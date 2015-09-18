@@ -21,7 +21,7 @@ public class ContentCacheManager {
     private static final String TAG = "ContentCacheManager";
     private final LocalBroadcastManager mBroadcastManager;
 
-    private final Map<String, EpisodeBaseModel> mEpisodes = new HashMap<>();
+    private Map<String, EpisodeBaseModel> mEpisodes = new HashMap<>();
     private List<EpisodeBaseModel> mShows = new ArrayList<>();
     private RadixTree<String> mDictionary = new RadixTree<>();
     private final Map<String, Uri> mStreamUrls = new HashMap<>();
@@ -87,14 +87,19 @@ public class ContentCacheManager {
         return new LinkedHashMap<>(mCollections);
     }
 
+    synchronized public void putEpisodes(Collection<EpisodeBaseModel> episodes) {
+        mEpisodes = new HashMap<>();
+       addEpisodes(episodes);
+    }
+
     synchronized public void addEpisodes(Collection<EpisodeBaseModel> episodes) {
         for (EpisodeBaseModel ep : episodes) {
             mEpisodes.put(ep.getHref(), ep);
         }
     }
 
-    synchronized public void setDictionary(RadixTree<String> dict) {
-        mDictionary = dict;
+    synchronized public void buildDictionary(Collection<EpisodeBaseModel> shows) {
+        mDictionary = buildWordsFromShows(shows);
     }
 
     synchronized public List<String> getSuggestions(String query) {
@@ -123,5 +128,37 @@ public class ContentCacheManager {
 
     synchronized public Uri getEpisodeStreamUrl(String id) {
         return mStreamUrls.get(id);
+    }
+
+    private RadixTree<String> buildWordsFromShows(Collection<EpisodeBaseModel> shows) {
+        RadixTree<String> dict = new RadixTree<>();
+        for (EpisodeBaseModel ep : shows) {
+            dict.putAll(getWords(ep));
+        }
+        Log.d(TAG, "dict:" + dict.size());
+        return dict;
+    }
+
+    private Map<String, String> getWords(EpisodeBaseModel episode) {
+        Map<String, String> words = new HashMap<>();
+        if (episode.getSeriesTitle() != null) {
+            words.putAll(splitWords(episode.getSeriesTitle(), episode));
+        }
+        if (episode.getTitle() != null) {
+            words.putAll(splitWords(episode.getTitle(), episode));
+        }
+        return words;
+    }
+
+    private Map<String, String> splitWords(String s, EpisodeBaseModel episode) {
+        String[] words = s.split("\\s+");
+        Map<String, String> result = new HashMap<>();
+        for (String w : words) {
+            String word = w.replaceAll("[^\\w]", "");
+            if (word.length() >= 3) {
+                result.put(word.toLowerCase(), word);
+            }
+        }
+        return result;
     }
 }

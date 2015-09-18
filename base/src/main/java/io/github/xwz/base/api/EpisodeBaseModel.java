@@ -7,6 +7,9 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,17 +20,17 @@ import java.util.Map;
 import java.util.Set;
 
 import io.github.xwz.base.Utils;
-import io.github.xwz.base.content.ContentDatabase;
 
 @Table(databaseName = ContentDatabase.NAME)
 public class EpisodeBaseModel extends BaseModel implements Serializable {
 
-    @Column
-    @PrimaryKey
-    private String href;
+    private static final String TAG = "EpisodeBaseModel";
 
     @Column
-    @PrimaryKey
+    @PrimaryKey(autoincrement = true)
+    public long DATA_ID;
+
+    @Column
     public String DATA_TYPE;
 
     @Column
@@ -35,6 +38,9 @@ public class EpisodeBaseModel extends BaseModel implements Serializable {
 
     @Column
     public int DATA_COLLECTION_INDEX;
+
+    @Column
+    private String href;
 
     @Column
     private String seriesTitle;
@@ -99,6 +105,32 @@ public class EpisodeBaseModel extends BaseModel implements Serializable {
     public void update() {
         updateCategoriesSerialized();
         super.update();
+    }
+
+    void unserialize() {
+        if (categoriesSerialized != null) {
+            JSONArray arr = parseArray(categoriesSerialized);
+            if (arr != null) {
+               for (int i = 0; i < arr.length();i++) {
+                   try {
+                       addCategory(arr.getString(i));
+                   } catch (JSONException e) {
+                       e.printStackTrace();
+                   }
+               }
+            }
+        }
+    }
+
+    private JSONArray parseArray(String content) {
+        if (content != null && content.contains("[") && content.contains("]")) {
+            try {
+                return new JSONArray(content);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     public void addCategory(String cat) {

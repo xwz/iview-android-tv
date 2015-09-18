@@ -249,9 +249,6 @@ abstract class SBSApiBase extends HttpApiBase {
         @SerializedName("pl1$shortSynopsis")
         String synopsis;
 
-        @SerializedName("media$expirationDate")
-        int expiry;
-
         @SerializedName("media$categories")
         private List<Category> categories;
 

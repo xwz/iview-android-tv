@@ -28,7 +28,6 @@ public class EpisodeModel extends EpisodeBaseModel {
         setCover(data.getCover());
         setCategories(data.getCategories());
         setDescription(data.synopsis);
-        setExpiry(data.expiry);
     }
 
     public void setHasFetchedRelated(boolean fetched) {

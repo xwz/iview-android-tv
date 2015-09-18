@@ -45,6 +45,10 @@ public class SBSApi extends SBSApiBase {
 
     @Override
     protected Void doInBackground(String... params) {
+        if (ContentManager.db().loadFromDbCache(ContentManager.cache(), EpisodeModel.class)) {
+            ContentManager.getInstance().broadcastChange(ContentManager.CONTENT_SHOW_LIST_DONE);
+        }
+
         while (getLastEntryCount() == 0 || getLastEntryCount() == ITEMS_PER_PAGE) {
             updateProgress();
             fetchAllTitles(page++);
@@ -103,9 +107,19 @@ public class SBSApi extends SBSApiBase {
         }
         updateProgress();
         ContentManager.cache().putShows(shows);
-        ContentManager.cache().addEpisodes(episodes);
+        ContentManager.cache().putEpisodes(episodes);
         ContentManager.cache().putCollections(sortedCollection);
-        ContentManager.cache().setDictionary(buildWordsFromShows(shows));
+        ContentManager.cache().buildDictionary(shows);
+
+        ContentManager.getInstance().broadcastChange(ContentManager.CONTENT_SHOW_LIST_DONE);
+
+        ContentManager.db().clearCache();
+        ContentManager.db().putShows(shows);
+        updateProgress();
+        ContentManager.db().putEpisodes(episodes);
+        updateProgress();
+        ContentManager.db().putCollections(sortedCollection);
+
         updateProgress();
 
         success = true;

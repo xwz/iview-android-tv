@@ -1,4 +1,4 @@
-package io.github.xwz.base.content;
+package io.github.xwz.base.api;
 
 import com.raizlabs.android.dbflow.annotation.Database;
 

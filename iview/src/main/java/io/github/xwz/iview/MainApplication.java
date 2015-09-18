@@ -13,8 +13,8 @@ public class MainApplication extends Application implements IApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        new ContentManager(this).fetchShowList(true);
         FlowManager.init(this);
+        new ContentManager(this).fetchShowList(true);
     }
 
     @Override

@@ -170,38 +170,6 @@ public abstract class HttpApiBase extends AsyncTask<String, Void, Void> {
         return cache;
     }
 
-    protected RadixTree<String> buildWordsFromShows(Collection<EpisodeBaseModel> shows) {
-        RadixTree<String> dict = new RadixTree<>();
-        for (EpisodeBaseModel ep : shows) {
-            dict.putAll(getWords(ep));
-        }
-        Log.d(TAG, "dict:" + dict.size());
-        return dict;
-    }
-
-    private Map<String, String> getWords(EpisodeBaseModel episode) {
-        Map<String, String> words = new HashMap<>();
-        if (episode.getSeriesTitle() != null) {
-            words.putAll(splitWords(episode.getSeriesTitle(), episode));
-        }
-        if (episode.getTitle() != null) {
-            words.putAll(splitWords(episode.getTitle(), episode));
-        }
-        return words;
-    }
-
-    private Map<String, String> splitWords(String s, EpisodeBaseModel episode) {
-        String[] words = s.split("\\s+");
-        Map<String, String> result = new HashMap<>();
-        for (String w : words) {
-            String word = w.replaceAll("[^\\w]", "");
-            if (word.length() >= 3) {
-                result.put(word.toLowerCase(), word);
-            }
-        }
-        return result;
-    }
-
     private static long calculateDiskCacheSize(File dir) {
         long size = Math.min(calculateAvailableCacheSize(dir), MAX_DISK_CACHE_SIZE);
         return Math.max(size, MIN_DISK_CACHE_SIZE);
