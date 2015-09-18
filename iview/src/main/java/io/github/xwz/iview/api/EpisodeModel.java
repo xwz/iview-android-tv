@@ -4,6 +4,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import io.github.xwz.base.api.EpisodeBaseModel;
 
 public class EpisodeModel extends EpisodeBaseModel {
@@ -41,6 +46,8 @@ public class EpisodeModel extends EpisodeBaseModel {
         setEpisodeCount(getInt(data, "episodeCount", getEpisodeCount()));
         setDescription(get(data, "description", getDescription()));
         setRelated(get(data, "related", getRelated()));
+        String date = get(data, "pubDate", null);
+        setPubDate(parseDate(date));
 
         try {
             stream = getStream(data);
@@ -54,6 +61,20 @@ public class EpisodeModel extends EpisodeBaseModel {
 
     public String getStream() {
         return stream;
+    }
+
+    private long parseDate(String d) {
+        if (d != null) {
+            // 2015-09-17 07:02:00
+            DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            try {
+                Date date = f.parse(d);
+                return date.getTime();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return 0;
     }
 
     public void merge(EpisodeModel ep) {

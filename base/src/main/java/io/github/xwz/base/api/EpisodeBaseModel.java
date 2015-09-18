@@ -12,6 +12,8 @@ import org.json.JSONException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -20,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import io.github.xwz.base.Utils;
+import io.github.xwz.base.content.ContentManagerBase;
 
 @Table(databaseName = ContentDatabase.NAME)
 public class EpisodeBaseModel extends BaseModel implements Serializable {
@@ -84,7 +87,10 @@ public class EpisodeBaseModel extends BaseModel implements Serializable {
     private String related;
 
     @Column
-    private int expiry;
+    private long expiry;
+
+    @Column
+    private long pubDate;
 
     private long resumePosition;
     private boolean recent;
@@ -184,6 +190,7 @@ public class EpisodeBaseModel extends BaseModel implements Serializable {
         this.others = ep.others.size() == 0 ? this.others : new LinkedHashMap<>(ep.others);
         this.related = ep.related == null ? this.related : ep.related;
         this.expiry = ep.expiry == 0 ? this.expiry : ep.expiry;
+        this.pubDate = ep.pubDate == 0 ? this.pubDate : ep.pubDate;
     }
 
     protected boolean hasOther(String key) {
@@ -199,16 +206,32 @@ public class EpisodeBaseModel extends BaseModel implements Serializable {
     }
 
     public Map<String, List<EpisodeBaseModel>> getOtherEpisodes() {
-        return new LinkedHashMap<>(others);
+        LinkedHashMap<String, List<EpisodeBaseModel>> all = new LinkedHashMap<>();
+        for (Map.Entry<String, List<EpisodeBaseModel>> more : others.entrySet()) {
+            List<EpisodeBaseModel> episodes = new ArrayList<>(more.getValue());
+            if (ContentManagerBase.OTHER_EPISODES.equals(more.getKey())) {
+                Collections.sort(episodes, getComparePubDate());
+            }
+            all.put(more.getKey(), episodes);
+        }
+        return all;
     }
 
     private List<EpisodeBaseModel> getOtherEpisodes(String cat) {
-        for (Map.Entry<String, List<EpisodeBaseModel>> episodes : getOtherEpisodes().entrySet()) {
-            if (episodes.getKey().equals(cat)) {
-                return episodes.getValue();
-            }
+        Map<String, List<EpisodeBaseModel>> all = getOtherEpisodes();
+        if (all.containsKey(cat)) {
+            return all.get(cat);
         }
         return new ArrayList<>();
+    }
+
+    private Comparator<EpisodeBaseModel> getComparePubDate() {
+        return new Comparator<EpisodeBaseModel>() {
+            @Override
+            public int compare(EpisodeBaseModel lhs, EpisodeBaseModel rhs) {
+                return (int) (lhs.pubDate - rhs.pubDate);
+            }
+        };
     }
 
     public List<String> getOtherEpisodeUrls(String cat) {
@@ -343,14 +366,14 @@ public class EpisodeBaseModel extends BaseModel implements Serializable {
     }
 
     public String toString() {
-        return getHref() + ": '" + getSeriesTitle() + "' - '" + getTitle() + "'";
+        return "{" + getHref() + ":'" + getSeriesTitle() + "', '" + getTitle() + "', " + pubDate + "}";
     }
 
-    public int getExpiry() {
+    public long getExpiry() {
         return expiry;
     }
 
-    public void setExpiry(int expiry) {
+    public void setExpiry(long expiry) {
         this.expiry = expiry;
     }
 
@@ -372,5 +395,13 @@ public class EpisodeBaseModel extends BaseModel implements Serializable {
 
     public void setRecent(boolean recent) {
         this.recent = recent;
+    }
+
+    public long getPubDate() {
+        return pubDate;
+    }
+
+    public void setPubDate(long pubDate) {
+        this.pubDate = pubDate;
     }
 }
