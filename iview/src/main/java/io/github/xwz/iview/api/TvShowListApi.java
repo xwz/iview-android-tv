@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ContextMenu;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,21 +47,20 @@ public class TvShowListApi extends IViewApi {
         updateProgress();
         fetchTitlesFromCollection();
 
-        for (Map.Entry<String, List<EpisodeBaseModel>> collection : collections.entrySet()) {
-            Log.d(TAG, "Found collection: " + collection.getKey());
-            ContentManager.cache().addCollection(collection.getKey(), collection.getValue());
-        }
-
         for (String cat : ContentManager.CATEGORIES.keySet()) {
             updateProgress();
             fetchTitlesInCategory(cat);
         }
+
         Log.d(TAG, "Found " + episodes.size() + " episodes from category query");
         fetchTitlesFromIndex();
         updateProgress();
+
         ContentManager.cache().putShows(shows);
         ContentManager.cache().addEpisodes(episodes.values());
+        ContentManager.cache().putCollections(collections);
         ContentManager.cache().setDictionary(buildWordsFromShows(shows));
+
         updateProgress();
         success = true;
         return null;
@@ -181,5 +181,6 @@ public class TvShowListApi extends IViewApi {
         }
         episodes.clear();
         shows.clear();
+        collections.clear();
     }
 }

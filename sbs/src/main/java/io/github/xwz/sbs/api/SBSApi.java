@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,7 +62,7 @@ public class SBSApi extends SBSApiBase {
                 Map<String, List<EpisodeBaseModel>> more = new HashMap<>();
                 more.put(ContentManagerBase.OTHER_EPISODES, others);
                 ep.setOtherEpisodes(more);
-                ((EpisodeModel)ep).setHasExtra(others.size() > 0);
+                ((EpisodeModel) ep).setHasExtra(others.size() > 0);
             }
             shows.add(show);
         }
@@ -89,6 +90,7 @@ public class SBSApi extends SBSApiBase {
         Collections.sort(keys);
 
         // add collections by name
+        LinkedHashMap<String, List<EpisodeBaseModel>> sortedCollection = new LinkedHashMap<>();
         for (String key : keys) {
             List<EpisodeBaseModel> collection = collections.get(key);
             Log.d(TAG, "Found collection: " + key + " = " + collection.size());
@@ -97,11 +99,12 @@ public class SBSApi extends SBSApiBase {
             if (key.contains("Film/")) {
                 name = key;
             }
-            ContentManager.cache().addCollection(name, collection);
+            sortedCollection.put(name, collection);
         }
         updateProgress();
         ContentManager.cache().putShows(shows);
         ContentManager.cache().addEpisodes(episodes);
+        ContentManager.cache().putCollections(sortedCollection);
         ContentManager.cache().setDictionary(buildWordsFromShows(shows));
         updateProgress();
 

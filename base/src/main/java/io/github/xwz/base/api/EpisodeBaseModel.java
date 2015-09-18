@@ -27,6 +27,16 @@ public class EpisodeBaseModel extends BaseModel implements Serializable {
     private String href;
 
     @Column
+    @PrimaryKey
+    public String DATA_TYPE;
+
+    @Column
+    public String DATA_COLLECTION_KEY;
+
+    @Column
+    public int DATA_COLLECTION_INDEX;
+
+    @Column
     private String seriesTitle;
 
     @Column
@@ -66,6 +76,9 @@ public class EpisodeBaseModel extends BaseModel implements Serializable {
 
     @Column
     private String related;
+
+    @Column
+    private int expiry;
 
     private Map<String, List<EpisodeBaseModel>> others = new HashMap<>();
 
@@ -135,6 +148,7 @@ public class EpisodeBaseModel extends BaseModel implements Serializable {
         this.isFilm = ep.isFilm;
         this.others = ep.others.size() == 0 ? this.others : new LinkedHashMap<>(ep.others);
         this.related = ep.related == null ? this.related : ep.related;
+        this.expiry = ep.expiry == 0 ? this.expiry : ep.expiry;
     }
 
     protected boolean hasOther(String key) {
@@ -295,5 +309,13 @@ public class EpisodeBaseModel extends BaseModel implements Serializable {
 
     public String toString() {
         return getHref() + ": '" + getSeriesTitle() + "' - '" + getTitle() + "'";
+    }
+
+    public int getExpiry() {
+        return expiry;
+    }
+
+    public void setExpiry(int expiry) {
+        this.expiry = expiry;
     }
 }
