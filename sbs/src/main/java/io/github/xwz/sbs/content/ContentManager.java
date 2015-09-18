@@ -17,6 +17,8 @@ import io.github.xwz.sbs.api.SBSRelatedApi;
 
 public class ContentManager extends ContentManagerBase {
 
+    private static final String TAG = "ContentManager";
+
     private SBSApi fetchShows;
 
     private long lastFetchList = 0;
@@ -29,7 +31,7 @@ public class ContentManager extends ContentManagerBase {
     public void fetchShowList(boolean force) {
         long now = (new Date()).getTime();
         boolean shouldFetch = force || now - lastFetchList > 1800000;
-        Log.d("ContentManager", "diff:" + (now - lastFetchList));
+        Log.d(TAG, "diff:" + (now - lastFetchList));
         if (shouldFetch && (fetchShows == null || fetchShows.getStatus() == AsyncTask.Status.FINISHED)) {
             cache().broadcastChange(CONTENT_SHOW_LIST_FETCHING);
             fetchShows = new SBSApi(getContext());
@@ -41,18 +43,19 @@ public class ContentManager extends ContentManagerBase {
     @Override
     public void fetchEpisode(EpisodeBaseModel episode) {
         broadcastChange(CONTENT_EPISODE_FETCHING, episode.getHref());
-        EpisodeModel existing = (EpisodeModel)cache().getEpisode(episode.getHref());
+        EpisodeModel existing = (EpisodeModel) cache().getEpisode(episode.getHref());
         if (existing != null && existing.hasExtras() && existing.hasOtherEpisodes()) {
             cache().broadcastChangeDelayed(100, CONTENT_EPISODE_DONE, episode.getHref(), null);
         } else {
-            new SBSRelatedApi(getContext(), episode.getHref()).execute(episode.getHref());
+            new SBSRelatedApi(getContext(), episode.getHref()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, episode.getHref());
         }
     }
 
     @Override
     public void fetchAuthToken(EpisodeBaseModel episode) {
+        Log.d(TAG, "fetchAuthToken");
         cache().broadcastChange(CONTENT_AUTH_FETCHING, episode.getHref());
-        new SBSAuthApi(getContext()  , episode.getHref()).execute(episode.getHref());
+        new SBSAuthApi(getContext(), episode.getHref()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, episode.getHref());
     }
 
     @Override

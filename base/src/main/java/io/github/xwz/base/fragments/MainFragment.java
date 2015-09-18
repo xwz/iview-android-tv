@@ -28,6 +28,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.github.xwz.base.R;
 import io.github.xwz.base.Utils;
@@ -147,8 +148,20 @@ public abstract class MainFragment extends BrowseFragment {
 
     protected abstract Class<?> getCategoryActivityClass();
 
+    private LinkedHashMap<String, List<EpisodeBaseModel>> getAllShows() {
+        LinkedHashMap<String, List<EpisodeBaseModel>> all = new LinkedHashMap<>();
+        List<EpisodeBaseModel> recent = getContentManger().getRecentlyPlayed();
+        if (recent.size() > 0) {
+            all.put(ContentManagerBase.RECENTLY_PLAYED, recent);
+        }
+        for (Map.Entry<String, List<EpisodeBaseModel>> collection : getContentManger().getAllShowsByCategories().entrySet()) {
+            all.put(collection.getKey(), collection.getValue());
+        }
+        return all;
+    }
+
     private void updateRows(ArrayObjectAdapter adapter) {
-        LinkedHashMap<String, List<EpisodeBaseModel>> all = getContentManger().getAllShowsByCategories();
+        LinkedHashMap<String, List<EpisodeBaseModel>> all = getAllShows();
         int currentRows = adapter.size();
         int newRows = all.size();
         List<String> categories = new ArrayList<>(all.keySet());
@@ -197,6 +210,7 @@ public abstract class MainFragment extends BrowseFragment {
         registerReceiver();
         boolean update = getAdapter() == null || getAdapter().size() == 0;
         getContentManger().fetchShowList(update);
+        updateAdapter();
     }
 
     public void onPause() {

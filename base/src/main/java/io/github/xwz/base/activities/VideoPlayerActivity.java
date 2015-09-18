@@ -37,15 +37,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import io.github.xwz.base.R;
 import io.github.xwz.base.Utils;
 import io.github.xwz.base.api.EpisodeBaseModel;
+import io.github.xwz.base.api.PlayHistory;
 import io.github.xwz.base.content.ContentManagerBase;
 import io.github.xwz.base.player.DurationLogger;
 import io.github.xwz.base.player.EventLogger;
 import io.github.xwz.base.player.HlsRendererBuilder;
 import io.github.xwz.base.player.VideoPlayer;
 import io.github.xwz.base.views.VideoPlayerView;
-import io.github.xwz.base.R;
 
 /**
  * An activity that plays media using {@link VideoPlayer}.
@@ -107,6 +108,11 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
         EpisodeBaseModel episode = (EpisodeBaseModel) getIntent().getSerializableExtra(ContentManagerBase.CONTENT_ID);
         mOtherEpisodeUrls = Arrays.asList(getIntent().getStringArrayExtra(ContentManagerBase.OTHER_EPISODES));
         resumePosition = getIntent().getLongExtra(RESUME_POSITION, 0);
+
+        if (resumePosition <= 0 && episode.getResumePosition() > 0) {
+            resumePosition = episode.getResumePosition();
+            Log.d(TAG, "Resume from recently played");
+        }
 
         setContentView(R.layout.video_player_activity);
         View root = findViewById(R.id.root);
@@ -329,6 +335,8 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
         String[] others = mOtherEpisodeUrls.toArray(new String[mOtherEpisodeUrls.size()]);
         intent.putExtra(ContentManagerBase.OTHER_EPISODES, others);
         intent.putExtra(RESUME_POSITION, playerPosition);
+
+        PlayHistory.updateProgress(mCurrentEpisode, playerPosition);
 
         PendingIntent pending = PendingIntent.getActivity(this, 99, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mediaSession.setSessionActivity(pending);

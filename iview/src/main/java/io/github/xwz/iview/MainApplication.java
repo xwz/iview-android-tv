@@ -3,8 +3,11 @@ package io.github.xwz.iview;
 import android.app.Application;
 
 import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.structure.ModelAdapter;
 
 import io.github.xwz.base.IApplication;
+import io.github.xwz.base.api.ContentDatabase;
+import io.github.xwz.base.api.PlayHistory;
 import io.github.xwz.iview.content.ContentManager;
 
 public class MainApplication extends Application implements IApplication {

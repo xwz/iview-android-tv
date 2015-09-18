@@ -25,6 +25,7 @@ public class SBSAuthApi extends SBSApiBase {
 
     @Override
     protected Void doInBackground(String... urls) {
+        Log.d(TAG, "Doing AUTH");
         if (urls.length > 0) {
             buildAuth(urls[0]);
         }
@@ -78,6 +79,10 @@ public class SBSAuthApi extends SBSApiBase {
         } else {
             ContentManager.getInstance().broadcastChange(ContentManager.CONTENT_AUTH_ERROR, ContentManager.AUTH_FAILED_NETWORK, id);
         }
+    }
+
+    protected void onPreExecute() {
+        ContentManager.getInstance().broadcastChange(ContentManager.CONTENT_AUTH_START);
     }
 
     private void parsePlayList(String content) {

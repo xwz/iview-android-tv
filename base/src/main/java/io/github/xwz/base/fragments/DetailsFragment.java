@@ -31,6 +31,7 @@ import io.github.xwz.base.R;
 import io.github.xwz.base.Utils;
 import io.github.xwz.base.adapters.CardSelector;
 import io.github.xwz.base.api.EpisodeBaseModel;
+import io.github.xwz.base.api.PlayHistory;
 import io.github.xwz.base.content.ContentManagerBase;
 import io.github.xwz.base.views.EpisodeDetailsView;
 

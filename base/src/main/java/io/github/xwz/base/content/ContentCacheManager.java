@@ -78,10 +78,6 @@ public class ContentCacheManager {
     public void putCollections(LinkedHashMap<String, List<EpisodeBaseModel>> collection) {
         mCollections = new LinkedHashMap<>(collection);
     }
-    /*
-    synchronized public void addCollection(String title, List<EpisodeBaseModel> shows) {
-        mCollections.put(title, new ArrayList<>(shows));
-    }*/
 
     synchronized public LinkedHashMap<String, List<EpisodeBaseModel>> getCollections() {
         return new LinkedHashMap<>(mCollections);

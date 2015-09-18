@@ -9,12 +9,20 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
 
+import com.raizlabs.android.dbflow.list.FlowCursorList;
+import com.raizlabs.android.dbflow.sql.builder.Condition;
+import com.raizlabs.android.dbflow.sql.language.Select;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.github.xwz.base.api.ContentDatabaseCache;
 import io.github.xwz.base.api.EpisodeBaseModel;
+import io.github.xwz.base.api.EpisodeBaseModel$Table;
+import io.github.xwz.base.api.PlayHistory;
+import io.github.xwz.base.api.PlayHistory$Table;
 
 public abstract class ContentManagerBase {
 
@@ -44,6 +52,7 @@ public abstract class ContentManagerBase {
     public static final String OTHER_EPISODES = "OTHER_EPISODES";
     public static final String MORE_LIKE_THIS = "More Like This";
     public static final String GLOBAL_SEARCH_INTENT = "GLOBAL_SEARCH_INTENT";
+    public static final String RECENTLY_PLAYED = "Recently played";
 
     //The columns we'll include in the video database table
     public static final String KEY_SERIES_TITLE = SearchManager.SUGGEST_COLUMN_TEXT_1;
@@ -207,6 +216,27 @@ public abstract class ContentManagerBase {
             return getEpisode(next);
         }
         return null;
+    }
+
+    public List<EpisodeBaseModel> getRecentlyPlayed() {
+
+        FlowCursorList<PlayHistory> cursor = new FlowCursorList<>(false,
+                (new Select()).from(PlayHistory.class)
+                        .orderBy("CASE WHEN "+PlayHistory$Table.PROGRESS+" >= 75 THEN 1 ELSE 0 END ASC, "+PlayHistory$Table.TIMESTAMP+" DESC")
+                        .limit(30));
+
+        List<EpisodeBaseModel> recent = new ArrayList<>();
+        for (int i = 0, k = cursor.getCount(); i < k; i++) {
+            PlayHistory history = cursor.getItem(i);
+            EpisodeBaseModel ep = getEpisode(history.href);
+            if (ep != null) {
+                if (history.progress < 75) {
+                    ep.setResumePosition(history.position);
+                }
+                recent.add(ep);
+            }
+        }
+        return recent;
     }
 
     public void recommendEpisode(Context context, EpisodeBaseModel ep, RecommendationPosition position) {

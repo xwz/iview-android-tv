@@ -86,6 +86,8 @@ public class EpisodeBaseModel extends BaseModel implements Serializable {
     @Column
     private int expiry;
 
+    private long resumePosition;
+
     private Map<String, List<EpisodeBaseModel>> others = new HashMap<>();
 
     public List<String> getCategories() {
@@ -349,5 +351,13 @@ public class EpisodeBaseModel extends BaseModel implements Serializable {
 
     public void setExpiry(int expiry) {
         this.expiry = expiry;
+    }
+
+    public long getResumePosition() {
+        return resumePosition;
+    }
+
+    public void setResumePosition(long resumePosition) {
+        this.resumePosition = resumePosition;
     }
 }

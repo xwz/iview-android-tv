@@ -62,7 +62,7 @@ public class ContentManager extends ContentManagerBase {
     public void fetchAuthToken(EpisodeBaseModel episode) {
         EpisodeModel ep = (EpisodeModel)episode;
         cache().broadcastChange(CONTENT_AUTH_FETCHING, ep.getHref());
-        new AuthApi(getContext(), episode.getHref()).execute(ep.getStream());
+        new AuthApi(getContext(), episode.getHref()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ep.getStream());
     }
 
     @Override
@@ -72,16 +72,14 @@ public class ContentManager extends ContentManagerBase {
         if (existing != null && existing.hasExtras() && existing.hasOtherEpisodes()) {
             cache().broadcastChangeDelayed(100, CONTENT_EPISODE_DONE, episode.getHref(), null);
         } else {
-            new EpisodeDetailsApi(getContext(), episode.getHref()).execute(episode.getHref());
+            new EpisodeDetailsApi(getContext(), episode.getHref()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, episode.getHref());
         }
     }
 
     @Override
     public LinkedHashMap<String, List<EpisodeBaseModel>> getAllShowsByCategories() {
+        LinkedHashMap<String, List<EpisodeBaseModel>> all = super.getAllShowsByCategories();
         List<EpisodeBaseModel> shows = getAllShows();
-        LinkedHashMap<String, List<EpisodeBaseModel>> all = new LinkedHashMap<>();
-        all.putAll(cache().getCollections());
-
         for (Map.Entry<String, String> channel : CHANNELS.entrySet()) {
             List<EpisodeBaseModel> episodes = new ArrayList<>();
             for (EpisodeBaseModel show : shows) {
