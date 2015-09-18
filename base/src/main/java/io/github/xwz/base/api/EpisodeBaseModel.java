@@ -113,13 +113,13 @@ public class EpisodeBaseModel extends BaseModel implements Serializable {
         if (categoriesSerialized != null) {
             JSONArray arr = parseArray(categoriesSerialized);
             if (arr != null) {
-               for (int i = 0; i < arr.length();i++) {
-                   try {
-                       addCategory(arr.getString(i));
-                   } catch (JSONException e) {
-                       e.printStackTrace();
-                   }
-               }
+                for (int i = 0; i < arr.length(); i++) {
+                    try {
+                        addCategory(arr.getString(i));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }
@@ -359,5 +359,9 @@ public class EpisodeBaseModel extends BaseModel implements Serializable {
 
     public void setResumePosition(long resumePosition) {
         this.resumePosition = resumePosition;
+    }
+
+    public int getProgress() {
+        return Math.round(100 * (float) getResumePosition() / (getDuration() * 1000));
     }
 }

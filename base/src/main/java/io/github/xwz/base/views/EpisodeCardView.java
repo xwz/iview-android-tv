@@ -4,9 +4,15 @@ import android.content.Context;
 import android.graphics.Point;
 import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.Presenter;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.squareup.picasso.Picasso;
 
+import io.github.xwz.base.IApplication;
+import io.github.xwz.base.R;
 import io.github.xwz.base.api.EpisodeBaseModel;
 
 public class EpisodeCardView extends Presenter.ViewHolder {
@@ -16,6 +22,7 @@ public class EpisodeCardView extends Presenter.ViewHolder {
     private final Context mContext;
     private final Point size;
     private boolean canShowCover;
+    private ProgressBar progress;
 
     public EpisodeCardView(Context context, ImageCardView view, Point s, boolean showCover) {
         super(view);
@@ -23,6 +30,23 @@ public class EpisodeCardView extends Presenter.ViewHolder {
         card = view;
         size = s;
         canShowCover = showCover;
+        addProgressBar(context, view);
+    }
+
+    private void addProgressBar(Context context, View card) {
+        if (context.getApplicationContext() instanceof IApplication) {
+            IApplication app = (IApplication) context.getApplicationContext();
+            View info = card.findViewById(app.getImageCardViewInfoFieldResId());
+            if (info instanceof RelativeLayout) {
+                RelativeLayout frame = (RelativeLayout) info;
+                frame.setClipToPadding(false);
+                LayoutInflater inflater = LayoutInflater.from(context);
+                View v = inflater.inflate(R.layout.progress, frame);
+                if (v != null) {
+                    progress = (ProgressBar) v.findViewById(R.id.progress);
+                }
+            }
+        }
     }
 
     public void setEpisode(EpisodeBaseModel ep) {
@@ -35,6 +59,15 @@ public class EpisodeCardView extends Presenter.ViewHolder {
         card.setContentText(title);
         if (sameTitles(series, title)) {
             card.setContentText("");
+        }
+        if (progress != null) {
+            if (ep.getResumePosition() > 0) {
+                progress.setVisibility(View.VISIBLE);
+                progress.setProgress(ep.getProgress());
+            } else {
+                progress.setVisibility(View.GONE);
+            }
+            card.requestLayout();
         }
 
         if (ep.getEpisodeCount() > 0) {
