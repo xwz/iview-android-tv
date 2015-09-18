@@ -87,6 +87,7 @@ public class EpisodeBaseModel extends BaseModel implements Serializable {
     private int expiry;
 
     private long resumePosition;
+    private boolean recent;
 
     private Map<String, List<EpisodeBaseModel>> others = new HashMap<>();
 
@@ -363,5 +364,13 @@ public class EpisodeBaseModel extends BaseModel implements Serializable {
 
     public int getProgress() {
         return Math.round(100 * (float) getResumePosition() / (getDuration() * 1000));
+    }
+
+    public boolean isRecent() {
+        return recent;
+    }
+
+    public void setRecent(boolean recent) {
+        this.recent = recent;
     }
 }

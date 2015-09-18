@@ -161,6 +161,7 @@ public abstract class MainFragment extends BrowseFragment {
     }
 
     private void updateRows(ArrayObjectAdapter adapter) {
+        Log.d(TAG, "Update rows");
         LinkedHashMap<String, List<EpisodeBaseModel>> all = getAllShows();
         int currentRows = adapter.size();
         int newRows = all.size();
@@ -175,13 +176,13 @@ public abstract class MainFragment extends BrowseFragment {
             }
             if (i < currentRows) { // update row
                 ListRow row = (ListRow) adapter.get(i);
-                row.setHeaderItem(new HeaderItem(Utils.stripCategory(category)));
+                row.setHeaderItem(new HeaderItem(i, Utils.stripCategory(category)));
                 BaseArrayAdapter<EpisodeBaseModel> items = (BaseArrayAdapter<EpisodeBaseModel>) row.getAdapter();
                 items.replaceItems(episodes);
             } else { // add
                 BaseArrayAdapter<EpisodeBaseModel> items = new BaseArrayAdapter<>(new CardSelector());
                 items.addAll(0, episodes);
-                HeaderItem header = new HeaderItem(Utils.stripCategory(category));
+                HeaderItem header = new HeaderItem(i, Utils.stripCategory(category));
                 ListRow row = new ListRow(header, items);
                 adapter.add(row);
             }
@@ -189,6 +190,21 @@ public abstract class MainFragment extends BrowseFragment {
         int deleteRows = currentRows - newRows;
         if (deleteRows > 0) {
             adapter.removeItems(newRows, deleteRows);
+        }
+    }
+
+    private void updateRecentlyPlayed() {
+        ArrayObjectAdapter adapter = (ArrayObjectAdapter) getAdapter();
+        if (adapter != null) {
+            ListRow row = (ListRow) adapter.get(0);
+            if (ContentManagerBase.RECENTLY_PLAYED.equals(row.getHeaderItem().getName())) {
+                Log.d(TAG, "Update recently played");
+                BaseArrayAdapter<EpisodeBaseModel> items = (BaseArrayAdapter<EpisodeBaseModel>) row.getAdapter();
+                List<EpisodeBaseModel> recent = getContentManger().getRecentlyPlayed();
+                items.replaceItems(recent);
+            } else {
+                updateRows(adapter);
+            }
         }
     }
 
@@ -210,7 +226,7 @@ public abstract class MainFragment extends BrowseFragment {
         registerReceiver();
         boolean update = getAdapter() == null || getAdapter().size() == 0;
         getContentManger().fetchShowList(update);
-        updateAdapter();
+        updateRecentlyPlayed();
     }
 
     public void onPause() {

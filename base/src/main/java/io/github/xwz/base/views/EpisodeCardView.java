@@ -61,7 +61,7 @@ public class EpisodeCardView extends Presenter.ViewHolder {
             card.setContentText("");
         }
         if (progress != null) {
-            if (ep.getResumePosition() > 0) {
+            if (ep.isRecent()) {
                 progress.setVisibility(View.VISIBLE);
                 progress.setProgress(ep.getProgress());
             } else {

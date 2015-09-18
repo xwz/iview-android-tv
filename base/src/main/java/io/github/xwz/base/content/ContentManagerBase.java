@@ -233,6 +233,7 @@ public abstract class ContentManagerBase {
                 if (history.progress < 75) {
                     ep.setResumePosition(history.position);
                 }
+                ep.setRecent(true);
                 recent.add(ep);
             }
         }
