@@ -66,6 +66,18 @@ public abstract class DetailsFragment extends android.support.v17.leanback.app.R
 
     protected abstract ContentManagerBase getContentManger();
 
+    protected EpisodeBaseModel getCurrentEpisode() {
+        return mCurrentEpisode;
+    }
+
+    protected EpisodeDetailsView getDetailView() {
+        return mDetailView;
+    }
+
+    protected void setCurrentEpisode(EpisodeBaseModel ep) {
+        mCurrentEpisode = ep;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +94,7 @@ public abstract class DetailsFragment extends android.support.v17.leanback.app.R
 
     private void setupEpisode(EpisodeBaseModel episode) {
         mLoadedEpisode = episode;
-        setCurrentEpisode(episode);
+        selectCurrentEpisode(episode, true);
 
         Point size = Utils.getDisplaySize(getActivity());
         mHeaderHeight = Math.round(size.y * 0.475f);
@@ -120,7 +132,7 @@ public abstract class DetailsFragment extends android.support.v17.leanback.app.R
         setAdapter(adapter);
     }
 
-    private void setCurrentEpisode(EpisodeBaseModel episode) {
+    protected void selectCurrentEpisode(EpisodeBaseModel episode, boolean initial) {
         Log.d(TAG, "Showing details: " + episode);
         if (!episode.equals(mCurrentEpisode)) {
             mCurrentEpisode = episode;
@@ -258,7 +270,7 @@ public abstract class DetailsFragment extends android.support.v17.leanback.app.R
             public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
                 Log.d(TAG, "Selected item:" + item);
                 if (item instanceof EpisodeBaseModel) {
-                    setCurrentEpisode((EpisodeBaseModel) item);
+                    selectCurrentEpisode((EpisodeBaseModel) item, false);
                 }
             }
         };

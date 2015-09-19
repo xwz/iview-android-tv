@@ -1,5 +1,11 @@
 package io.github.xwz.sbs.api;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import io.github.xwz.base.api.EpisodeBaseModel;
 import io.github.xwz.base.content.ContentManagerBase;
 
@@ -46,5 +52,18 @@ public class EpisodeModel extends EpisodeBaseModel {
 
     public boolean hasOtherEpisodes() {
         return fetchedRelated || hasOther(ContentManagerBase.MORE_LIKE_THIS);
+    }
+
+    @Override
+    public Map<String, List<EpisodeBaseModel>> getOtherEpisodes() {
+        LinkedHashMap<String, List<EpisodeBaseModel>> all = new LinkedHashMap<>();
+        for (Map.Entry<String, List<EpisodeBaseModel>> more : others().entrySet()) {
+            List<EpisodeBaseModel> episodes = new ArrayList<>(more.getValue());
+            if (ContentManagerBase.OTHER_EPISODES.equals(more.getKey())) {
+                Collections.sort(episodes, compareTitle());
+            }
+            all.put(more.getKey(), episodes);
+        }
+        return all;
     }
 }

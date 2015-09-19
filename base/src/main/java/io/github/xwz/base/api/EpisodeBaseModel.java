@@ -207,14 +207,18 @@ public class EpisodeBaseModel extends BaseModel implements Serializable {
 
     public Map<String, List<EpisodeBaseModel>> getOtherEpisodes() {
         LinkedHashMap<String, List<EpisodeBaseModel>> all = new LinkedHashMap<>();
-        for (Map.Entry<String, List<EpisodeBaseModel>> more : others.entrySet()) {
+        for (Map.Entry<String, List<EpisodeBaseModel>> more : others().entrySet()) {
             List<EpisodeBaseModel> episodes = new ArrayList<>(more.getValue());
             if (ContentManagerBase.OTHER_EPISODES.equals(more.getKey())) {
-                Collections.sort(episodes, getComparePubDate());
+                Collections.sort(episodes, comparePubDate());
             }
             all.put(more.getKey(), episodes);
         }
         return all;
+    }
+
+    protected Map<String, List<EpisodeBaseModel>> others() {
+        return others;
     }
 
     private List<EpisodeBaseModel> getOtherEpisodes(String cat) {
@@ -225,11 +229,20 @@ public class EpisodeBaseModel extends BaseModel implements Serializable {
         return new ArrayList<>();
     }
 
-    private Comparator<EpisodeBaseModel> getComparePubDate() {
+    protected Comparator<EpisodeBaseModel> comparePubDate() {
         return new Comparator<EpisodeBaseModel>() {
             @Override
             public int compare(EpisodeBaseModel lhs, EpisodeBaseModel rhs) {
                 return (int) (lhs.pubDate - rhs.pubDate);
+            }
+        };
+    }
+
+    protected Comparator<EpisodeBaseModel> compareTitle() {
+        return new Comparator<EpisodeBaseModel>() {
+            @Override
+            public int compare(EpisodeBaseModel lhs, EpisodeBaseModel rhs) {
+                return lhs.getTitle().compareTo(rhs.getTitle());
             }
         };
     }
