@@ -1,6 +1,6 @@
-# Android TV apps for Australian ABC iview and SBS
-
+# Android TV apps for ABC iview and SBS
 2 basic TV apps that will stream content from ABC iview and SBS. 
+![home](docs/home.jpg)
 
 ABC iview for Android TV
 -------------------------
@@ -9,13 +9,10 @@ ABC iview for Android TV
 
 SBS for Android TV
 ------------------
-![home](docs/home.jpg)
 ![films](docs/sbs-films.jpg)
-
 
 To build
 --------
 Create a file named `app.properties` in the project that
 defines the API urls for the ABC iview and SBS services.
-
 See gradle build error messages for details.
