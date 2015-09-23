@@ -46,6 +46,7 @@ import io.github.xwz.base.player.DurationLogger;
 import io.github.xwz.base.player.EventLogger;
 import io.github.xwz.base.player.HlsRendererBuilder;
 import io.github.xwz.base.player.VideoPlayer;
+import io.github.xwz.base.views.PlaybackControls;
 import io.github.xwz.base.views.VideoPlayerView;
 
 /**
@@ -67,7 +68,7 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
 
     private EventLogger eventLogger;
     private MediaSession mediaSession;
-    private MediaController mediaController;
+    private PlaybackControls mediaController;
     private DurationLogger timeLogger;
 
     private VideoPlayerView videoPlayerView;
@@ -117,7 +118,7 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
         setContentView(R.layout.video_player_activity);
         View root = findViewById(R.id.root);
 
-        mediaController = new MediaController(this);
+        mediaController = new PlaybackControls(this);
         mediaController.setAnchorView(root);
         videoPlayerView = new VideoPlayerView(this, mediaController, root);
 

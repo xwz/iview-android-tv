@@ -53,7 +53,7 @@ public class VideoPlayerView {
 
     private final Context mContext;
 
-    private final MediaController mediaController;
+    private final PlaybackControls mediaController;
     private MediaController.MediaPlayerControl mPlayer;
 
     private static final List<Integer> PLAY_PAUSE_EVENTS = Arrays.asList(
@@ -70,7 +70,7 @@ public class VideoPlayerView {
             KeyEvent.KEYCODE_CAMERA
     );
 
-    public VideoPlayerView(Context context, MediaController controller, View root) {
+    public VideoPlayerView(Context context, PlaybackControls controller, View root) {
         mContext = context;
         mediaController = controller;
         shutterView = root.findViewById(R.id.shutter);
@@ -92,6 +92,7 @@ public class VideoPlayerView {
         card.setFocusableInTouchMode(true);
         card.setInfoVisibility(View.VISIBLE);
         card.setExtraVisibility(View.VISIBLE);
+        card.setInfoAreaBackgroundColor(context.getResources().getColor(R.color.black_900));
         Point size = new Point(context.getResources().getDimensionPixelSize(R.dimen.card_width),
                 context.getResources().getDimensionPixelSize(R.dimen.card_height));
         nextEpisode = new EpisodeCardView(context, card, size, false);
@@ -122,7 +123,7 @@ public class VideoPlayerView {
             doPauseResume();
             return true;
         } else if (PLAYER_EVENTS.contains(keyCode)) {
-            return mediaController.dispatchKeyEvent(event);
+            return mediaController.dispatchKeyEvent(event, 0);
         }
         return false;
     }
