@@ -73,7 +73,7 @@ public class PlaybackControls extends MediaController {
         }
 
         show(timeout);
-        return super.dispatchKeyEvent(event);
+        return false;
     }
 
     private void updatePausePlay() {

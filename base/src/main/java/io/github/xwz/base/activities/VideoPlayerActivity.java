@@ -164,6 +164,7 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
         super.onResume();
         registerReceiver();
         videoPlayerView.configureSubtitleView();
+        videoPlayerView.showShutter(false);
 
         // The player will be prepared on receiving audio capabilities.
         audioCapabilitiesReceiver.register();
@@ -172,6 +173,17 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
     @Override
     public void onPause() {
         super.onPause();
+        if (!requestVisibleBehind(true)) {
+            releasePlayer();
+            audioCapabilitiesReceiver.unregister();
+            videoPlayerView.showShutter(true);
+        }
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+    }
+
+    @Override
+    public void onVisibleBehindCanceled() {
+        super.onVisibleBehindCanceled();
         releasePlayer();
         audioCapabilitiesReceiver.unregister();
         videoPlayerView.showShutter(true);
