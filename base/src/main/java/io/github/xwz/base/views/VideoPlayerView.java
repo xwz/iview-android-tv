@@ -27,9 +27,9 @@ import com.google.android.exoplayer.util.Util;
 import java.util.Arrays;
 import java.util.List;
 
+import io.github.xwz.base.R;
 import io.github.xwz.base.api.EpisodeBaseModel;
 import io.github.xwz.base.player.VideoPlayer;
-import io.github.xwz.base.R;
 
 public class VideoPlayerView {
     private static final String TAG = "VideoPlayerView";
@@ -289,7 +289,7 @@ public class VideoPlayerView {
         statusTextView.setVisibility(View.GONE);
     }
 
-    private void showStatusText(String text) {
+    public void showStatusText(String text) {
         statusTextView.setVisibility(View.VISIBLE);
         statusTextView.setText(text);
     }

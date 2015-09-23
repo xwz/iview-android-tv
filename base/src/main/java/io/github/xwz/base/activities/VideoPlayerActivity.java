@@ -17,7 +17,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.View;
-import android.widget.MediaController;
 import android.widget.Toast;
 
 import com.google.android.exoplayer.ExoPlayer;
@@ -99,6 +98,11 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
             }
             if (ContentManagerBase.CONTENT_AUTH_ERROR.equals(action)) {
                 authFailed(intent);
+            }
+            if (ContentManagerBase.CONTENT_AUTH_FETCHING.equals(action)) {
+                if (videoPlayerView != null) {
+                    videoPlayerView.showStatusText("Preparing...");
+                }
             }
         }
     };
@@ -193,6 +197,7 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
     private void registerReceiver() {
         Log.i(TAG, "Register receiver");
         IntentFilter filter = new IntentFilter();
+        filter.addAction(ContentManagerBase.CONTENT_AUTH_FETCHING);
         filter.addAction(ContentManagerBase.CONTENT_AUTH_START);
         filter.addAction(ContentManagerBase.CONTENT_AUTH_DONE);
         filter.addAction(ContentManagerBase.CONTENT_AUTH_ERROR);
