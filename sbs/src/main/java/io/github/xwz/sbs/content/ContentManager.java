@@ -47,7 +47,7 @@ public class ContentManager extends ContentManagerBase {
         if (existing != null && existing.hasExtras() && existing.hasOtherEpisodes()) {
             cache().broadcastChangeDelayed(100, CONTENT_EPISODE_DONE, episode.getHref(), null);
         } else {
-            new SBSRelatedApi(getContext(), episode.getHref()).execute(episode.getHref());
+            new SBSRelatedApi(getContext(), episode.getHref()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, episode.getHref());
         }
     }
 
@@ -55,7 +55,7 @@ public class ContentManager extends ContentManagerBase {
     public void fetchAuthToken(EpisodeBaseModel episode) {
         Log.d(TAG, "fetchAuthToken");
         cache().broadcastChange(CONTENT_AUTH_FETCHING, episode.getHref());
-        new SBSAuthApi(getContext(), episode.getHref()).execute(episode.getHref());
+        new SBSAuthApi(getContext(), episode.getHref()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, episode.getHref());
     }
 
     @Override

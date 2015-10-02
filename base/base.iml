@@ -90,8 +90,8 @@
     <orderEntry type="library" exported="" name="okhttp-2.5.0" level="project" />
     <orderEntry type="library" exported="" name="okio-1.6.0" level="project" />
     <orderEntry type="library" exported="" name="leanback-v17-23.0.0" level="project" />
-    <orderEntry type="library" exported="" name="support-annotations-23.0.0" level="project" />
     <orderEntry type="library" exported="" name="DBFlow-Core-2.2.1" level="project" />
+    <orderEntry type="library" exported="" name="support-annotations-23.0.0" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-23.0.0" level="project" />
     <orderEntry type="library" exported="" name="DBFlow-2.2.1" level="project" />
   </component>
