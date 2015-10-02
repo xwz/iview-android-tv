@@ -52,13 +52,15 @@ public class SBSAuthApi extends SBSApiBase {
             int end = content.indexOf("};", start);
             if (end > pos) {
                 String data = content.substring(start - 1, end + 1);
+                Log.d(TAG, "data:" + data);
                 Gson gson = new Gson();
                 try {
                     PlayerParams params = gson.fromJson(data, PlayerParams.class);
                     Log.d(TAG, "params: " + params);
                     if (params != null && params.releaseUrls != null) {
-                        if (params.releaseUrls.html != null && params.releaseUrls.html.length() > 0) {
-                            Uri.Builder builder = Uri.parse(params.releaseUrls.html).buildUpon();
+                        String release = params.releaseUrls.getUrl();
+                        if (release != null && release.length() > 0) {
+                            Uri.Builder builder = Uri.parse(release).buildUpon();
                             Uri url = builder.build();
                             loadPlayList(url);
                             return;
@@ -102,6 +104,20 @@ public class SBSAuthApi extends SBSApiBase {
         private String progressive;
         private String html;
         private String standard;
+
+        public String getUrl() {
+            if (html != null) {
+                String url = html.toLowerCase();
+                if (url.startsWith("http://") || url.startsWith("https://")) {
+                    return html;
+                }
+                if (url.startsWith("//")) {
+                    return "http:" + html;
+                }
+                Log.d(TAG, "Invalid release URL: " + this);
+            }
+            return null;
+        }
 
         public String toString() {
             return progressive + " | " + html + " | " + standard;

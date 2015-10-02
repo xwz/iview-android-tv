@@ -290,6 +290,7 @@ public class VideoPlayerView {
     }
 
     public void showStatusText(String text) {
+        showShutter(false);
         statusTextView.setVisibility(View.VISIBLE);
         statusTextView.setText(text);
     }
