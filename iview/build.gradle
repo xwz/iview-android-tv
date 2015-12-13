@@ -23,10 +23,15 @@ android {
             buildConfigField 'String', 'AUTH_URL', getAppProp('IVIEW_AUTH_URL')
             buildConfigField 'String', 'API_URL', getAppProp('IVIEW_API_URL')
         }
+        iviewkids {
+            applicationIdSuffix ".kids"
+            buildConfigField 'String', 'AUTH_URL', getAppProp('IVIEW_AUTH_URL')
+            buildConfigField 'String', 'API_URL', getAppProp('IVIEW_API_URL')
+        }
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':base')
 }

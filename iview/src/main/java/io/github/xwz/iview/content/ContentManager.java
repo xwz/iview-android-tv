@@ -12,6 +12,7 @@ import java.util.Map;
 import io.github.xwz.base.ImmutableMap;
 import io.github.xwz.base.api.EpisodeBaseModel;
 import io.github.xwz.base.content.ContentManagerBase;
+import io.github.xwz.iview.BuildConfig;
 import io.github.xwz.iview.api.AuthApi;
 import io.github.xwz.iview.api.EpisodeDetailsApi;
 import io.github.xwz.iview.api.EpisodeModel;
@@ -19,7 +20,7 @@ import io.github.xwz.iview.api.TvShowListApi;
 
 public class ContentManager extends ContentManagerBase {
 
-    public static final Map<String, String> CATEGORIES = ImmutableMap.of(
+    public static Map<String, String> CATEGORIES = ImmutableMap.of(
             "arts", "Arts & Culture",
             "comedy", "Comedy",
             "docs", "Documentary",
@@ -31,7 +32,7 @@ public class ContentManager extends ContentManagerBase {
             "sport", "Sport"
     );
 
-    private static final Map<String, String> CHANNELS = ImmutableMap.of(
+    public static Map<String, String> CHANNELS = ImmutableMap.of(
             "abc1", "ABC1",
             "abc2", "ABC2",
             "abc3", "ABC3",
@@ -41,6 +42,15 @@ public class ContentManager extends ContentManagerBase {
 
     public ContentManager(Context context) {
         super(context);
+        if(BuildConfig.FLAVOR == "iviewkids"){
+            CATEGORIES = ImmutableMap.of(
+
+            );
+            CHANNELS = ImmutableMap.of(
+                    "abc3", "ABC3",
+                    "abc4kids", "ABC4Kids"
+            );
+        }
     }
 
     private TvShowListApi fetchShows;

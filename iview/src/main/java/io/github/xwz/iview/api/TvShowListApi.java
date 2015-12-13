@@ -18,6 +18,7 @@ import java.util.Map;
 
 import io.github.xwz.base.ImmutableMap;
 import io.github.xwz.base.api.EpisodeBaseModel;
+import io.github.xwz.iview.BuildConfig;
 import io.github.xwz.iview.content.ContentManager;
 
 public class TvShowListApi extends IViewApi {
@@ -48,8 +49,9 @@ public class TvShowListApi extends IViewApi {
         }
 
         updateProgress();
-        fetchTitlesFromCollection();
-
+        if(BuildConfig.FLAVOR != "iviewkids") {
+            fetchTitlesFromCollection();
+        }
         for (String cat : ContentManager.CATEGORIES.keySet()) {
             updateProgress();
             fetchTitlesInCategory(cat);
@@ -96,12 +98,14 @@ public class TvShowListApi extends IViewApi {
         List<EpisodeBaseModel> titles = getEpisodesFromData(data, false);
         Log.d(TAG, "Found " + titles.size() + " episode from index query");
         for (EpisodeBaseModel title : titles) {
-            if (episodes.containsKey(title.getHref())) {
-                title.setCategories(episodes.get(title.getHref()).getCategories());
-            } else {
-                episodes.put(title.getHref(), title);
+            if(title.getChannel() != null && ContentManager.CHANNELS.containsKey(title.getChannel())){
+                if (episodes.containsKey(title.getHref())) {
+                    title.setCategories(episodes.get(title.getHref()).getCategories());
+                } else {
+                    episodes.put(title.getHref(), title);
+                }
+                shows.add(title);
             }
-            shows.add(title);
         }
     }
 

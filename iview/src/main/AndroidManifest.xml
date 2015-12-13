@@ -62,12 +62,12 @@
 
         <provider
             android:name="io.github.xwz.base.content.RecommendationBuilder$RecommendationBackgroundContentProvider"
-            android:authorities="io.github.xwz.iview.recommendation"
+            android:authorities="${applicationId}.recommendation"
             android:exported="true"/>
 
         <provider
             android:name="io.github.xwz.iview.content.SearchContentProvider"
-            android:authorities="io.github.xwz.iview.search"
+            android:authorities="${applicationId}.search"
             android:exported="true"/>
 
     </application>
