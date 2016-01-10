@@ -8,3 +8,6 @@
 /cache
 *.swp
 app.properties
+*.iml
+.idea
+*~
